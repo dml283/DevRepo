@@ -17,7 +17,8 @@ public class AddressHelper {
     public string merchantId {get;set;}
     public string terminalId {get;set;}
     public string type {get;set;}
-
+	
+	//new comment
     public AddressHelper(ApexPages.StandardController ctrl) 
         {
              ctrlId = ctrl.getID();
