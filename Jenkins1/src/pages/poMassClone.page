@@ -1,0 +1,134 @@
+<apex:page controller="MassClonePO" standardStylesheets="false" showheader="false" sidebar="false">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.js"/>
+<apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+<apex:includeScript value="{!URLFOR($Resource.SimpleTableSorter)}"/>
+
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap_amwb, 'toolstrap_amwb/toolstrap.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.dt_boostrap)}"/>
+<html>
+  <head>
+    <title>Mass Clone</title>
+  </head>
+  <body class='nav full-height'>
+    <header>
+  <div class='container'>
+    <nav>
+      <ul>
+        <li>
+          <a href="#">PO Clone</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div class='content clearfix'>
+    <section class='main'>
+      <div class='container'>
+        <h2>PO Clone-o-Matic</h2>
+        <div class="row">
+            <label>Select Division:</label>
+            <br/>
+            <select id="DivSelect">
+                <option></option>
+                <apex:repeat var="div" value="{!DivisionOptions}">
+                <option>{!div.Name}</option>
+                </apex:repeat>
+            </select>
+            
+            <br/><br/>
+            <button class="btn btn-primary" onclick="loadPurchOrders();">Find Templates </button>
+            <br/><br/>
+            <div id="dateSelect">
+            <label>Select Date to Apply to Cloned POs:</label>
+            <p><input type="text" id="datepicker"/></p>
+            </div>
+            <table class="table table-striped table-bordered-horizontal tablesorter" id="poTable">
+                <thead>
+                    <th class="type-string">PO Name</th>
+                    <th class="type-string">SubDivision</th>
+                    <th class="type-string">Category</th>
+                    <th class="type-string">Subcategory</th>
+                    <th class="type-string">Ideal Price Range</th>
+                    <th class="type-string">Notes</th>
+                    <th></th>
+                </thead>
+                <tbody id="poList">
+                   
+               </tbody> 
+            </table>
+        </div>
+      </div>
+    </section>
+</div>
+</body>
+</html>
+<script>
+//var j$ = jQuery.noConflict();
+
+$(document).ready(function(){
+    $("#poTable").stupidtable();  
+    $("#datepicker").datepicker();
+    $("#dateSelect").hide();
+});    
+
+function loadPurchOrders(){
+        $("#dateSelect").show();
+        $('#poTable tbody').html('');
+        var queryDiv = $("select[id$='DivSelect']").val();
+        var subdiv = '';
+        MassClonePO.getPurchaseOrderByDivisions(queryDiv, function(result,event){
+                $(result).each(function(){
+                console.log(result);
+                $("#PurchOrderTemplate").tmpl(this).appendTo("#poTable");
+            });
+        });
+        $("#poTable").stupidtable();   
+    }
+    
+function clonePurchOrders(purchOrdId, elm){
+        var TargetFeatureDate = $("input[id$='datepicker']").val();
+        $(elm).removeClass('btn-primary');
+        $(elm).addClass('btn-caution');
+        $(elm).html('Cloning....');
+        MassClonePO.clonePO(purchOrdId, TargetFeatureDate, function(result,event){
+            console.log(event.status);
+            if(event.status){
+                $(elm).addClass('btn-success').html('Success!').removeClass('btn-caution');
+            }else{
+                $(elm).removeClass();
+                $(elm).addClass('btn-danger');
+                $(elm).html('Failed');
+                }
+            });
+    }                            
+</script>
+<script id="subDivTemplate" type="text/x-jquery-tmpl">
+        <option value="${Name}" >${Name}</option>
+</script>
+
+<script id="PurchOrderTemplate" type="text/x-jquery-tmpl">
+    <tr>
+        <td><a href="/${Id}">${Name}</a></td>
+        <td>
+            {{if Subdivision__r}}
+                ${Subdivision__r.Name}
+            {{/if}}
+        </td>
+        <td>${Category_v3__c}</td>
+        <td>${Subcategory_v3__c}</td>
+        <td>${Ideal_Price_Range__c}</td>
+        <td>${PO_Notes__c}</td>
+        <td><button onclick="clonePurchOrders('${Id}', this);" class="btn btn-primary">Clone</button></td>
+    </tr>
+</script>
+<style type="text/css">
+      tr.awesome{
+        color: red;
+      }
+      th[class|="type"]{
+        cursor:pointer;
+      }
+    </style>
+</apex:page>

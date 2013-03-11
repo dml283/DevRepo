@@ -1,0 +1,84 @@
+<apex:page standardController="Opportunity" extensions="TargetZips">
+<apex:outputPanel id="wrapper">
+<script type="text/javascript">
+       beenFocused = true;
+</script>
+<apex:form >
+<apex:pageMessages /> 
+        <apex:actionFunction name="addZip" action="{!addZip}" rerender="wrapper, ZipOutput, ZipOutput1" oncomplete="makeDraggable();" >
+            <apex:param name="zip" value=""/>
+        </apex:actionFunction>
+        <apex:actionFunction name="deleteTargetZip" action="{!deleteTargetZip}" rerender="wrapper, ZipOutput, ZipOutput1" oncomplete="makeDraggable();">
+            <apex:param name="ZipIdToDelete" value=""/>
+        </apex:actionFunction>        
+    </apex:form>
+ 
+
+    <apex:form >
+                   <table>
+                       <tr>
+                           <td>Target Zip Code</td><td><apex:inputText value="{!zip}" disabled="false" id="ZipInputId"/></td>
+                           <td><apex:commandButton action="{!addZip}" value="Add Target Zip" style="ui-button ui-button-text-only ui-widget ui-state-default ui-corner-all"/> </td>
+                           <td><div id="TrashCan" class="TrashCan"><img src="{!$Resource.trashCan}" width="30" height="30"/></div></td>
+                      </tr>
+                   </table>    
+    </apex:form>
+</apex:outputPanel>    
+
+<apex:outputPanel id="ZipOutput1">
+<apex:repeat value="{!AllZips}" var="a">  
+<div id = "ZipDiv" class = "Zip" data-addyAId="{!a.Id}">
+{!a.Target_Zip_Code__c}
+</div>
+</apex:repeat>
+</apex:outputPanel>
+<apex:includeScript value="{!$Resource.Jquery}"/>
+<apex:includeScript value="{!$Resource.JQueryUI}"/>
+<apex:includeScript value="{!$Resource.JqueryWidget}"/>
+<apex:stylesheet value="{!URLFOR($Resource.JQueryCSS)}"/>
+<script type="text/javascript">
+        var j$ = jQuery.noConflict();
+        
+        j$(document).ready(function(){
+            makeDraggable();
+
+        });
+        
+        function makeDraggable(){
+                        j$(".Zip").draggable({revert: 'invalid'});
+                        j$(".TrashCan").droppable({
+                                drop: function(event, ui){
+                                                         //alert(ui.draggable.attr('data-addyAId'));
+                                                         deleteTargetZip(ui.draggable.attr('data-addyAId'));
+                                                         } 
+                                                    });        
+                                //alert({!AllZips});
+        };
+       
+                         
+           
+</script>
+<style>
+        .Zip{
+             background-color: white;
+            border: 1px solid black;
+            border-radius: 5px;
+            float:left;
+            margin: 5px 5px 5px 5px;
+            padding: 3px;
+            height: 10px;
+            }
+        .TrashCan{
+            float: left;
+            border: 1px solid black;
+            padding: 10px;
+            border-radius: 5px;
+            width: 25px;
+            height: 25px;
+            background-color: white;
+        }
+        .clear{
+            clear: both;
+        }
+</style>                    
+</apex:page>

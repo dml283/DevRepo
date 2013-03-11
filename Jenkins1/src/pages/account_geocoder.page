@@ -1,0 +1,3 @@
+<apex:page standardController="Account" extensions="bulk_geocoder" >
+
+</apex:page>

@@ -1,0 +1,13 @@
+<apex:component >
+    <apex:attribute name="colors" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="displayzoombuttons" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="zoomendtime" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="zoomstarttime" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="height" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="width" type="String" description="TODO: Describe me"/>
+    <apex:attribute name="jsondata" type="String" description="TODO: Describe me"/>
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  This is your new Component: timeline
+  <!-- End Default Content REMOVE THIS -->
+</apex:component>

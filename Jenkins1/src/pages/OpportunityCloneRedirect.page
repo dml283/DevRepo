@@ -1,0 +1,4 @@
+<apex:page standardController="Opportunity" extensions="OpportunityCloneRedirectController" action="{!cloneAndRedirect}" >
+<apex:pagemessages />
+
+</apex:page>

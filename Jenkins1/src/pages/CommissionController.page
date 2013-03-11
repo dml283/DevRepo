@@ -1,0 +1,58 @@
+<apex:page controller="CommissionManager" standardStylesheets="false" sidebar="false" showHeader="false" id="CommissionGenerator">
+
+<apex:stylesheet value="{!$Resource.toolstrap}"/>
+
+<body class="panel-out">
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#"> Commissions</a>
+                    </li>
+                </ul>
+                
+            </nav>
+        </div>
+    </header>
+    <section class="control-bar">
+        <div class="container">
+            <h2>Generate Monthly Commissions</h2>
+        </div>
+    </section>
+    <div class="content clearfix">
+        <div class="container">
+            <section class="main">
+                <div class="container">
+                    <apex:form id="commissionForm" styleClass="form-default">
+                        <legend>Commission Generator</legend>
+                        <div class="control-group">
+                             <label>Delete All Prior Commission Statements?</label>
+                             <div class="controls">
+                                 <apex:inputCheckbox value="{!delete_all_prior}"/>
+                             </div>
+                             <hr/>
+                             <label>Month</label>
+                             <div class="controls">
+                                <apex:selectList id="month" value="{!month}" size="1">
+                                    <apex:selectOption itemValue="1" itemLabel="January"/>
+                                    <apex:selectOption itemValue="2" itemLabel="February"/>
+                                    <apex:selectOption itemValue="3" itemLabel="March"/>
+                                </apex:selectList> 
+                             </div>
+                             <label>Year</label>
+                             <div class="controls">
+                                <apex:selectList id="year" value="{!year}" size="1">
+                                    <apex:selectOption itemValue="2013" itemLabel="2013"/>
+                                </apex:selectList> 
+                             </div>
+                        </div>
+                        <apex:commandButton action="{!execute}" title="Run" value="Run" styleClass="btn btn-info"/>
+                    </apex:form>
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+  
+</apex:page>

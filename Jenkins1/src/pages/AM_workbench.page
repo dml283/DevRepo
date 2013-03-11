@@ -1,0 +1,1637 @@
+<apex:page controller="AM_workbench" docType="html-5.0" standardStylesheets="false" showheader="false" sidebar="false" title="AM Dashboard">
+  <head>
+    <meta charset="utf-8" />
+    <apex:stylesheet value="{!URLFOR($Resource.toolstrap_amwb, '/toolstrap_amwb/toolstrap.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.toolstrap_amwb, '/toolstrap_amwb/workbench.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.toolstrap_icon_font, '/Groupon-Icon-Font/style.css')}"/>
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"/>
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"/>
+    <apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+    <apex:includeScript value="{!$Resource.tooltip}"/>
+    <apex:includeScript value="{!$Resource.formatCurrency}"/>
+  </head>
+  <body class='nav panel-in'>
+    <header>
+    <div class='container'>
+      <nav>
+      <apex:image value="{!URLFOR($Resource.toolstrap_zip, '/images/icon-g.png')}" />
+      <ul>
+        <li>
+          <a href="/styleguides/pipeline">Pipeline</a>
+        </li>
+        <li>
+          <a href="#">Deal Estate</a>
+        </li>
+        <li class='active'>
+          <a href="/styleguides/workbench">Workbench</a>
+        </li>
+        <li>
+          <a href="#">Coffee</a>
+        </li>
+        <li>
+          <a href="#">Deal Wizard</a>
+        </li>
+        <li>
+          <a href="/home/home.jsp" target="_blank">Salesforce</a>
+        </li>
+      </ul>
+      </nav>
+    </div>
+    </header>
+    <div class='content clearfix'>
+      <div class='container' style='display:table'>
+        <section class='main-section'>
+          <div class='container'>
+            <h2>Merchant Priorities</h2>
+            <h2 id="salesforce-warning"></h2>
+            <div class='tab-container'>
+              <span class='tab-label'>Priority Sort:</span>
+              <div class='btn-group'>
+                <a id="priority" class='btn' href='#'>Standard</a>
+                <a id="nextSet" class='btn' href='#'>Next 10d</a>
+                <a id="lastSet" class='btn' href='#'>Last 10d</a>
+                <a class='prioritize-btn btn' href='#' onclick="sendMerchantData();">Prioritize</a>
+              </div>
+              <span class="control-group search-form">
+                <form id="merchant-search-form">
+                  <input class="controls" type="search" placeholder="Search" />
+                </form>
+              </span>
+            </div>
+            <div id="merchants-table" class='merchant-main-table'>
+              <table class='table table-bordered-horizontal table-striped table-no-outer-border table-colgroup'>
+                <colgroup>
+                  <col span='3'/>
+                  <col span='5'/>
+                  <col span='2'/>
+                </colgroup>
+                <thead data-bind="visible: true">
+                  <th width='5'>Cat.</th>
+                  <th>Merchant</th>
+                  <th width='5'>Product Adoption
+                    <span data-toggle="tooltip" data-placement="right"><a href="">(?)</a></span>
+                    <div class="tooltip">
+                      <ul class="unstyled">
+                        <li style="list-style: none; "><b>N</b> - Now!</li>
+                        <li style="list-style: none;"><b>R</b> - Rewards</li>
+                        <li style="list-style: none;"><b>S</b> - Scheduler</li>
+                        <li style="list-style: none;"><b>P</b> - Payment</li>
+                        <li style="list-style: none;"><b>B</b> - Breadcrumb</li>
+                        <li style="list-style: none;"><b>Q</b> - Quantum Lead</li>
+                      </ul>
+                    </div>
+                  </th>
+                  <th>Deals</th>
+                  <th width='5'>Go Live
+                    <span data-toggle="tooltip" data-placement="right"><a href="">(?)</a></span>
+                    <div class="tooltip">
+                      <p>Asterisk indicates the deal does not have Prefeature enabled</p>
+                    </div>
+                  </th>
+                  <th width='5'>Expiration
+                    <apex:outputPanel rendered="{!!isInternational}">
+                      <span data-toggle="tooltip" data-placement="right"><a href="">(?)</a></span>
+                      <div class="tooltip">
+                        <p>Asterisk indicates the deal does not have Expiration Staggering enabled</p>
+                      </div>
+                    </apex:outputPanel>
+                  </th>
+                  <th width='5'>Strength</th>
+                  <th width='5'>Cadence Touch Points</th>
+                  <th>Contact Reason</th>
+                  <th width='5'>&nbsp;</th>
+                </thead>
+                <apex:repeat var="merchant" value="{!merchantList}">
+                  <tbody data-priority-order="{!merchant.priorityOrder}" data-next-order="{!merchant.nextOrder}" data-last-order="{!merchant.lastOrder}" class="{!merchant.sectionStyle}">
+                    <apex:repeat var="deal" value="{!merchant.g1deals}">
+                      <tr style="{!deal.displayCSS}" class="{!merchant.id}" width="1967px">
+                        <td>
+                          <apex:outputPanel rendered="{!merchant.category == 'Beauty / Wellness / Healthcare' && deal.display}">
+                            <span class='category-icon icon-wellness'>
+                            </span>
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!merchant.category == 'Leisure Offers / Activities' && deal.display}">
+                            <span class='category-icon icon-leisure'>
+                            </span>
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!merchant.category == 'Travel' && deal.display}">
+                            <span class='category-icon icon-getaways'>
+                            </span>
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!merchant.category == 'Tickets' && deal.display}">
+                            <span class='category-icon icon-grouponlive'>
+                            </span>
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!merchant.category == 'Food & Drink' && deal.display}">
+                            <span class='category-icon icon-restaurants'>
+                            </span>
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!merchant.category == 'Services' && deal.display}">
+                            <span class='category-icon icon-services'>
+                            </span>
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!merchant.category == 'Shopping' && deal.display}">
+                            <span class='category-icon icon-shopping'>
+                            </span>
+                          </apex:outputPanel>
+                          <apex:outputPanel rendered="{!merchant.category == 'Charity' && deal.display}">
+                            <span class='category-icon icon-grassroots'>
+                            </span>
+                          </apex:outputPanel>
+                        </td>
+                        <td>
+                          <span data-toggle="tooltip" data-placement="right">
+                            <apex:outputPanel rendered="{!deal.display && !isInternational}">
+                              <a style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 200px !important; display:inline-block;" href="https://coffee.groupondev.com/merchants/{!merchant.id}/tabs/products" value="/{!merchant.id}" target="_blank">{!merchant.name}</a>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!deal.display && isInternational}">
+                              <a style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 200px !important; display:inline-block;" href="/{!merchant.id}" value="/{!merchant.id}" target="_blank">{!merchant.name}</a>
+                            </apex:outputPanel>
+                            <apex:outputPanel rendered="{!deal.display}"><p class="help-text">Last Modified: {!merchant.last_modified}</p></apex:outputPanel>
+                          </span>
+                          <div class="tooltip tooltip-modal">
+                            <div data-title="Merchant Details"  style="width:auto !important;">
+                              <div class="tooltip-title">Merchant Temperature</div>
+                              <div class="tooltip-body">
+                                <div class="msat"><strong>MSAT:</strong> {!merchant.msat} <small>({!merchant.msat_date})</small></div>
+                                <apex:outputPanel rendered="{!merchant.temperature.size > 0}">
+                                  <table class="table table-striped table-condensed table-bordered">
+                                    <thead>
+                                      <th>Date</th>
+                                      <th>Temp</th>
+                                      <th>Reason</th>
+                                      <th>Comments</th>
+                                      <th>Source</th>
+                                    </thead>
+                                    <tbody>
+                                      <apex:repeat value="{!merchant.temperature}" var="temp">
+                                        <tr>
+                                          <td>
+                                            <apex:outputText value="{0,date,M'/'dd'/'yyyy}">
+                                            <apex:param value="{!temp.tempDate}"/>
+                                            </apex:outputText>
+                                          </td>
+                                          <td>{!temp.overallRanking}</td>
+                                          <td>{!temp.category}</td>
+                                          <td><span style="max-width:50px;">{!temp.overallComments}</span></td>
+                                          <td>{!temp.source}</td>
+                                        </tr>
+                                      </apex:repeat>
+                                    </tbody>
+                                  </table>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!!isInternational}">
+                                  <hr/>
+                                  <a class="btn btn-info" href="/a3B/e?CF00NC0000005MUQf={!merchant.name}&CF00NC0000005MUQf_lkid={!merchant.id}" target="_blank">Add Temperature</a>
+                                </apex:outputPanel>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="pull-right">
+                            <apex:outputPanel rendered="{!deal.display}">
+                              <apex:outputPanel rendered="{!merchant.merchantStatus == 'white' && deal.display}">
+                                <span class="icon-glove badge-icon white-glove pull-left"></span>
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!merchant.merchantStatus == 'super white' && deal.display}">
+                                <span class="icon-glove badge-icon super-white-glove pull-left"></span>
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!merchant.merchantStatus == 'alert' && deal.display}">
+                                <span class="icon-alert badge-icon alert-account pull-left"></span>
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!merchant.merchantStatus == 'skull' && deal.display}">
+                                <span class="icon-skull badge-icon burned-account pull-left"></span>
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!merchant.star == 'gold' && deal.display && !merchant.out_of_business}">
+                                <span class="icon-star-filled badge-icon partner-merchant pull-left"></span>
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!merchant.star == 'black' && deal.display && !merchant.out_of_business}">
+                                <span class="icon-star-filled badge-icon existing-merchant pull-left"></span>
+                              </apex:outputPanel>
+                              <apex:outputPanel rendered="{!merchant.out_of_business}">
+                                <span class="icon-skull badge-icon existing-merchant pull-left"></span>
+                              </apex:outputPanel>
+                              <ul class='unstyled pull-right'></ul>
+                              <span style="cursor: pointer;" class='{!merchant.nowStatus.css}' onclick="nowDeals('{!merchant.id}');">{!merchant.nowStatus.value}</span>
+                              <span style="cursor: pointer;" class='{!merchant.rewardsStatus.css}' onclick="rewardsDeals('{!merchant.id}');">{!merchant.rewardsStatus.value}</span>
+                              <span style="cursor: pointer;" class='{!merchant.schedulerStatus.css}' onclick="schedulerModal('{!merchant.id}');">{!merchant.schedulerStatus.value}</span>
+                              <span style="cursor: pointer;" class='{!merchant.paymentStatus.css}' onclick="paymentModal('{!merchant.id}');">{!merchant.paymentStatus.value}</span>
+                              <span style="cursor: pointer;" class='{!merchant.breadcrumbStatus.css}' onclick="breadcrumbModal('{!merchant.id}');">{!merchant.breadcrumbStatus.value}</span>
+                              <span style="cursor: pointer;" class='{!merchant.clpStatus.css}' onclick="quantumLeadModal('{!merchant.name}', '{!merchant.id}');">{!merchant.clpStatus.value}</span>
+                              <span style="cursor: pointer;" class="label" onclick="prioritize_single('{!merchant.id}',this);">Rescore</span>
+                            </apex:outputPanel>
+                          </div>
+                        </td>
+                        <td class="deal">
+                          <span style="cursor: pointer;" ><apex:image value="{!URLFOR($Resource.toolstrap_zip, '/images/arrow-right.png')}" rendered="{!deal.display && merchant.has_deals}" onclick="showDeals('{!merchant.id}',$(this).parent().parent().parent(),this)" styleClass="{!merchant.id}show" /></span>
+                          <span style="cursor: pointer;" ><apex:image value="{!URLFOR($Resource.toolstrap_zip, '/images/arrow-down.png')}" rendered="{!deal.display && merchant.has_deals}" onclick="hideDeals('{!merchant.id}',$(this).parent().parent().parent(),this)" style="display:none" styleClass="{!merchant.id}hide"  /></span>
+
+                          <span data-toggle="tooltip" data-placement="right"><a href="/{!deal.opportunityId}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 500px !important; display:inline-block;" target="_blank" onmouseover="getOptionData('{!deal.id}', this);" data-rendered="false">{!deal.name}</a></span>
+                          <div class="tooltip tooltip-modal">
+                            <div data-title="Deal Details"  style="width:auto !important; min-width:450px;">
+                              <div class="tooltip-title">{!merchant.name}</div>
+                              <div class="tooltip-body">
+                                <dl>
+                                  <dt class="help-text">Sales Rep: </dt>  <dd>{!deal.sales_rep}&nbsp;</dd>
+                                  <apex:outputPanel rendered="{!!isInternational}">
+                                    <dt class="help-text">Permalink: </dt>  <dd><a href="http://www.groupon.com/deals/{!deal.permalink}" target="_blank" >{!deal.permalink}</a>&nbsp;</dd>
+                                  </apex:outputPanel>
+                                  <dt class="help-text">Division: </dt>   <dd>{!deal.division}&nbsp;</dd>
+                                  <dt class="help-text">Deal Bank: </dt>  <dd>{!deal.deal_bank}&nbsp;</dd>
+                                  <dt class="help-text">Write Up Status:</dt>  <dd>{!deal.writeup_status}&nbsp;</dd>
+                                </dl>
+                                <h3 class="h3" style="padding-top:10px;">Deal Options</h3>
+                                <div id="{!deal.id}options" >
+                                  <apex:image value="{!URLFOR($Resource.toolstrap_zip, '/images/g-spinner.gif')}" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span>{!deal.featuredate}<apex:outputText rendered="{!deal.prefeature}" style="color:red; font-weight:bold;" value="*"/></span></td>
+                        <td><span>{!deal.expirationdate}<apex:outputText rendered="{!deal.staggeredExp !=true && !isInternational}" style="color:red; font-weight:bold;" value="*"/></span></td>
+                        <td>
+                          <span class='{!deal.dealstrength.css}'>{!deal.dealstrength.value}</span>
+                        </td>
+                        <td>
+                          <ul class='label-list'>
+                            <apex:repeat value="{!deal.status}" var="s">
+                            <li class='{!s.css}' data-id="{!deal.id}">
+                              <a onclick="prepStatus('{!s.subject}','{!deal.id}', $(this).parent())" data-toggle="modal" data-target="prepStatus" style="cursor: pointer;" >
+                                {!s.value}
+                              </a>
+                            </li>
+                            </apex:repeat>
+                          </ul>
+                        </td>
+                        <td>
+                          <span class='label {!merchant.contact_reason.css}' style="color:white; min-width:260px;">{!merchant.contact_reason.value} <span class="label-endcap">{!merchant.endCap}</span></span>
+                        </td>
+                        <td>
+                          <div>
+                            <div data-toggle="tooltip" data-placement="bottom" style="cursor: pointer;">
+                              <apex:image value="{!URLFOR($Resource.toolstrap_zip, '/images/icon-settings.png')}" />
+                            </div>
+                            <div class="tooltip">
+                              <ul class="unstyled gear">
+                                <li style="list-style: none;"><a style="cursor: pointer;" onclick="showContacts('{!merchant.id}', '{!deal.id}');">Contacts</a></li>
+                                <apex:outputPanel rendered="{!!isInternational}">
+                                  <li style="list-style: none;"><a href="http://groupon.com/deals/{!deal.permalink}" target="_blank">Deal Permalink</a></li>
+                                  <li style="list-style: none;"><a href="http://merchants.groupon.com/{!merchant.permalink}" target="_blank">Merchant Center</a></li>
+                                </apex:outputPanel>
+                                <li style="list-style: none;"><a href="{!merchant.website}" target="_blank">Merchant Site</a></li>
+                                <apex:outputPanel rendered="{!!isInternational}">
+                                  <li style="list-style: none;"><a href="https://central.groupon.com" target="_blank">Groupon Central</a></li>
+                                  <li style="list-style: none;"><a href="http://sheepdads.zendesk.com/home" target="_blank">Sheepdads</a></li>
+                                  <li style="list-style: none;"><a href="#" onclick="logCall('Maintenance: Merchant Temperature Follow Up', '{!merchant.id}');">Log a Call</a></li>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!isUK}">
+                                <li style="list-style: none;"><a href="#" onclick="window.open('/apex/contractLiveCall?id=' + '{!deal.id}', 'mywindow')">Go Live Screen Setup</a></li>
+                                </apex:outputPanel>
+                              </ul>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </apex:repeat>
+                  </tbody>
+                </apex:repeat>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div id="modalContainer"></div>
+  </body>
+
+<script>
+  var toolstrapSource = '<apex:outputText value="{!URLFOR($Resource.toolstrap_zip)}"></apex:outputText>';
+  var allMerchants = '';
+  var showAll = '<apex:outputText value="{!showAll}"></apex:outputText>';
+  var numberOfScriptStatements = '<apex:outputText value="{!numberOfScriptStatements}"></apex:outputText>';
+
+  $(document).ready(function() {
+
+    modalContainer = $('#modalContainer');
+
+    if (showAll == 'false') {
+      $('h2#salesforce-warning').html('<font color="red">WARNING</font>: Some merchants are hidden. Please contact support.');
+    }
+
+    var allMerchants = $('#merchants-table').html();
+    var searching = false;
+
+    $('#merchant-search-form').bind('submit', function(event) {
+      var searchTerm = $('#merchant-search-form input').val();
+      if (searchTerm == '') {
+        swapMerchantTable(allMerchants);
+      } else {
+        var spinnerModal = $('#merchants-table-spinner').tmpl();
+        spinnerModal.dialog({
+          modal: true,
+          autoOpen: true,
+          closeOnEscape: false,
+        });
+        $(".ui-dialog-titlebar").hide()
+
+        if (searching == false) {
+          searching = true;
+          AM_workbench.searchMerchants(searchTerm, function(result, event) {
+            swapMerchantTable($('#merchantsTableTemplate').tmpl(event));
+            searching = false;
+            spinnerModal.remove();
+          });
+        }
+      }
+      event.preventDefault();
+    });
+
+    $('#merchant-search-form input').bind('click', function(event) {
+      $(this).select();
+    });
+
+    $('#merchant-search-form input').bind('keyup', function(event) {
+      if (event.keyCode == 8 || event.keyCode == 46 ) {
+        if ($(this).val() == '') {
+          swapMerchantTable(allMerchants);
+        }
+      }
+    });
+
+    $('[data-toggle=tooltip]').toolstrapTooltip();
+    removeCTIcss();
+
+    $('a[id=priority]').on('click', function() {
+      $(this).parent().parent().find('li[class=active]').removeClass('active');
+      $(this).parent('li').addClass('active');
+      sortPriorityOrder();
+    });
+
+    $('a[id=nextSet]').on('click', function() {
+      $(this).parent().parent().find('li[class=active]').removeClass('active');
+      $(this).parent('li').addClass('active');
+      sortNextOrder();
+    });
+
+    $('a[id=lastSet]').on('click', function() {
+      $(this).parent().parent().find('li[class=active]').removeClass('active');
+      $(this).parent('li').addClass('active');
+      sortLastOrder();
+    });
+
+    modalContainer.on('click', '#status-error, .ui-widget-overlay', function() {
+      modalContainer.find('.ui-dialog').dialog('close');
+      modalContainer.find('.ui-dialog').remove();
+      opened = false;
+    });
+
+    var startTime = Date.now();
+    setTimeout(function() {
+      sendMerchantData();
+      setTimeout(function() {
+        $(document).bind("click", function() {
+          if (!opened) {
+            createSnoozeModal(startTime);
+          }
+        })
+      }, 5 * minute());
+    }, 120 * minute());
+  });
+
+  function swapMerchantTable(merchants) {
+    $('#merchants-table').html(merchants);
+    $('[data-placement="bottom"]').toolstrapTooltip()
+    $('[data-placement="right"]').toolstrapTooltip()
+  }
+  
+  function convertToDate(num) {
+    var d = new Date(num);
+    var curr_date = d.getUTCDate();
+    var curr_month = d.getUTCMonth() + 1; 
+    var curr_year = d.getUTCFullYear();
+    return curr_month + "/" + curr_date  + "/" + curr_year;
+  }
+
+  function minute() {
+    return 60 * 1000;
+  }
+
+  function createSnoozeModal(startTime) {
+    $(document).unbind('click keydown keyup');
+
+    var snoozeModal = $('#snoozeTemplate').tmpl();
+    snoozeModal.dialog({
+      modal: true,
+      title: 'Refresh Browser Page',
+      autoOpen: true,
+      closeOnEscape: false,
+      dialogClass: 'snooze',
+      buttons: {
+        "OK": function() {
+          window.location.reload();
+        },
+        "10 min Snooze": function() {
+          snoozeModal.dialog('close');
+        }
+      },
+      close: function(event, ui) {
+        snoozeButton(startTime);
+        snoozeModal.remove();
+        opened = false;
+      },
+      open: function(event, ui) {
+        opened = true;
+      },
+    });
+  }
+
+  function snoozeButton(startTime) {
+    setTimeout(function() {
+      var snoozeModal = $('#snoozeTemplate').tmpl();
+      snoozeModal.dialog({
+        modal: true,
+        autoOpen: true,
+        closeOnEscape: false,
+        dialogClass: 'snooze',
+        buttons: {
+          "OK": function() {
+            window.location.reload();
+          }
+        },
+        close: function(event, ui) {
+          opened = false;
+        },
+        open: function(event, ui) {
+          opened = true;
+        }
+      });
+    }, 10 * minute());
+  }
+
+  function sortPriorityOrder() {
+    var tbodies = $('.merchant-main-table > table > tbody').toArray();
+    $.each(tbodies, function(index, tbody) { $(tbody).detach(); })
+    tbodies = tbodies.sort(function(a, b) {
+      return parseInt($(a).data('priority-order')) - parseInt($(b).data('priority-order'));
+    });
+    $('.merchant-main-table > table > thead').after(tbodies);
+  }
+
+  function sortNextOrder() {
+    var tbodies = $('.merchant-main-table > table > tbody').toArray();
+    $.each(tbodies, function(index, tbody) { $(tbody).detach(); })
+    tbodies = tbodies.sort(function(a, b) {
+      return parseInt($(a).data('next-order')) - parseInt($(b).data('next-order'));
+    });
+    $('.merchant-main-table > table > thead').after(tbodies);
+  }
+
+  function sortLastOrder() {
+    var tbodies = $('.merchant-main-table > table > tbody').toArray();
+    $.each(tbodies, function(index, tbody) { $(tbody).detach(); })
+    tbodies = tbodies.sort(function(a, b) {
+      return parseInt($(a).data('last-order')) - parseInt($(b).data('last-order'));
+    });
+    $('.merchant-main-table > table > thead').after(tbodies);
+  }
+
+  var prepelm;
+  var opened = false;
+
+  function removeCTIcss() {
+    var cssCTI = $("link[href='/resource/qbdialer__c2c_resources/20120822114054/style/flick/jquery-ui-1.8.9.custom.css']");
+    cssCTI.remove();
+  }
+
+  function logCall(subject, accountId) {
+    AM_workbench.getPrepTask(subject, accountId, function(result, event) {
+      var task = new Object();
+
+      task.subject = result.subject;
+      task.what_id = result.whatId;
+      task.status = result.status;
+      task.notes = result.description;
+      task.id = result.id;
+      task.statuses = result.statuses;
+
+      if (result.openModal) {
+        var logCall = $('#logCallTemplate').tmpl(task);
+        logCall.dialog({
+          modal: true,
+          autoOpen: true,
+          title: 'Log a Call',
+          close: function(event, ui) {
+            $('#status-error p').html("");
+            $('#status-error').hide();
+            logCall.remove();
+          }
+        });
+        logCall.parent().next().appendTo(modalContainer);
+        logCall.parent().appendTo(modalContainer);
+
+        $(modalContainer).on('change', '#log-call-subject', function() {
+          var logCall = $('#logCall');
+          AM_workbench.getPrepTask($(this).val(), accountId, function(result, event) {
+            logCall.find('#statusId').val(result.status);
+            logCall.find('#notes').val(result.description);
+          });
+        })
+      }
+    });
+  }
+
+  function prepStatus(subj, id, elm) {
+    prepelm = elm;
+
+    AM_workbench.getPrepTask(subj,id, function(result, event) {
+      var options = new Object();
+
+      if (!opened) {
+        options.subject = result.subject;
+        options.what_id = result.whatId;
+        options.status = result.status;
+        options.notes = result.description;
+        options.id = result.id;
+        options.statuses = result.statuses;
+
+        if (result.openModal) {
+          var prepStatus = $('#prepStatusTemplate').tmpl(options);
+          prepStatus.dialog({
+            modal: true,
+            autoOpen: true,
+            close: function(event, ui) {
+              $('#status-error p').html("");
+              $('#status-error').hide();
+              prepStatus.remove();
+              opened = false;
+            },
+            open: function(event, ui) {
+              opened = true;
+            }
+          });
+          prepStatus.parent().next().appendTo(modalContainer);
+          prepStatus.parent().appendTo(modalContainer);
+        }
+      }
+    });
+  }
+
+  function prioritize_single(id,elm) {
+    AM_workbench.prioritize_merchant(id, function(result,event){
+      if(event.status){
+        $(elm).html('Refreshed');
+        $(elm).removeClass().addClass('label label-inverse');
+      } else {
+        $(elm).html('Failed');
+        $(elm).removeClass().addClass('label label-warning');
+      }
+    });
+  }
+
+  function schedulerModal(id) {
+    AM_workbench.getSchedulerModal(id, function(result, event) {
+      if(event.status){
+        var scheduler = $('#schedulerTemplate').tmpl(result);
+        scheduler.dialog({
+          modal: true,
+          autoOpen: true,
+          close: function(event, ui) {
+            scheduler.remove();
+          }
+        });
+        scheduler.parent().next().appendTo(modalContainer);
+        scheduler.parent().appendTo(modalContainer);
+      }
+    });
+  }
+
+  function breadcrumbModal(id) {
+    AM_workbench.getBreadcrumbModal(id, function(result, event) {
+      if(event.status){
+        var breadcrumb = $('#breadcrumbTemplate').tmpl(result);
+        breadcrumb.dialog({
+          modal: true,
+          autoOpen: true,
+          close: function(event, ui) {
+            breadcrumb.remove();
+          }
+        });
+        breadcrumb.parent().next().appendTo(modalContainer);
+        breadcrumb.parent().appendTo(modalContainer);
+      }
+    });
+  }
+
+  function createLogCall(subject, opportunityId, notes, id) {
+    console.log("Logging call");
+    var task = new Object();
+    task.WhatId = opportunityId;
+    task.Subject = subject;
+    var status = $('#statusId').val();
+    if (status == '') {
+      $('#status-error p').html("Status can't be blank");
+      $('#status-error').show();
+    } else {
+      $('#status-error p').html("");
+      $('#status-error').hide();
+
+      task.Status = status;
+      task.Description = notes;
+
+      if (id != '') {
+        task.Id = id;
+      }
+
+      console.log(task);
+
+      AM_workbench.taskIt(task, function(status, event) {
+        console.log(status);
+        console.log("Tasking it!");
+        $('#logCall').remove();
+        opened = false;
+      });
+    }
+  }
+
+  function createTask(subject, oppId, notes, id) {
+    var task = new Object();
+    task.WhatId = oppId;
+    task.subject = subject;
+    var status = $('#statusId').val();
+    if (status == '') {
+      $('#status-error p').html("Status can't be blank");
+      $('#status-error').show();
+    } else {
+      $('#status-error p').html("");
+      $('#status-error').hide();
+
+      task.status = status;
+      task.Description = notes;
+
+      if (id != '') {
+        task.Id = id;
+      }
+
+      AM_workbench.taskIt(task, function(status, event) {
+        $(prepelm).removeClass('bg-caution');
+        $(prepelm).removeClass('bg-inverse');
+        $(prepelm).removeClass('bg-danger');
+        $(prepelm).addClass(status.css);
+        $('#prepStatus').remove();
+        opened = false;
+      });
+    }
+  }
+
+  function quantumLeadModal(name, id) {
+    AM_workbench.getQuantumLeadModal(id, function(result, event) {
+      if(event.status){
+        result.name = name;
+        var modal = $('#quantumLeadTemplate').tmpl(result);
+        modal.dialog({
+          modal: true,
+          autoOpen: true,
+          close: function(event, ui) {
+            modal.remove();
+          },
+          open: function(event, ui) {
+            $('.ui-widget-overlay').bind('click', function() {
+              modal.dialog('close');
+              modal.remove();
+            });
+          }
+        });
+      }
+    });
+  }
+
+  function paymentModal(id, element){
+    paymentElement = element;
+    AM_workbench.getPaymentModal(id, function(result, event) {
+      if (event.status) {
+        var payments = $('#paymentTemplate').tmpl(result);
+        payments.dialog({
+          modal: true,
+          autoOpen: true,
+          close: function(event, ui) {
+            payments.remove();
+          }
+        });
+        payments.parent().next().appendTo(modalContainer);
+        payments.parent().appendTo(modalContainer);
+      }
+    });
+  }
+
+  function nowDeals(id) {
+    AM_workbench.grouponNow(id, function(result, event) {
+      var now = $('#nowTemplate').tmpl(event);
+      now.dialog({
+        modal: true,
+        autoOpen: true,
+        close: function(event, ui) {
+          now.remove();
+        }
+      });
+      $('.currency-format').formatCurrency();
+      now.parent().next().appendTo(modalContainer);
+      now.parent().appendTo(modalContainer);
+    });
+  }
+
+  function rewardsDeals(id) {
+    AM_workbench.rewards(id, function(result, event) {
+      var reward = $('#rewardTemplate').tmpl(event);
+      reward.dialog({
+        modal: true,
+        autoOpen: true,
+        close: function(event, ui) {
+          reward.remove();
+        }
+      });
+      reward.parent().next().appendTo(modalContainer);
+      reward.parent().appendTo(modalContainer);
+    });
+  }
+
+  function getOptionData(id, elm) {
+    if ($(elm).data('rendered') == false) {
+      AM_workbench.getOptions(id, function(result, event) {
+        if (event.status) {
+          $('#'+id+'options').html($('#optionTemplate').tmpl(event));
+          $(elm).data('rendered', 'true');
+        }
+      });
+    }
+  }
+
+  function showContacts(contactId, dealId) {
+    AM_workbench.merchant_contacts(contactId, dealId, function(result, event) {
+      var contact = $('#contactTemplate').tmpl(event);
+      contact.dialog({
+        modal: true,
+        autoOpen: true,
+        close: function(event, ui) {
+          contact.remove();
+        },
+        open: function(event, ui) {
+          $('.ui-dialog-title').addClass('modal-title');
+        }
+      });
+      contact.parent().next().appendTo(modalContainer);
+      contact.parent().appendTo(modalContainer);
+    });
+  }
+
+  function sendMerchantData(){
+    AM_workbench.prioritize(function(result, event) {
+    });
+  }
+
+  function showDeals(id, elm, btn) {
+    $('.' + id).each(function() {
+      $(this).show();
+    });
+    $('.' + id + 'show').hide();
+    $('.' + id + 'hide').show();
+  }
+  function hideDeals(id, elm, btn) {
+    $('.' + id).each(function(){
+      $(this).hide();
+    });
+    $(elm).show();
+    $('.' + id + 'show').show();
+    $('.' + id + 'hide').hide();
+  }
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-26968040-17']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(ga, s);
+  })();
+
+  var uvOptions ={
+    custom_fields: {
+      "Product": "AM-Workbench"
+    }
+  }
+  var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+  uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/vwN44TKtSIotuKFPOXwE7A.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+</script>
+
+<script id="contactTemplate" type="text/x-jquery-tmpl">
+  <div id="contactModal" data-title="Contacts" class="modal" style="width:auto !important;">
+    <table class="table table-striped table-condensed table-bordered" id="contactTable">
+      <thead>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Mobile Phone</th>
+        <th>Email</th>
+      </thead>
+      <tbody>
+        {{each result}}
+        <tr>
+          <td>${name}</td>
+          <td><span class="label" onclick="ISDial('${phone}','${id}','${accountId}');" style="cursor:pointer;">${phone}</span></td>
+          <td><span class="label" onclick="ISDial('${mobilePhone}','${id}','${accountId}');" style="cursor:pointer;">${mobilePhone}</span></td>
+          <td><a href="../_ui/core/email/author/EmailAuthor?p2_lkid=${id}&p3_lkid=${dealId}" target="_blank">${email}</a></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</script>
+
+<script id="rewardTemplate" type="text/x-jquery-tmpl">
+  <div id="rewardModal" data-title="Contacts" class="modal" style="width:auto !important;">
+    <table class="table table-striped table-condensed table-bordered" id="contactTable">
+      <thead>
+        <th>Owner</th>
+        <th>Deal Name</th>
+        <th>Stage</th>
+        <th>Category</th>
+        <th>Division</th>
+        <th>Rewards Data Tracking Status</th>
+      </thead>
+      <tbody>
+        {{each result}}
+        <tr>
+          <td>${ownerName}</td>
+          <td><a href="/${Id}" target="_blank">${Name}</a></td>
+          <td>${stageName}</td>
+          <td>${accountCategory}</td>
+          <td>${division}</td>
+          <td>${accountRewardsTransactionTrackingStatus}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</script>
+
+<script id="quantumLeadTemplate" type="text/x-jquery-tmpl">
+  <div id="quantumLeadModal" class="modal" >
+    <h2>${name} : Quantum Lead</h2>
+    <div><label>Call List Priority: </label><span>${callListPriority}</span></div>
+    <div><label>Sales Value Reasons: </label><span>${salesValueReasons}</span></div>
+    <div><label>Link to Sales WB: </label><span><a href="https://sales-workbench.groupondev.com/call_list" target="_blank" style="padding-left:0px !important;">Sales Workbench</a></span></div>
+  </div>
+</script>
+
+<script id="paymentTemplate" type="text/x-jquery-tmpl">
+  <div>
+    <h2>${name} : Payments</h2>
+    <div><label>Payments Eligible: </label><span>${paymentsEligible}</span></div>
+    <div><label>Payments Product Sales Status: </label><span>${paymentsProductSalesStatus}</span></div>
+    <div><label>Payments Active Status: </label><span>${paymentsActiveStatus}</span></div>
+    <div><label>Payments Interested: </label><span>${paymentsInterested}</span></div>
+    <div><label>Payments Lead Source: </label><span>${paymentsLeadSource}</span></div>
+    <div><label>Payments Product Notes: </label><span>${paymentsProductNotes}</span></div>
+    <div><label>Payments Manager: </label><span>${paymentsManagerName}</span></div>
+  </div>
+</script>
+
+<script id="breadcrumbTemplate" type="text/x-jquery-tmpl">
+  <div id="breadcrumbModal" data-title="Breadcrumb" class="modal" >
+    <h2>${name} : Breadcrumb</h2>
+    <div><label>POS Manager: </label><span>${manager}</span></div>
+    <div><label>BC Sales Stage: </label><span>${salesStatus}</span></div>
+    <div><label>POS Lead Source: </label><span>${leadSource}</span></div>
+    <div><label>POS Lead Source Notes: </label><span>${leadSourceNotes}</span></div>
+  </div>
+</script>
+
+<script id="optionTemplate" type="text/x-jquery-tmpl">
+    <div>
+        {{each result}}
+            <span><a href="/${id}" target="_blank" style="padding-left:0px !important;">${name}</a></span>
+            <p class="help-text">Price: $${unitSellPrice} - Value: $${unitValue} - Discount: ${discount}% - Option Cap: ${optionCap} - Monthly Cap ${grouponLiteMonthlyCap} </p>
+        {{/each}}
+    </div>
+</script>
+
+<script id="nowTemplate" type="text/x-jquery-tmpl">
+  <div id="nowModal" data-title="Contacts" class="modal" >
+    <h2>${result[0].name} : Now!</h2>
+      <dl>
+        <dt class="help-text">Interested In Now!?: </dt><dd>${result[0].interestedInNow}&nbsp;</dd>
+        <dt class="help-text">Now! Merchant Activity: </dt><dd>${result[0].nowMerchantActivity}&nbsp;</dd>
+        <dt class="help-text">Total Now! Units: </dt><dd>${result[0].totalNowUnits}&nbsp;</dd>
+        <dt class="help-text">Last Week Active: </dt><dd>${result[0].lastWeekActive}&nbsp;</dd>
+        <dt class="help-text">Total Now! Revenue: </dt><dd><div class="currency-format">${result[0].totalNowRevenue}</div>&nbsp;</dd>
+      </dl>
+    </hr>
+    <table class="table table-striped table-condensed table-bordered" id="contactTable">
+      <thead>
+        <th>Owner</th>
+        <th>Deal Name</th>
+        <th>Stage</th>
+        <th>Close Date</th>
+        <th>Category</th>
+        <th>Now! Merchant Activity</th>
+      </thead>
+      <tbody>
+        {{each result}}
+          {{each now_deals}}
+          <tr>
+            <td>${dealOwnerName}</td>
+            <td><a href="/${Id}" target="_blank">${dealName}</a></td>
+            <td>${stage}</td>
+            <td>${closeDate}</td>
+            <td>${category}</td>
+            <td>${accountNameNowMerchantActivity}</td>
+          </tr>
+          {{/each}}
+        {{/each}}
+      </tbody>
+    </table>
+    <a class="btn btn-info" href="/a0R/e?CF00NC0000004i2ex=${result[0].name}&CF00NC0000004i2ex_lkid=${result[0].id}" target="_blank">New Now!</a>
+  </div>
+</script>
+
+<script id="schedulerTemplate" type="text/x-jquery-tmpl">
+  <div id="schedulerModal" data-title="Scheduler" class="modal" >
+    <h2>${name} : Scheduler</h2>
+    <div><label>Eligibility: </label><span>${eligibility}</span></div>
+    <div><label>Strength: </label><span>${strength}</span></div>
+    <div><label>Specalist: </label><span>${specialist}</span></div>
+    <br/>
+    <h3 class="h3">Using Scheduler</h3>
+    {{each deals}}
+      {{if using_scheduler}}
+      <a href="/${id}" target="_blank">${name}</a>
+      {{/if}}
+    {{/each}}
+    <hr/>
+    <h3 class="h3">Not Using Scheduler</h3>
+    {{each deals}}
+      {{if !using_scheduler}}
+      <div><a href="/${id}">${name}</a></div>
+      {{/if}}
+    {{/each}}
+  </div>
+</script>
+
+<script id="merchants-table-spinner" type="text/x-jquery-tmpl">
+  <img src="${toolstrapSource + '/images/g-spinner.gif'}" alt="" />
+</script>
+
+<script id="merchantsTableTemplate" type="text/x-jquery-tmpl">
+  <table class='table table-bordered-horizontal table-striped table-no-outer-border table-colgroup'>
+    <colgroup>
+      <col span='3'/>
+      <col span='5'/>
+      <col span='2'/>
+    </colgroup>
+    <thead data-bind="visible: true">
+      <th width='5'>Cat.</th>
+      <th>Merchant</th>
+      <th width='5'>Product Adoption
+        <span data-toggle="tooltip" data-placement="right"><a href="">(?)</a></span>
+        <div class="tooltip">
+          <ul class="unstyled">
+            <li style="list-style: none; "><b>N</b> - Now!</li>
+            <li style="list-style: none;"><b>R</b> - Rewards</li>
+            <li style="list-style: none;"><b>S</b> - Scheduler</li>
+            <li style="list-style: none;"><b>P</b> - Payment</li>
+            <li style="list-style: none;"><b>B</b> - Breadcrumb</li>
+            <li style="list-style: none;"><b>Q</b> - Quantum Lead</li>
+          </ul>
+        </div>
+      </th>
+      <th>Deals</th>
+      <th width='5'>Go Live
+        <span data-toggle="tooltip" data-placement="right"><a href="">(?)</a></span>
+        <div class="tooltip">
+          <p>Asterisk indicates the deal does not have Prefeature enabled</p>
+        </div>
+      </th>
+      <th width='5'>Expiration
+        <span data-toggle="tooltip" data-placement="right"><a href="">(?)</a></span>
+        <div class="tooltip">
+          <p>Asterisk indicates the deal does not have Expiration Staggering enabled</p>
+        </div>
+      </th>
+      <th width='5'>Strength</th>
+      <th width='5'>Cadence Touch Points</th>
+      <th>Contact Reason</th>
+      <th width='5'>&nbsp;</th>
+    </thead>
+    {{each(index, merchant) result}}
+      <tbody data-priority-order="${merchant.priorityOrder}" data-next-order="${merchant.nextOrder}" data-last-order="${merchant.lastOrder}" class="${merchant.sectionStyle}">
+        {{each(index, deal) merchant.g1deals}}
+          <tr style="${deal.displayCSS}" class="${merchant.id}" width="1967px">
+            <td>
+              {{if merchant.category == $('<div/>').text('Beauty / Wellness / Healthcare').html() && deal.display}}
+                <span class='category-icon icon-wellness'></span>
+              {{/if}}
+              {{if merchant.category == $('<div/>').text('Leisure Offers / Activities').html() && deal.display}}
+                <span class='category-icon icon-leisure'></span>
+              {{/if}}
+              {{if merchant.category == 'Travel' && deal.display}}
+                <span class='category-icon icon-getaways'></span>
+              {{/if}}
+              {{if merchant.category == 'Tickets' && deal.display}}
+                <span class='category-icon icon-grouponlive'></span>
+              {{/if}}
+              {{if merchant.category == $('<div/>').text('Food & Drink').html() && deal.display}}
+                <span class='category-icon icon-restaurants'></span>
+              {{/if}}
+              {{if merchant.category == 'Services' && deal.display}}
+                <span class='category-icon icon-services'></span>
+              {{/if}}
+              {{if merchant.category == 'Shopping' && deal.display}}
+                <span class='category-icon icon-shopping'></span>
+              {{/if}}
+              {{if merchant.category == 'Charity' && deal.display}}
+                <span class='category-icon icon-grassroots'></span>
+              {{/if}}
+            </td>
+            <td>
+              {{if deal.display}}
+                <span data-toggle="tooltip" data-placement="right">
+                  <a style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 200px !important; display:inline-block;"
+                  href="https://coffee.groupondev.com/merchants/${merchant.id}/tabs/products"
+                  value="/${merchant.id}" target="_blank">${merchant.name}</a>
+                  <p class="help-text">Last Modified: ${merchant.last_modified}</p>
+                </span>
+                <div class="tooltip tooltip-modal">
+                  <div data-title="Merchant Details"  style="width:auto !important;">
+                    <div class="tooltip-title">Merchant Temperature</div>
+                    <div class="tooltip-body">
+                      <div class="msat"><strong>MSAT:</strong> ${merchant.msat} <small>${merchant.msat_date}</small></div>
+                      {{if Object.keys(merchant.temperature).length > 0}}
+
+                        <table class="table table-striped table-condensed table-bordered">
+                          <thead>
+                            <th>Date</th>
+                            <th>Temp</th>
+                            <th>Reason</th>
+                            <th>Comments</th>
+                          </thead>
+                          <tbody>          
+                            {{each(index, temp) merchant.temperature}}
+                              <tr>
+                                <td>                                 
+                                  ${convertToDate(temp.tempDate)}
+                                </td>
+                                <td>${parseFloat(temp.overallRanking).toFixed(1)}</td>
+                                <td>${temp.category}</td>
+                                <td><span style="max-width:50px;">${temp.overallComments}</span></td>
+                              </tr>
+                            {{/each}}
+                          </tbody>
+                        </table>
+                      {{/if}}
+                      {{if  {!!isInternational}  }}
+                        <hr/>
+                        <a class="btn btn-info" href="/a3B/e?CF00NC0000005MUQf=${merchant.name}&CF00NC0000005MUQf_lkid=${merchant.id}" target="_blank">Add Temperature</a>
+                      {{/if}}
+                    </div>
+                  </div>
+                </div>
+                {{/if}}
+              </td>   
+              <td>
+                <div class="pull-right">
+                  {{if deal.display}}
+                    {{if deal.display && merchant.star == 'gold' && !merchant.out_of_business}}
+                      <span class="icon-star-empty pull-left">
+                      </span>
+                    {{/if}}
+                    {{if deal.display && merchant.star == 'black' && !merchant.out_of_business}}
+                      <span class="icon-star-empty pull-left">
+                      </span>
+                    {{/if}}
+                    {{if merchant.out_of_business}}
+                      <span class="icon-star-empty pull-left">
+                      </span>
+                    {{/if}}
+                    <ul class='unstyled pull-right'></ul>
+                    <span style="cursor: pointer;" class='${merchant.nowStatus.css}' onclick="nowDeals('${merchant.id}');">${merchant.nowStatus.value}</span>
+                    <span style="cursor: pointer;" class='${merchant.rewardsStatus.css}' onclick="rewardsDeals('${merchant.id}');">${merchant.rewardsStatus.value}</span>
+                    <span style="cursor: pointer;" class='${merchant.schedulerStatus.css}' onclick="schedulerModal('${merchant.id}');">${merchant.schedulerStatus.value}</span>
+                    <span style="cursor: pointer;" class='${merchant.paymentStatus.css}' onclick="paymentModal('${merchant.id}');">${merchant.paymentStatus.value}</span>
+                    <span style="cursor: pointer;" class='${merchant.breadcrumbStatus.css}' onclick="breadcrumbModal('${merchant.id}');">${merchant.breadcrumbStatus.value}</span>
+                    <span style="cursor: pointer;" class='${merchant.clpStatus.css}' onclick="quantumLeadModal('${merchant.name}', '${merchant.id}');">${merchant.clpStatus.value}</span>
+                    <span style="cursor: pointer;" class="label" onclick="prioritize_single('${merchant.id}',this);">Rescore</span>
+                  {{/if}}
+                </div>
+              </td>
+
+              <td class="deal">
+                {{if deal.display && merchant.has_deals}}
+                <span style="cursor: pointer;" >
+                  <img src="${toolstrapSource + '/images/arrow-right.png'}" onclick="showDeals('${merchant.id}',$(this).parent().parent().parent(),this)" styleClass="${merchant.id}show" alt="Show Deal" />
+                </span>
+                {{/if}}
+                {{if deal.display && merchant.has_deals}}
+                <span style="cursor: pointer;" >
+                  <img src="${toolstrapSource + '/images/arrow-down.png'}" onclick="hideDeals('${merchant.id}',$(this).parent().parent().parent(),this)" style="display:none" styleClass="${merchant.id}hide" alt="Hide Deal" />
+                </span>
+                {{/if}}
+                <span data-toggle="tooltip" data-placement="right"><a href="/${deal.opportunityId}" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 500px !important; display:inline-block;" target="_blank" onmouseover="getOptionData('${deal.id}', this);" data-rendered="false">${deal.name}</a></span>
+                <div class="tooltip tooltip-modal">
+                  <div data-title="Deal Details"  style="width:auto !important; min-width:450px;">
+                    <div class="tooltip-title">${merchant.name}</div>
+                    <div class="tooltip-body">
+                      <dl>
+                        <dt class="help-text">Sales Rep: </dt>  <dd>${deal.sales_rep}&nbsp;</dd>
+                        <dt class="help-text">Permalink: </dt>  <dd><a href="http://www.groupon.com/deals/${deal.permalink}" target="_blank" >${deal.permalink}</a>&nbsp;</dd>
+                        <dt class="help-text">Division: </dt>   <dd>${deal.division}&nbsp;</dd>
+                        <dt class="help-text">Deal Bank: </dt>  <dd>${deal.deal_bank}&nbsp;</dd>
+                        <dt class="help-text">Write Up Status:</dt>  <dd>${deal.writeup_status}&nbsp;</dd>
+                      </dl>
+                      <h3 class="h3" style="padding-top:10px;">Deal Options</h3>
+                      <div id="${deal.id}options" >
+                        <img src="${toolstrapSource + '/images/g-spinner.gif'}" alt="" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span>
+                  ${deal.featureDate}
+                  {{if deal.prefeature}}
+                    <span style="color:red; font-weight:bold;">*</span>
+                  {{/if}}
+                </span>
+              </td>
+              <td>
+                <span>
+                  ${deal.expirationDate}
+                  {{if deal.staggeredExp != true}}
+                    {{if  {!!isInternational}  }}
+                      <span style="color:red; font-weight:bold;">*</span>
+                    {{/if}}
+                  {{/if}}
+                </span>
+              </td>
+              <td>
+                <span class='${deal.dealStrength.css}'>${deal.dealStrength.value}</span>
+              </td>
+              <td>
+                <ul class='label-list'>
+                  {{each(index, s) deal.status}}                  
+                  <li class='${s.css}' data-id="${deal.id}">
+                    <a onclick="prepStatus('${s.subject}','${deal.id}', $(this).parent())" data-toggle="modal" data-target="prepStatus" style="cursor: pointer;" >
+                      ${s.value}
+                    </a>
+                  </li>
+                  {{/each}}
+                </ul>
+              </td>
+              <td>
+                <span class='label ${merchant.contact_reason.css}' style="color:white; min-width:260px;">${merchant.contact_reason.value} <span class="label-endcap">${merchant.endCap}</span></span>
+              </td>
+              <td>
+                <div>
+                  <div data-toggle="tooltip" data-placement="bottom" style="cursor: pointer;">
+                    <img src="${toolstrapSource + '/images/icon-settings.png'}" alt="Additional Links" />
+                  </div>
+                  <div class="tooltip">
+                    <ul class="unstyled gear">
+                      <li style="list-style: none;"><a style="cursor: pointer;" onclick="showContacts('${merchant.id}', '${deal.id}');">Contacts</a></li>
+                      {{if  {!!isInternational}  }}
+                        <li style="list-style: none;"><a href="http://groupon.com/deals/${deal.permalink}" target="_blank">Deal Permalink</a></li>
+                        <li style="list-style: none;"><a href="http://merchants.groupon.com/${merchant.permalink}" target="_blank">Merchant Center</a></li>
+                      {{/if}}
+                      <li style="list-style: none;"><a href="${merchant.website}" target="_blank">Merchant Site</a></li>
+                      {{if  {!!isInternational}  }}
+                        <li style="list-style: none;"><a href="https://central.groupon.com" target="_blank">Groupon Central</a></li>
+                        <li style="list-style: none;"><a href="http://sheepdads.zendesk.com/home" target="_blank">Sheepdads</a></li>
+                        <li style="list-style: none;"><a style="cursor: pointer;" onclick="logCall('Maintenance: Merchant Temperature Follow Up', '${merchant.id}');">Log a Call</a></li>
+                      {{/if}}
+                      {{if  {!isUK}  }}
+                        <li style="list-style: none;"><a style="cursor: pointer;" onclick="window.open('/apex/contractLiveCall?id=' + '${deal.id}', 'mywindow')">Go Live Screen Setup</a></li>
+                      {{/if}}
+                    </ul>
+                  </div>
+                </div>
+              </td>
+           </tr>
+        {{/each}}
+      </tbody>
+    {{/each}}
+  </table>
+</script>
+
+<script id="snoozeTemplate" type="text/x-jquery-tmpl">
+  <div id="snoozeModal" class="modal" style="width: 300px !important;">
+    We have re-prioritized your rules for you, but we need you to refresh your page!
+  </div>
+</script>
+
+<script id="prepStatusTemplate" type="text/x-jquery-tmpl">
+  <div id="prepStatus" data-title="${subject}" class="modal" style="width: 300px !important;">
+    <form class="form-default">
+    <legend>${subject}</legend>
+       <fieldset>
+          <div class="control-group">
+          <label>Status: </label>
+             <div class="controls">
+               <select class="input-m" id='statusId'>
+                  <option value='${status}'>${status}</option>
+                  {{each(index, status) statuses}}
+                    <option value='${status}'>${status}</option>
+                  {{/each}}
+               </select>
+               <div id="status-error" class="alert error">
+                 <a href="#", title="Close this alert" class="close"> x </a>
+                 <p class="alert error"></p>
+               </div>
+             </div>
+             <label for="notes">Notes</label>
+             <textarea id="notes" class="input-full" rows="4">${notes}</textarea>
+          </div>
+       <fieldset>
+       <a class="btn btn-primary" onclick="createTask('${subject}','${what_id}',$('#notes').val(),'${id}');">Save</an>
+    </form>
+  </div>
+</script>
+
+<script id="logCallTemplate" type="text/x-jquery-tmpl">
+  <div id="logCall" data-title="${subject}" class="modal" style="width: 300px !important;">
+    <form class="form-default">
+    <fieldset>
+      <div class="control-group">
+        <label>Subject: </label>
+        <div class="controls">
+          <select class="input-m" id='log-call-subject'>
+            <option value='${subject}'>${subject}</option>
+            <option value='Maintenance: Merchant Temperature Follow Up'>Maintenance: Merchant Temperature Follow Up</option>
+            <option value='Maintenance: Sign of Life'>Maintenance: Sign of Life</option>
+          </select>
+        </div>
+        <label>Status: </label>
+        <div class="controls">
+          <select class="input-m" id='statusId'>
+            <option value='${status}'>${status}</option>
+            {{each(index, status) statuses}}
+              <option value='${status}'>${status}</option>
+            {{/each}}
+          </select>
+        </div>
+        <label for="notes">Notes</label>
+        <textarea id="notes" class="input-full" rows="4">${notes}</textarea>
+        <div id="status-error" class="alert error">
+          <a href="#", title="Close this alert" class="close"> x </a>
+          <p class="alert error"></p>
+        </div>
+      </div>
+    <fieldset>
+    <a class="btn btn-primary" onclick="createLogCall($('#log-call-subject').val(),'${what_id}',$('#notes').val(),'${id}');">Save</an>
+    </form>
+  </div>
+</script>
+
+<style>
+  .merchant-main-table .label-success, .merchant-main-table .label-inverse, .merchant-main-table .label {
+    min-width: 54px;
+  }
+  .ui-dialog{
+    width:auto !important;
+  }
+  .label-list a{
+    color: white;
+  }
+  .tooltip p, .tooltip ul{
+    text-shadow:none;
+  }
+  .deal a{
+    padding-left:50px;
+  }
+  .tooltip-modal {
+    color: #333333;
+    background-color: white;
+    padding: 0 !important;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    -ms-border-radius: 6px;
+    -o-border-radius: 6px;
+    border-radius: 6px;
+    border-color: #333;
+  }
+
+  .tooltip-title {
+    padding: 15px 20px;
+    font-size: 1.17em;
+    font-weight: bold;
+    color: white;
+    background-color: #333333;
+    -webkit-border-top-left-radius: 6px;
+    -moz-border-top-left-radius: 6px;
+    -ms-border-top-left-radius: 6px;
+    -o-border-top-left-radius: 6px;
+    border-top-left-radius: 6px;
+    -webkit-border-top-right-radius: 6px;
+    -moz-border-top-right-radius: 6px;
+    -ms-border-top-right-radius: 6px;
+    -o-border-top-right-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+
+  .tooltip-body {
+    padding: 10px;
+    background-color: white;
+  }
+
+  .tooltip-body table {
+    width: 500px;
+    margin: 0;
+  }
+
+  .msat {
+    color: #8eb316;
+    text-align: right;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 10px 0;
+  }
+
+  .msat strong {
+    color: #333333;
+  }
+
+  .msat small {
+    color: #cccccc;
+    font-size: 12px;
+  }
+  .table-modal {
+    width: auto;
+    margin: 0;
+  }
+  .table-modal th, .table-modal td {
+    padding: 10px 15px;
+    line-height: 18px;
+  }
+  .table-modal th:first-child, .table-modal td:first-child {
+    padding-left: 0;
+  }
+  .table-modal th:last-child, .table-modal td:last-child {
+    padding-right: 0;
+  }
+  .table-modal th {
+    text-align: left;
+    color: #666666;
+  }
+  .table-modal td {
+    border-top: 1px solid #cccccc;
+  }
+  .table-modal td span {
+    min-width: 60px;
+  }
+  .table-modal td a {
+    font-weight: bold;
+  }
+  .table-modal.nowrap td {
+    white-space: nowrap;
+  }
+  dt{
+    float:left;
+    width:150px;
+  }
+  dl dd {
+    margin:0 0 0 110px;
+  }
+  .help-text{
+    padding-top:0px;
+  }
+  .deal dd a {
+    padding-left:0;
+  }
+  .gear li{
+    font-size:14px;
+  }
+  .gear a{
+    color:#CCC;
+    font-weight:normal;
+    line-height:20px;
+  }
+  .gear a:hover {
+    color:#FFF;
+  }
+  a.btn:hover {
+    color:#FFF;
+  }
+  #status-error {
+    display:none;
+  }
+  span.modal-title {
+    padding: 0 !important;
+    height: 40px;
+  }
+
+  tbody.next tr td {
+  }
+
+  tbody.last tr td {
+  }
+
+  .tab-container {
+    white-space: nowrap;
+    margin-bottom: 30px;
+  }
+
+  .tab-container .btn {
+    border-color: #cccccc;
+    font-weight: bold;
+    font-size: 11px;
+  }
+
+  .tab-container .btn:hover {
+    color: #666666;
+  }
+
+  .tab-label {
+    color: #666666;
+    font-weight: bold;
+    line-height: 30px;
+    margin-right: 10px;
+    font-size: 11px;
+    display: inline;
+  }
+
+  .tab-container .btn-group {
+    display: inline-block;
+    position: relative;
+    font-size: 0;
+    margin-right: 10px;
+  }
+
+  .tab-container .btn-group > .btn {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    border-color: #cccccc;
+  }
+
+  .tab-container .btn-group > .btn:hover {
+    color: #666666;
+  }
+
+  .tab-container .btn-group > .btn + .btn {
+    margin-left: -1px;
+  }
+
+  .tab-container .btn-group > .btn:first-child {
+    margin-left: 0;
+    -webkit-border-top-left-radius: 4px;
+    -moz-border-top-left-radius: 4px;
+    -ms-border-top-left-radius: 4px;
+    -o-border-top-left-radius: 4px;
+    border-top-left-radius: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+    -moz-border-bottom-left-radius: 4px;
+    -ms-border-bottom-left-radius: 4px;
+    -o-border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+
+  .tab-container .btn-group > .btn:last-child {
+    -webkit-border-top-right-radius: 4px;
+    -moz-border-top-right-radius: 4px;
+    -ms-border-top-right-radius: 4px;
+    -o-border-top-right-radius: 4px;
+    border-top-right-radius: 4px;
+    -webkit-border-bottom-right-radius: 4px;
+    -moz-border-bottom-right-radius: 4px;
+    -ms-border-bottom-right-radius: 4px;
+    -o-border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
+
+  .label,
+  .label-danger,
+  .label-warning,
+  .label-caution,
+  .label-success,
+  .label-inverse {
+    position: relative;
+  }
+
+  .label-endcap {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #444444;
+    color: #fafafa;
+    padding: 0 10px 0 8px;
+    text-align: center;
+    font-size: 90%;
+    -webkit-border-top-right-radius: 11px;
+    -moz-border-top-right-radius: 11px;
+    -ms-border-top-right-radius: 11px;
+    -o-border-top-right-radius: 11px;
+    border-top-right-radius: 11px;
+    -webkit-border-bottom-right-radius: 11px;
+    -moz-border-bottom-right-radius: 11px;
+    -ms-border-bottom-right-radius: 11px;
+    -o-border-bottom-right-radius: 11px;
+    border-bottom-right-radius: 11px;
+  }
+
+  .label-list li:nth-child(1) {
+    z-index: 9;
+  }
+  .label-list li:nth-child(2) {
+    z-index: 8;
+    padding-left: 20px;
+  }
+  .label-list li:nth-child(3) {
+    z-index: 7;
+    padding-left: 20px;
+  }
+  .label-list li:nth-child(4) {
+    z-index: 6;
+    padding-left: 20px;
+  }
+  .label-list li:nth-child(5) {
+    z-index: 5;
+    padding-left: 20px;
+  }
+  .label-list li:nth-child(6) {
+    z-index: 4;
+    padding-left: 20px;
+  }
+  .label-list li:nth-child(7) {
+    z-index: 3;
+    padding-left: 20px;
+  }
+  .label-list li:nth-child(8) {
+    z-index: 2;
+    padding-left: 20px;
+  }
+  .label-list li:nth-child(9) {
+    z-index: 1;
+    padding-left: 20px;
+  }
+  .snooze .ui-dialog-titlebar-close {
+    display: none;
+  }
+  .snooze .ui-dialog-buttonset {
+    margin: 10px 10px 10px 94px;
+  }
+  .badge-primary { 
+    background-color: #6dd7e8; 
+  }
+  .label-list li.bg-danger {
+    background-color: #CC2127;
+  }
+  .label-list li.bg-danger::after {
+    border-left-color: #CC2127;
+  }
+  .search-form {
+    display: inline-block;
+    float: right;
+    clear: none;
+  }
+  .prioritize-btn {
+    margin-left: 10px !important;
+  }
+  .badge-icon {
+    margin-right: 10px !important;
+    color: #fff;
+    border-radius: 3px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    padding: 3px 4px;
+    font-size: 12px;
+    text-shadow: 0 1px 1px rgba(0,0,0,.3);
+  }
+
+  .white-glove,
+  .existing-merchant,
+  .burned-account {
+    background-color: #666;
+  }
+
+  .super-white-glove,
+  .partner-merchant {
+    background-color: #f2a900;
+  }
+
+  .alert-account {
+    background-color: #daa501;
+  }
+  
+  .nav .content > .container .main-section {
+    border-left: 1px solid #CCC;
+    display: table;
+    padding: 20px;
+  }
+</style>
+
+</apex:page>

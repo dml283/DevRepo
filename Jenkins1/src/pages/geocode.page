@@ -1,0 +1,5 @@
+<apex:page standardController="Merchant_Addresses__c" extensions="geocoder" action="{!nextPage}">
+{!addy.Full_Address__c}<br/>
+lat: {!addy.Latitude__c}<br/>
+lng: {!addy.Longitude__c}
+</apex:page>

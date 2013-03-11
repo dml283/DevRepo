@@ -1,0 +1,81 @@
+<apex:page standardController="Opportunity" extensions="RedemptionMap">
+<div id="container">
+    <div id="map1" class="map"></div>
+    <div id="map2" class="map"></div>
+    <div id="map3" class="map"></div>
+    <div id="locations">
+    </div>
+
+</div>
+
+<style>
+.map{
+    width:31%;
+    float:left;
+    height:350px;
+    border: 3px solid white;
+}
+</style>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp9F6dL6fKeRwmKlMmE5yoXEhDcvATwEw&sensor=false"/>
+<script>
+function draw(){
+    zoom = 4;
+    divs = ['map3','map2','map1'];
+    divs.forEach(function(id){
+        initialize(id,zoom);
+        zoom*=2;
+    });
+}
+      function initialize(id,zoom) {
+         var myOptions = {
+                          center: new google.maps.LatLng(36.1143901,-115.147351),
+                          zoom: zoom,
+                          mapTypeId: google.maps.MapTypeId.ROADMAP
+                         };
+         var my_map = new google.maps.Map(document.getElementById(id),myOptions);
+         addMarkers(my_map);
+      }
+function addMarkers(map){
+    locations.forEach(function(data){
+        createMarker(data, map);
+    });
+}
+function createMarker(data,map){
+    var content = drawInfoBox(data);
+    var latLng = new google.maps.LatLng(data.lat,data.lng);
+    var pin = new google.maps.Marker({        
+                   position: latLng,         
+                   title: data.fullAddress,
+                   animation: google.maps.Animation.DROP,
+                   map: map,
+                   content : content
+            });
+    map.setCenter(latLng);
+    google.maps.event.addListener(pin, 'click', function() {
+        var info = new google.maps.InfoWindow({content: content});
+        info.open(map,pin);
+     });        
+}
+function drawInfoBox(data){
+    var content='';
+    if(data.VenueName){
+        content+="<div>Venue Name: "+data.VenueName+"</div>";
+    }
+    content+="<div>"+data.StreetLine1+"<div>";
+    if(data.StreetLine2){
+        content+="<div>"+data.StreetLine2+"<div>";
+    }
+    content+="<div>"+data.City+", "+data.State+" "+data.Zip+"<div>";
+    content+="<div>"+data.Country+"<div>";
+    content+="<hr/>";
+    content+="<div>Neighborhood: "+data.Neighborhood+"</div>";
+    content+="<div>Subdivision: "+data.Subdivision+"</div>";
+    content+="<div>Phone: "+data.Phone+"</div>";
+    content+="<div><a href='/"+data.Id+"' target='_blank'>Update Address</a></div>";
+    return content;
+}
+google.maps.event.addDomListener(window, 'load', draw);
+var locations = new Object({!Markers});
+</script>
+
+</apex:page>

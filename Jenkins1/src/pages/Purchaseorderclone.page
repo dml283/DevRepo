@@ -1,0 +1,4 @@
+<apex:page standardController="Purchase_Order__c" extensions="Purchaseorderclonecontroller" action="{!cloneAndRedirectTravel}" >
+<apex:pagemessages />
+
+</apex:page>

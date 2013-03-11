@@ -1,0 +1,112 @@
+<apex:page controller="CloneIt" standardStylesheets="false" showheader="false" sidebar="false">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.js"/>
+
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap_zip, 'toolstrap.css')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap_zip, 'workbench.css')}"/>
+<html>
+  <head>
+    <title>Clone It!</title>
+  </head>
+  <body class='nav full-height'>
+    <header>
+  <div class='container'>
+    <nav>
+      <img alt='Groupon' class='logo' height='24' src='/images/logo.png' width='24'/>
+      <ul>
+        <li>
+          <a href="#">Clone It!</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<div class='content clearfix'>
+  <div class='container'>
+    <aside>
+      <nav>
+        <ul class='nav-plain'>
+        </ul>
+      </nav>
+    </aside>
+    <section class='main'>
+      <div class='container'>
+        <h2>The Clone-o-Matic</h2>
+        <div>
+            <label for="oppid">Enter Opportunity Id:</label>
+            <input type="text" id="oppid"/>
+            <button class="btn btn-primary" onclick="search();">Search for Opportunity</button>
+            <button class="btn btn-primary" data-bind="visible: selectedDivisions().length>0, click: clone">CLONE IT!</button>
+        </div><br/>
+        <div id="deal_details" style="display:none;">
+            <table class="table">
+                <tr><td><label for="deal_name">Account Name: </label></td><td><input id="acct_name" type="text" disabled="disabled" value="" class="input-xl"/></td></tr>
+                <tr><td><label for="deal_name">Deal Name: </label></td><td><input id="deal_name" type="text" disabled="disabled" value="" class="input-xl"/></td></tr>
+                <tr><td><label for="deal_name">Feature Date: </label></td><td><input id="feature_date" type="text" disabled="disabled" value=""/></td></tr>
+                <tr><td><label for="deal_name">Feature End Date: </label></td><td><input id="feature_end_date" type="text" disabled="disabled" value=""/></td></tr>
+            </table>    
+        </div>
+        <div class="row">
+            <table>
+                <thead>
+                    <th>Division Name</th>
+                    <th>Clone It!</th>
+                </thead>
+                    <apex:repeat var="d" value="{!divisions}">
+                        <tr>
+                            <td>{!d.name}</td>
+                            <td><button class="btn btn-primary" onclick="clone('{!d.id}','{!d.name}',this);">Clone It! </button></td>
+                        </tr>
+                    </apex:repeat>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+  </body>
+</html>
+<script>
+
+function search(){
+    var id = $('#oppid').val();
+    console.log(id);
+    CloneIt.getOpp(id,function(result,event){
+        console.log(result);
+        var deal = result;
+        $('#acct_name').val(deal.account_name);
+        $('#deal_name').val(deal.name);
+        $('#feature_date').val(deal.feature_date);
+        $('#feature_end_date').val(deal.feature_end_date);
+    });
+    $('#deal_details').show();
+    //cloneit.function
+}
+
+function clone(divId,divName,elm){
+    console.log(elm);
+    var oppId = $('#oppid').val();
+    $(elm).removeClass();
+    $(elm).addClass('btn-caution');
+    $(elm).html('Cloning....');
+    console.log(divId);
+    console.log(divName);
+    CloneIt.cloneIt(oppId,divName,divId,function(result,event){
+        console.log(result);
+        console.log(event);
+        if(event.status){
+            $(elm).removeClass();
+            $(elm).addClass('btn-success');
+            $(elm).html('CLONED!');
+            }else{
+                $(elm).removeClass();
+                $(elm).addClass('btn-danger');
+                $(elm).html('Cloning Failed');
+            }
+    });
+}
+
+</script>
+</apex:page>

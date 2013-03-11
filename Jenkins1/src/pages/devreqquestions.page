@@ -1,0 +1,11 @@
+<apex:page standardController="Device_Request__c">
+    <apex:outputPanel style="font-size:17px">
+        <center>
+        <br/>
+        <b>Please select a Contact to address the shipment to.</b><br/>
+        <b>If you select iPhone, $250 will be deducted from the GP for this deal per device sent.</b><br/>
+        <b>No PO Boxes Allowed for Shipping Addresses</b><br/>
+        <b>Questions?</b> Email <u>redemptiondevices@groupon.com</u>
+        </center>
+    </apex:outputPanel>
+</apex:page>

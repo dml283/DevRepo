@@ -1,0 +1,191 @@
+<apex:page controller="workbench" standardStylesheets="false" showHeader="false" sidebar="true">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:includeScript value="{!URLFOR($Resource.DataTables, 'DataTables-1.9.0/media/js/jquery.dataTables.js')}"/>
+
+<apex:includeScript value="{!URLFOR($Resource.formatCurrency)}"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap)}"/>
+<apex:stylesheet value="{!URLFOR($Resource.dt_boostrap)}"/>
+<apex:stylesheet value="{!URLFOR($Resource.bootstrap)}"/>
+<apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css"/>
+
+
+<html>
+<TITLE>Live Deals</TITLE>
+  <header>
+  <div class="container">
+    <nav>
+     <ul>
+       <li class="active">
+         <a href="/home/home.jsp" target="_blank">Workbench</a>
+       </li>  
+       <li>
+         <a href="/">Back to Salesforce</a>
+       </li>  
+     </ul>
+    </nav>
+  </div>
+  </header>
+  <div class="content clearfix">
+    <div class="container">
+      <aside>
+        <nav>
+          <ul class="nav-plain">
+              <li><a href="/apex/workbench_merchants">Merchants</a></li>
+              <li><a href="/apex/workbench_contracts">Contracts<span class="badge-counter pull-right">{!stat.my_contracts}</span></a></li>
+              <li><a href="/apex/workbench_pipeline">Pipeline<span class="badge-counter pull-right">{!stat.my_deals}</span></a></li>
+              <li><a href="/apex/workbench_IR">IRs<span class="badge-counter pull-right">{!stat.my_irs}</span></a></li>
+              <li><a href="/apex/workbench_commission">Commission</a></li>
+              <li><a href="/apex/workbench_transactions">Transactions</a></li>
+              <li><a href="/apex/workbench_map">Map It!</a></li>
+              <li><a href="/apex/workbench_rgi">Rep Getting Info<span class="badge-counter pull-right">{!stat.my_rgi}</span></a></li>
+              <li><a href="/apex/workbench_tasks">Tasks</a></li>
+              <li class="active"><a href="/apex/workbench_live_deals">Live Deals</a></li>
+          </ul>
+        </nav>
+      </aside>
+    <section class="main">
+      <div class="container">
+        <body class="nav with-sidebar">
+          <h3 class="h3">Deals Currenly Live</h3>
+          <div class="clearfix">
+          <table class="table table-striped table-bordered" id="live_deals">
+            <thead>
+              <th>Division</th>
+              <th>Merchant</th>
+              <th>Deal Name</th>
+              <th>Launched</th>
+              <th>Ends</th>
+              <th>Category</th>
+              <th>Subcategory</th>
+              <th>Revenue</th>
+              <th>Permalink</th>
+            </thead>
+            <tbody>
+              <apex:repeat value="{!LiveDeals}" var="ld">
+                <tr>
+                  <td>{!ld.division}</td>
+                  <td><a href = "/{!ld.merchant_id}" target="_blank">{!ld.merchant_name}</a></td>
+                  <td><a href = "/{!ld.deal_id}" target="_blank">{!ld.deal_name}</a></td>
+                  <td>{!ld.feature_launch_date}</td>
+                  <td>{!ld.feature_end_date}</td>
+                  <td>{!ld.category}</td>
+                  <td>{!ld.subcategory}</td>
+                  <td class="currency">{!ld.revenue}</td>
+                  <td><a href="http://www.groupon.com/deals/{!ld.permalink}" target="_blank"> {!ld.permalink}</a></td>
+                </tr>
+              </apex:repeat>
+            </tbody>
+          </table>
+          </div>
+        </body>
+      </div>
+    </section>
+    <section class="sidebar">
+      <div class="container">
+        <figure class="statbox">
+          <h3>Contracts
+            <em>MTD</em>
+            <strong>
+              <span class="low">{!stat.contract_percent_to_goal}% to Goal</span>
+            </strong>
+          </h3>
+          <ul class="progress-meter clearfix">
+            <li class="completed" style="width:{!stat.contract_percent_to_goal}%;"></li>
+          </ul>
+          <table class="table-dashboard">
+            <tfoot>
+              <tr>
+                <th>Closed</th>
+                <th>Sent</th>
+                <th>New Biz</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr>
+                <td>{!stat.contracts_won}</td>
+                <td>{!stat.my_contracts}</td>
+                <td>{!stat.contracts_new_business}</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <figure class="statbox">
+          <h3>GP
+            <em>MTD</em>
+            <strong>
+              <span class="low">{!stat.actual_percent_to_goal}% to Goal</span>
+            </strong>
+          </h3>
+          <ul class="progress-meter clearfix">
+            <li class="completed" style="width:{!stat.actual_percent_to_goal}%;"></li>
+          </ul>
+          <table class="table-dashboard">
+            <tfoot>
+              <tr>
+                <th>Deal</th>
+                <th>ST</th>
+                <th>Actual</th>
+                <th>Projected</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr>
+                <td>{!stat.gp_deals_run}</td>
+                <td>{!stat.gp_sure_thing}</td>
+                <td class="currency">{!stat.gp_actual}</td>
+                <td class="currency">{!stat.gp_run_rate}</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>        
+      </div>
+    </section>
+  </div>
+  </div>
+</html>
+<script>
+$(document).ready(function(){
+    $('.currency').formatCurrency({roundToDecimalPlace:0});
+    $('#live_deals').dataTable();
+});
+</script>
+<script>
+      var uvOptions ={
+          custom_fields: {
+            "Product": "Workbench" }
+        }
+      
+      var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+      uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/vwN44TKtSIotuKFPOXwE7A.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);  
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26968040-11']); 
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);})();
+</script>
+<style>
+  table.table thead .sorting,
+  table.table thead .sorting_asc,
+  table.table thead .sorting_desc,
+  table.table thead .sorting_asc_disabled,
+  table.table thead .sorting_desc_disabled {
+    cursor: pointer;
+    *cursor: hand;
+  }
+  table.table thead .sorting { background: url('images/sort_both.png') no-repeat center right; }
+  table.table thead .sorting_asc { background: url('images/sort_asc.png') no-repeat center right; }
+  table.table thead .sorting_desc { background: url('images/sort_desc.png') no-repeat center right; }
+  table.table thead .sorting_asc_disabled { background: url('images/sort_asc_disabled.png') no-repeat center right; }
+  table.table thead .sorting_desc_disabled { background: url('images/sort_desc_disabled.png') no-repeat center right; }
+.dataTables_wrapper{
+float:left;
+}
+</style>
+</apex:page>

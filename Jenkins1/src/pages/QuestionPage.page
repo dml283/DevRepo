@@ -1,0 +1,175 @@
+<apex:page standardController="Opportunity" extensions="QuestionPageController" id="thePage">
+    
+    <apex:form id="mainForm">
+        <apex:pageBlock id="pageBlock">
+            <apex:pageBlockSection rendered="{!Opportunity.Submitted_via_Deal_Wizard__c == True}">
+                <apex:pageBlockSectionItem >
+                <apex:outputText style="font-weight:800; color:red;" value="Deal was created via Deal Wizard. Don't fill out questionnaire"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Save Answers" action="{!saveAnswers}"  rerender="jsPanel,panel01,panel02,panel03" oncomplete="checkError();" />
+            </apex:pageBlockButtons>
+             
+            <apex:pageBlockSection columns="1" title="Redemption Instructions" id="pbs1" rendered="{!mainQuestionsBlank.size > 0}">
+                <apex:outputPanel id="panel01">
+                <table width="100%">
+                    <apex:repeat value="{!mainQuestionsBlank}" var="line">
+                        <tr>
+                            <td width="5%"><apex:outputLabel value="({!line.questionNumber})" title="{!line.theQuest.Help_Text__c}" /></td>
+                            <td width="60%"><apex:outputLabel value="{!line.theQuest.Question_Name__c}{!IF(line.theQuest.Required__c, '*', '')}" title="{!line.theQuest.Help_Text__c}" /></td>
+                            <td width="35%">
+                            
+                                <apex:inputField value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Long Text', NOT(line.theQuest.Required__c))}" />
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Long Text', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputField value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" />
+                                </apex:outputPanel>
+                                
+                                <apex:inputText value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Text', NOT(line.theQuest.Required__c))}" />
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Text', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputText value="{!line.theQuest.Answer__c}" required="false" style="width:100%;" />
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Picklist', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:selectList value="{!line.theQuest.Answer__c}" required="false"  size="1" style="width:100%;">
+                                        <apex:selectOptions value="{!line.picklistOptions}" />
+                                    </apex:selectList>
+                                </apex:outputPanel>
+                                <apex:selectList style="width:100%;"value="{!line.theQuest.Answer__c}" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Picklist', NOT(line.theQuest.Required__c))}" size="1">
+                                    <apex:selectOptions value="{!line.picklistOptions}" />
+                                </apex:selectList>
+                                
+                                <apex:inputField style="width:60%;" value="{!line.dummyDate.CloseDate}" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Date', NOT(line.theQuest.Required__c))}" />
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Date', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputField style="width:60%;" value="{!line.dummyDate.CloseDate}" required="false" />
+                                </apex:outputPanel>                             
+                                
+                                <apex:outputPanel rendered="{!line.theQuest.Data_Type__c = 'Date'}"> <br /><br /> </apex:outputPanel>
+                                <apex:outputPanel rendered="{!OR(line.theQuest.Data_Type__c = 'Picklist',line.theQuest.Data_Type__c = 'Text')}"> <br /><br /><br /> </apex:outputPanel>
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection columns="1" title="Fine Print" rendered="{!mainQuestionsFP.size > 0}">
+                <apex:outputPanel id="panel02">
+                <table width="100%">
+                    <apex:repeat value="{!mainQuestionsFP}" var="line">
+                        <tr>
+                            <td width="5%"><apex:outputLabel value="({!line.questionNumber})" title="{!line.theQuest.Help_Text__c}" /></td>
+                            <td width="60%"><apex:outputLabel value="{!line.theQuest.Question_Name__c}{!IF(line.theQuest.Required__c, '*', '')}" title="{!line.theQuest.Help_Text__c}" /></td>
+                            <td width="35%">
+                            
+                                <apex:inputField value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Long Text', NOT(line.theQuest.Required__c))}" />
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Long Text', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputField value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" />
+                                </apex:outputPanel>
+                                
+                                <apex:inputText value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Text', NOT(line.theQuest.Required__c))}" />
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Text', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputText value="{!line.theQuest.Answer__c}" required="false" style="width:100%;" />
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Picklist', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:selectList value="{!line.theQuest.Answer__c}" required="false"  size="1" style="width:100%;">
+                                        <apex:selectOptions value="{!line.picklistOptions}" />
+                                    </apex:selectList>
+                                </apex:outputPanel>
+                                <apex:selectList style="width:100%;"value="{!line.theQuest.Answer__c}" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Picklist', NOT(line.theQuest.Required__c))}" size="1">
+                                    <apex:selectOptions value="{!line.picklistOptions}" />
+                                </apex:selectList>
+                                
+                                <apex:inputField style="width:60%;" value="{!line.dummyDate.CloseDate}" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Date', NOT(line.theQuest.Required__c))}" />
+                                
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Date', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputField style="width:60%;" value="{!line.dummyDate.CloseDate}" required="false" />
+                                </apex:outputPanel>                             
+                                
+                                <apex:outputPanel rendered="{!line.theQuest.Data_Type__c = 'Date'}"> <br /><br /> </apex:outputPanel>
+                                <apex:outputPanel rendered="{!OR(line.theQuest.Data_Type__c = 'Picklist',line.theQuest.Data_Type__c = 'Text')}"> <br /><br /><br /> </apex:outputPanel>
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection columns="1" title="Details & Selling Points" rendered="{!mainQuestionsDetail.size > 0}">
+                <apex:outputPanel id="panel03">
+                <table width="100%">
+                    <apex:repeat value="{!mainQuestionsDetail}" var="line">
+                        <tr>
+                            <td width="5%"><apex:outputLabel value="({!line.questionNumber})" title="{!line.theQuest.Help_Text__c}" /></td>
+                            <td width="60%"><apex:outputLabel value="{!line.theQuest.Question_Name__c}{!IF(line.theQuest.Required__c, '*', '')}" title="{!line.theQuest.Help_Text__c}" /></td>
+                            <td width="35%">
+                            
+                                <apex:inputField value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Long Text', NOT(line.theQuest.Required__c))}" />
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Long Text', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputField value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" />
+                                </apex:outputPanel>
+                                
+                                <apex:inputText value="{!line.theQuest.Answer__c}" style="width:100%;" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Text', NOT(line.theQuest.Required__c))}" />
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Text', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputText value="{!line.theQuest.Answer__c}" required="false" style="width:100%;" />
+                                </apex:outputPanel>
+                                
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Picklist', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:selectList value="{!line.theQuest.Answer__c}" required="false"  size="1" style="width:100%;">
+                                        <apex:selectOptions value="{!line.picklistOptions}" />
+                                    </apex:selectList>
+                                </apex:outputPanel>
+                                <apex:selectList style="width:100%;"value="{!line.theQuest.Answer__c}" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Picklist', NOT(line.theQuest.Required__c))}" size="1">
+                                    <apex:selectOptions value="{!line.picklistOptions}" />
+                                </apex:selectList>
+                                
+                                <apex:inputField style="width:60%;" value="{!line.dummyDate.CloseDate}" required="false" rendered="{!AND(line.theQuest.Data_Type__c = 'Date', NOT(line.theQuest.Required__c))}" />
+                                <apex:outputPanel layout="block" styleClass="requiredInput" rendered="{!AND(line.theQuest.Data_Type__c = 'Date', line.theQuest.Required__c)}">
+                                    <apex:outputPanel layout="block" styleClass="requiredBlock"/>
+                                    <apex:inputField style="width:60%;" value="{!line.dummyDate.CloseDate}" required="false" />
+                                </apex:outputPanel>                             
+                                
+                                <apex:outputPanel rendered="{!line.theQuest.Data_Type__c = 'Date'}"> <br /><br /> </apex:outputPanel>
+                                <apex:outputPanel rendered="{!OR(line.theQuest.Data_Type__c = 'Picklist',line.theQuest.Data_Type__c = 'Text')}"> <br /><br /><br /> </apex:outputPanel>
+                            </td>
+                        </tr>
+                    </apex:repeat>
+                </table>
+                </apex:outputPanel>
+            </apex:pageBlockSection>                            
+          
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Save Answers" action="{!saveAnswers}"   rerender="jsPanel,panel01,panel02,panel03" oncomplete="checkError();" />
+            </apex:pageBlockButtons>            
+        </apex:pageBlock>
+    </apex:form> 
+    
+    <apex:outputPanel id="jsPanel">
+    <script type="text/javascript">
+         beenFocused = true;
+        function checkError() {
+              if({!errorFlag}==false){
+                  reloadPage();
+               }
+        }
+        function reloadPage() {
+            var tempStr = '{!currentPageId}';
+            window.parent.location = '/' + tempStr;
+        }
+        
+    </script>
+    </apex:outputPanel>
+</apex:page>

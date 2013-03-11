@@ -1,0 +1,4 @@
+<apex:page standardController="Account" extensions="ValidateTINController" action="{!validateTINButton}" >
+<apex:pagemessages />
+
+</apex:page>

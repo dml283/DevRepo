@@ -1,0 +1,19 @@
+<apex:page controller="CommissionViewer">
+
+<apex:pageBlock >
+            <apex:form >
+                <apex:pageBlockSection >
+                    <apex:selectList value="{!selected_user}" size="1" label="Sales Rep">
+                        <apex:selectOptions value="{!items}"/>
+                    </apex:selectList>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection >
+                    <apex:selectList value="{!selected_month}" size="3" label="Month">
+                        <apex:selectOptions value="{!months}"/>
+                    </apex:selectList>
+                </apex:pageBlockSection>
+            <apex:commandButton action="{!viewCommission}" value="View Commission"/>
+            </apex:form>
+</apex:pageBlock>
+
+</apex:page>

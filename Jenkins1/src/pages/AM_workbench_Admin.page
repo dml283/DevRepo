@@ -1,0 +1,100 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" controller="AMrulesEngine">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"/>
+<apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap_amwb, '/toolstrap_amwb/toolstrap.css')}"/>
+<apex:includeScript value="{!$Resource.prettyPrint}"/>
+<body class="panel-out">
+    <header>
+        <div class="container">
+            <h2>Rule Engine Admin</h2>
+        </div>
+    </header>
+    <section class="control-bar" style="min-height:55px !important;">
+        <div class="container">
+            <span class="help-text"> This is where you can run the AM Rules Engine on a one off basis, see the JSON sent to the engine and get the ranking back</span>
+        </div>
+    </section>
+    <div class="content clearfix">
+        <section class="main">
+            <div class="container">
+                <form class="form-default">
+                    <fieldset>
+                        <legend>
+                            <span>Run the rules engine</span>
+                        </legend>
+                        <div class="control-group">
+                            <label for="account_id">Account Id</label>
+                            <div class="controls">
+                                <input type="text" id="account_id" placeholder="AccountID"/>
+                                <a class="btn btn-info" onclick="get_priority($('#account_id').val());">Run the Engine</a>
+                            </div>
+                            <hr/>
+                            <div id="response">
+                                <span class="help-text">This is the JSON that was sent to the rules engine:</span>
+                                <div class="row">
+                                    <div class="two column"/>
+                                    <div class="eight column">
+                                        <div id="json_resp" class="json_resp" style="display:none;"/>
+                                    </div>
+                                    <div class="two column"/>
+                                </div>
+                                <span class="help-text">This is the JSON that was returned from the rules engine:</span>
+                                <div class="row">
+                                    <div class="two column"/>
+                                    <div class="eight column">
+                                        <div id="json_priority" class="json_priority" style="display:none;"/>
+                                    </div>
+                                    <div class="two column"/>    
+                                </div>
+                                <div id="table_resp">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+    </div>
+</body>
+
+<script>
+
+function append_json(data) {
+    var tbl = prettyPrint(data);
+    console.log(tbl);
+    $(tbl).appendTo('#table_resp');
+}
+
+function clearDivs() {
+    $('#table_resp').html('');
+    $('#json_resp').html('').hide();
+    $('#json_priority').html('').hide();
+}
+
+function get_priority(id) {
+  clearDivs();
+
+  AMrulesEngine.get_am_json(id, function(result, event){
+    $('#json_resp').html(JSON.stringify(result, null, '\t')).show();
+  });
+
+  AMrulesEngine.prioritize(id, function(result, event){
+    $('#json_priority').html(JSON.stringify(result, null, '\t')).show();
+  });
+}
+
+</script>
+<style>
+.btn a{
+    color:white;
+}
+.json_resp, .json_priority{
+    padding: 25px 25px 25px 25px;
+    border: solid;
+    border-color:black;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}
+</style>
+</apex:page>

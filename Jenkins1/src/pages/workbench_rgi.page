@@ -1,0 +1,160 @@
+<apex:page controller="workbench" standardStylesheets="false" showHeader="false" sidebar="true">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:includeScript value="{!URLFOR($Resource.formatCurrency)}"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap)}"/>
+<apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css"/>
+<html>
+<TITLE>Rep Getting Info</TITLE>
+  <header>
+  <div class="container">
+    <nav>
+     <ul>
+       <li class="active">
+         <a href="/home/home.jsp" target="_blank">Workbench</a>
+       </li>  
+       <li>
+         <a href="/">Back to Salesforce</a>
+       </li>  
+     </ul>
+    </nav>
+  </div>
+  </header>
+  <div class="content clearfix">
+    <div class="container">
+      <aside>
+        <nav>
+          <ul class="nav-plain">
+              <li><a href="/apex/workbench_merchants">Merchants</a></li>
+              <li><a href="/apex/workbench_contracts">Contracts<span class="badge-counter pull-right">{!stat.my_contracts}</span></a></li>
+              <li><a href="/apex/workbench_pipeline">Pipeline<span class="badge-counter pull-right">{!stat.my_deals}</span></a></li>
+              <li><a href="/apex/workbench_IR">IRs<span class="badge-counter pull-right">{!stat.my_irs}</span></a></li>
+              <li><a href="/apex/workbench_commission">Commission</a></li>
+              <li><a href="/apex/workbench_transactions">Transactions</a></li>
+              <li><a href="/apex/workbench_map">Map It!</a></li>
+              <li class="active"><a href="/apex/workbench_rgi">Rep Getting Info<span class="badge-counter pull-right">{!stat.my_rgi}</span></a></li>
+              <li><a href="/apex/workbench_tasks">Tasks</a></li>
+              <li><a href="/apex/workbench_live_deals">Live Deals</a></li>  
+          </ul>
+        </nav>
+      </aside>
+    <section class="main">
+      <div class="container">
+        <body class="nav with-sidebar">
+          <h3 class="h3">My Deals in Rep Getting Info</h3>
+          <table class="table table-bordered table-striped">
+            <thead>
+              <th>Merchant</th>
+              <th>Deal</th>
+              <th>Category</th>
+              <th>Subcategory</th>
+              <th>Division</th>
+              <th>Close Date</th>
+              <th>Deal Strength</th>
+            </thead>
+            <tbody>
+              <apex:repeat value="{!MyRGI}" var="r">
+                <tr>
+                  <td><a href="/{!r.accountid}" target="_blank">{!r.account.name}</a></td>
+                  <td><a href="/{!r.id}" target="_blank">{!r.name}</a></td>
+                  <td>{!r.Category_v3__c}</td>
+                  <td>{!r.Subcategory_v3__c}</td>
+                  <td>{!r.Division__c}</td>
+                  <td><apex:outputText value="{0,date,MM/dd/yyyy}"> <apex:param value="{!r.CloseDate}" /> </apex:outputText></td>
+                  <td>{!r.Deal_Strengh__c}</td>
+                </tr>
+              </apex:repeat>
+            </tbody>
+          </table>
+        </body>
+      </div>
+    </section>
+    <section class="sidebar">
+      <div class="container">
+        <figure class="statbox">
+          <h3>Contracts
+            <em>MTD</em>
+            <strong>
+              <span class="low">{!stat.contract_percent_to_goal}% to Goal</span>
+            </strong>
+          </h3>
+          <ul class="progress-meter clearfix">
+            <li class="completed" style="width:{!stat.contract_percent_to_goal}%;"></li>
+          </ul>
+          <table class="table-dashboard">
+            <tfoot>
+              <tr>
+                <th>Closed</th>
+                <th>Sent</th>
+                <th>New Biz</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr>
+                <td>{!stat.contracts_won}</td>
+                <td>{!stat.my_contracts}</td>
+                <td>{!stat.contracts_new_business}</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <figure class="statbox">
+          <h3>GP
+            <em>MTD</em>
+            <strong>
+              <span class="low">{!stat.actual_percent_to_goal}% to Goal</span>
+            </strong>
+          </h3>
+          <ul class="progress-meter clearfix">
+            <li class="completed" style="width:{!stat.actual_percent_to_goal}%;"></li>
+          </ul>
+          <table class="table-dashboard">
+            <tfoot>
+              <tr>
+                <th>Deal</th>
+                <th>ST</th>
+                <th>Actual</th>
+                <th>Projected</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr>
+                <td>{!stat.gp_deals_run}</td>
+                <td>{!stat.gp_sure_thing}</td>
+                <td class="currency">{!stat.gp_actual}</td>
+                <td class="currency">{!stat.gp_run_rate}</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>        
+      </div>
+    </section>
+  </div>
+  </div>
+</html>
+<script>
+$(document).ready(function(){
+    $('.currency').formatCurrency({roundToDecimalPlace:0});
+});
+</script>
+<script>
+      var uvOptions ={
+          custom_fields: {
+            "Product": "Workbench" }
+        }
+      
+      var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+      uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/vwN44TKtSIotuKFPOXwE7A.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);  
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26968040-11']); 
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);})();
+</script>
+</apex:page>

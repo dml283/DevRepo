@@ -1,0 +1,202 @@
+<apex:page standardController="Multi_Deal__c" extensions="optionTaxonomyClass" sidebar="false" showHeader="false">
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryChosen)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Chosentest)}"/>
+    <apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+
+    <apex:form >
+        <apex:pageBlock >
+            <table id ="optionTaxonomy" title="Option Taxonomy" width="75%" align="center">
+                <tr>
+                    <td>
+                        <apex:outputPanel id="messaging">
+                            <apex:outputText escape="false" value="<b> {!errorMessages} </b>" style="font-family:Serif; font-size:25px; color:RED"/>
+                            <apex:outputText escape="false" value="<b> {!successMessages} </b>" style="font-family:Serif; font-size:25px; color:GREEN"/>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+                <tr><th>Merchant Category</th></tr>
+                <tr><td><apex:outputField value="{!Multi_Deal__c.Category_v3__c}" id="category"/></td></tr>
+                <tr><th>Merchant Subcategory</th></tr>
+                <tr><td><apex:outputField value="{!Multi_Deal__c.Subcategory_v3__c}" id="subcategory"/></td></tr>
+                <tr><th>Option Services</th></tr>
+                <tr>
+                    <td id="services">
+                        <select data-placeholder="Select Option Services" style="width:350px;" class="chzn-select" multiple="true" tabindex="6" id="srvslct">
+                            <apex:repeat value="{!preSelectedServices}" var="preselsrvc">       
+                                <option id="preselectedservice" selected="selected">{!preselsrvc}</option>
+                                <optgroup>
+                                <apex:repeat value="{!ServiceOptions}" var="service">
+                                    <option>{!service}</option>
+                                </apex:repeat>
+                                </optgroup>
+                            </apex:repeat>
+                        </select>
+                    </td>
+                </tr>
+                <tr><th>Option Attributes</th></tr>
+                <tr>        
+                    <td id="attributes">
+                        <select data-placeholder="Select Option Attributes" style="width:350px;" class="chzn-select" multiple="true" tabindex="6" id="attrslct">
+                            <apex:repeat value="{!preSelectedAttributes}" var="preselattr">
+                                <option id="preselectedattribute" selected="selected">{!preselattr}</option>
+                            </apex:repeat>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><apex:inputHidden value="{!OptionServicesArray}" id="SelSrvc"/></td>
+                    <td><apex:inputHidden value="{!OptionAttributesArray}" id="SelAttr"/></td>
+                </tr>
+                <tr>
+                    <td><apex:commandbutton action="{!updateTaxonomy}" value="Submit Taxonomy" onclick="submitSelections()" rerender="messaging">
+                        </apex:commandbutton>
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <td>
+                        <a class="btn" onclick="showMerchantService();">Add a New Service</a>
+                    </td>
+                </tr>           
+            </table>
+            
+            <table id ="MerchantTaxonomy" width="75%" align="center">
+                <tr>
+                    <td>
+                    <apex:outputPanel id="merchMessage">
+                        <apex:outputText escape="false" value="<b> {!errorMessages} </b>" style="font-family:Serif; font-size:25px; color:RED"/>
+                        <apex:outputText escape="false" value="<b> {!successMessages} </b>" style="font-family:Serif; font-size:25px; color:GREEN"/>
+                    </apex:outputPanel>
+                    </td>
+                </tr>
+                <tr><th>Merchant Services</th></tr>
+                <tr>
+                    <td id="mServices">
+                        <select data-placeholder="Select a Merchant Service" style="width:350px;" class="chzn-select" multiple="true" tabindex="6" id="merchSrvcs">
+                            <apex:repeat value="{!preSelectMerchServices}" var="preselMserv">
+                                <option id="preselectedMservice" selected="selected">{!preselMserv}</option>
+                            </apex:repeat>    
+                        </select>
+                    </td>
+                </tr>
+                <tr><td><apex:inputHidden value="{!MerchantServicesArray}" id="MerchantService"/></td></tr>
+                <tr>
+                    <td>
+                        <apex:commandButton value="Add Service to Merchant" action="{!updateMerchant}" reRender="merchMessage">
+                        </apex:commandButton>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button onclick="hideMerchantService()">Return to Option</button></td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+    <script>
+        beenFocused = true;
+        var j$ = jQuery.noConflict();
+        var recordId = "{!ctrlId}";
+        var queryCat = "{!Multi_Deal__c.Category_v3__c}";
+        var acctId = "{!Multi_Deal__c.Opportunity__r.AccountId}";
+        j$(document).ready(function() {
+                j$("#srvslct").chosen();
+                loadAttributes();
+                hideMerchantService();
+            });
+        
+        function hideMerchantService(){
+                j$("#MerchantTaxonomy").hide();
+                j$("#optionTaxonomy").show();
+            }
+        
+        function showMerchantService(){
+                j$("#MerchantTaxonomy").show();
+                j$("#optionTaxonomy").hide();
+                loadMerchServices();
+            }
+        
+        function loadMerchServices(){
+                var currentIDservices = acctId;
+                optionTaxonomyClass.getServiceOptions(queryCat, currentIDservices, function(result,event){
+                    console.log(result);
+                    console.log(event);
+                    j$(result).each(function(){
+                        j$("#optionTemplate").tmpl(this).appendTo("#merchSrvcs");
+                        });
+                    j$("#merchSrvcs").chosen();    
+                });         
+            }
+        
+        function loadAttributes(){
+                var currentIDattributes = recordId;
+                optionTaxonomyClass.getAttributeOptions(queryCat, currentIDattributes, function(result,event){
+                        j$(result).each(function(){
+                            j$("#optionTemplate").tmpl(this).appendTo("#attrslct");
+                            });
+                        j$("#attrslct").chosen();
+                    });
+            }
+        
+        j$("#srvslct").change(function(){serviceSelect();});
+        function serviceSelect(){
+                    var dealOptions = new Array();
+                    j$("#SelSrvc").val('');
+                    j$(".search-choice").each(function(){
+                        if(j$(this).parent().parent().parent().attr('id')=='services'){
+                                dealOptions.push(j$(this).find('span').text());
+                            }
+                        });
+                    j$("input[id$='SelSrvc']").val(makeArray(dealOptions));        
+                }
+            
+        j$("#attrslct").change(function(){attributeSelect();});
+        function attributeSelect(){
+                    var dealAttributes = new Array();
+                    j$("#SelAttr").val('');
+                    j$(".search-choice").each(function(){
+                        if(j$(this).parent().parent().parent().attr('id')=='attributes'){
+                                dealAttributes.push(j$(this).find('span').text());
+                            }
+                        });
+                    j$("input[id$='SelAttr']").val(makeArray(dealAttributes));        
+                }
+                
+        j$("#merchSrvcs").change(function(){merchServiceSelect();});
+        function merchServiceSelect(){
+                    var dealOptions = new Array();
+                    j$("#merchSrvcs").val('');
+                    j$(".search-choice").each(function(){
+                        if(j$(this).parent().parent().parent().attr('id')=='mServices'){
+                                dealOptions.push(j$(this).find('span').text());
+                            }
+                        });
+                    j$("input[id$='MerchantService']").val(makeArray(dealOptions));        
+                }
+        
+        function makeArray(a){
+                    var pipe='';
+                    for(x=0;x<a.length;x++){
+                            pipe+=a[x];
+                            if((x+1)<a.length)
+                            pipe+=' | ';
+                        }
+                    return pipe;
+                }
+        
+        function submitSelections(){
+                serviceSelect();
+                attributeSelect();
+            }                        
+            
+    </script>
+    <script id="optionTemplate" type="text/x-jquery-tmpl">
+        <optgroup label="${Header}">
+            {{each MerchServices}}
+                <option value="" >${this}</option>
+            {{/each}}
+       </optgroup>
+    </script>    
+    </apex:form>
+
+</apex:page>

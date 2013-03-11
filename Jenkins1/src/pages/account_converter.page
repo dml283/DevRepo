@@ -1,0 +1,87 @@
+<apex:page controller="converter" showHeader="false" sidebar="false" standardStylesheets="false">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap_amwb, '/toolstrap_amwb/toolstrap.css')}"/>
+
+<body class='panel-in'>
+  <header>
+      <div class="container">
+       <nav>
+        <apex:image value="{!URLFOR($Resource.toolstrap_amwb, '/toolstrap_amwb/images/logo.png')}" styleClass="logo"/>
+                <ul>
+                    <li class="active">Account Converter</li>
+                </ul>
+          </nav>
+      </div>
+  </header>
+  <div class="content clearfix">
+      <div class='container'>
+          <section class='main'>
+              <div class="container">
+                  <h2>Convesion Progress</h2>
+                  <div>
+                  <button onclick="run();" class="btn btn-primary">Run!</button>
+                  <button onclick="keep_converting=false;" class="btn btn-danger">Stop!</button>
+                  </div>
+                  <table class="table">
+                      <thead>
+                          <th>Converted</th>
+                          <th>Remaining</th>
+                          <th>% Completed</th>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td id="converted_td"></td>
+                              <td id="remaining_td"></td>
+                              <td id="percent_td"></td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  <ul class="progress-meter clearfix">
+                      <li style="width:0%;" class="completed" id="progress_meter"/>
+                  </ul>
+              </div>
+          </section>
+      </div>
+  </div>
+
+</body>
+
+<script>
+var count_converted = 0;
+var total_size = 50000;
+var keep_converting = true;
+    $(document).ready(function(){
+        convertLead();
+    });
+function run(){
+    keep_converting = true;
+    convertLead();
+}    
+function convertLead(){
+    converter.convertMyLead(function(result,event){
+        console.log(result);
+        console.log(event);
+        if(event.status){
+            count_converted++;
+            setProgressBar(result);
+           if(keep_converting){
+                convertLead();
+            }
+        }else{
+            count_converted++;
+            setProgressBar(result);
+           if(keep_converting){
+                convertLead();
+            }
+        }
+    });
+}    
+function setProgressBar(result){
+    $('#converted_td').html(count_converted);
+    $('#remaining_td').html(total_size);
+    var round = ((count_converted/total_size)*100).toFixed(3)
+    $('#percent_td').html(round+'%');
+    $('#progress_meter').width(round+'%');
+}
+</script>
+</apex:page>

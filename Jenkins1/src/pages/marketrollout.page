@@ -1,0 +1,79 @@
+<apex:page showHeader="true" sidebar="true" controller="marketrollout" >
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>
+      Market Rollout
+    </title>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1.1', {packages: ['controls']});
+    </script>
+    <script type="text/javascript">
+      function drawVisualization() {
+        // Prepare the data.
+       var data = new google.visualization.DataTable({!MarketRolloutGV});
+           
+        // Define a StringFilter control for the 'Name' column
+        var stringFilter = new google.visualization.ControlWrapper({
+          'controlType': 'StringFilter',
+          'containerId': 'control1',
+          'options': {
+            'filterColumnLabel': 'Division Name'
+          }
+        });
+       var regionnPicker = new google.visualization.ControlWrapper({
+          'controlType': 'CategoryFilter',
+          'containerId': 'regionpicker',
+          'options': {
+            'filterColumnLabel': 'Region',
+            'ui': {
+              'labelStacking': 'vertical',
+              'allowTyping': 'false',
+              'allowMultiple': 'false'    
+            }
+          }
+        }); 
+        var options = {'showRowNumber': true, 'allowHtml': true};
+
+        // Define a table visualization
+        var table = new google.visualization.ChartWrapper({
+          'chartType': 'Table',
+          'containerId': 'chart1',
+          'options': {
+            'allowHtml': 'true'
+             }
+        });
+        
+        // Create the dashboard.
+        var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard')).
+          // Configure the string filter to affect the table contents
+          bind(stringFilter, regionnPicker).
+          bind(regionnPicker, table ).
+          // Draw the dashboard
+          draw(data);    
+      }
+
+      google.setOnLoadCallback(drawVisualization);
+    </script>
+  </head>
+  <body style="font-family: Arial;border: 0 none;">
+  <a href="https://c.na8.visual.force.com/apex/marketrolloutxls">Open in Excel</a>
+    <div id="dashboard">
+      <table>
+        <tr style='vertical-align: top'>
+          <td style='width: 250px; font-size: 1.2em;'>
+            <div id="control1"></div>
+            <div id="regionpicker"></div>
+            </td>
+          </tr>
+          <tr>
+          <td style='width: 800px'>
+            <div style="float: left;" id="chart1"></div>
+            <div style="float: left;" id="chart2"></div>
+            <div style="float: left;" id="chart3"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</apex:page>

@@ -1,0 +1,354 @@
+<apex:page standardController="Purchase_Order__c" extensions="POSystem">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:includeScript value="{!URLFOR($Resource.jQueryChosen)}"/>
+<apex:stylesheet value="{!URLFOR($Resource.ChosenCSS)}"/>
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css"/>
+<apex:includeScript value="{!URLFOR($Resource.tablesorter, 'jquery.tablesorter.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.TableFilter, 'TableFilter/filtergrid.css')}"/>
+<apex:includeScript value="{!URLFOR($Resource.TableFilter, 'TableFilter/tablefilter_all.js')}"/>
+
+
+<apex:form id="PurchaseOrderForm">
+<apex:actionFunction name="AddAccount" action="{!addAccount}" rerender="PinnedMerchants" >
+    <apex:param name="recordID" assignTo="{!RecordID}" value="" />
+</apex:actionFunction>
+<apex:actionFunction name="AddLead" action="{!addLead}" rerender="PinnedMerchants">
+    <apex:param name="recordID" assignTo="{!RecordID}" value="" />
+</apex:actionFunction>
+<apex:actionFunction name="unpinLead" action="{!unpinLead}" rerender="" >
+    <apex:param name="recordID" assignTo="{!RecordID}" value="" />
+</apex:actionFunction>
+<apex:actionFunction name="unpinMerchant" action="{!unpinMerchant}"  rerender="">
+    <apex:param name="recordID" assignTo="{!RecordID}" value="" />
+</apex:actionFunction>
+
+        <apex:pageBlock >
+           
+            <apex:pageBlockSection title="Pinned Merchants ({!Pinned.size})"  id="PinnedMerchants" columns="1" >
+            <apex:outputPanel layout="block">
+            <apex:messages />
+                <table id ="Pinned" title="Pinned Merchants" width="100%"  align="center" class="merchantSearch tablesorter list" >
+                    <tr align="center" class="hasborder">
+                        <th>Unpin</th>
+                        <th>New/Existing Business</th>
+                        <th>Company Name</th>
+                        <th>Owner</th>
+                        <th>Research Ranking</th>
+                        <th>Category</th>
+                        <th>Subcategory 1</th>
+                        <th>Subcategory 2</th>
+                        <th>Subdivision</th>
+                        <th>Feature Date</th>
+                        <th>Stage</th>
+                        <th>Last Activity</th>
+                    </tr>
+                    <apex:repeat value="{!Pinned}" var="r" id="Pinned">
+                            <tr align="center">
+                                <td><input id="removefrom" type="checkbox" onclick="unPinMerchant('{!r.rtype}','{!r.recordID}',j$(this).parent().parent())"/></td>
+                                <td>{!r.NewOld}</td>
+                                <td><a href="/{!r.RecordID}" target="_blank">{!r.Merchant}</a><br/><a href="http://{!r.website}" target="_blank">{!r.website}</a></td>
+                                <td>{!r.owner}</td>
+                                <td>{!r.ResearchRanking}</td>
+                                <td>{!r.Cat}</td>
+                                <td>{!r.subcat}</td>
+                                <td>{!r.subcat2}</td>
+                                <td>{!r.SubDivision}</td>
+                                <td>{!r.FeatureDate}</td>
+                                <td>{!r.Stage}</td>
+                                <td>{!r.LastActivity}</td>
+                            </tr>
+                    </apex:repeat>
+                </table>
+             </apex:outputPanel>   
+            </apex:pageBlockSection>
+            </apex:pageBlock>
+          
+       <apex:pageBlock title="Merchant Search">  
+            <apex:pageBlockSection title="Merchant Search" id="MerchantSearch" columns="1">
+                <apex:outputPanel layout="block">
+                     Merchant Name: <input type="text" id="merchantName"/>
+                     Division: <select style="color:black;"  id="DivPicker">
+                                        <option>Select a Division</option>
+                                        <apex:repeat value="{!Divisions}" var="r" id="DivList">
+                                              <option>{!r.name}</option>
+                                        </apex:repeat>
+                                </select>
+                     Category: <select name ="Category" id="Cat"/>
+                     Subcategory 1: <select name="Subcategory1" id="Subcat1"/>
+                     Subcategory 2: <select name="Subcategory2" id="Subcat2"/> 
+                     Number of Results: <select id="numResults">
+                                          <option value="25">50</option>
+                                          <option value="50">100</option>
+                                          <option value="100">200</option>
+                                          <option value="250">500</option>
+                                          <option value="499">Max</option>
+                                        </select>
+                     <apex:commandButton id="searchButton" value="Search" rerender="MerchantSearchResults" oncomplete="addTableSorter()" onclick="j$('#searching').dialog('open')"/>
+              </apex:outputPanel>
+          </apex:pageBlockSection>
+          </apex:pageBlock>
+          <apex:pageBlock title="Search Results" id="MerchantSearchResults">  
+              <apex:pageBlockSection title="Merchant Results" id="MerchantSearchResultsSection" columns="1">
+              <apex:outputPanel layout="block">
+                    <table id ="searchResults"  width="100%"  align="center" class="merchantSearch tablesorter list" >
+                        <thead>
+                        <tr>
+                            <th>Add to PO</th>
+                            <th>New/Existing Business</th>
+                            <th>Company Name</th>
+                            <th>Owner</th>
+                            <th>Research Ranking</th>                              
+                            <th>Category</th>
+                            <th>Subcategory 1</th>
+                            <th>Subcategory 2</th>
+                            <th>Subdivision</th>
+                            <th>Feature Date</th>
+                            <th>Stage</th>
+                            <th>Last Activity</th>
+                            <th>Qualified?</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                         <apex:repeat value="{!Results}" var="r" id="theRepeat">
+                              <tr>
+                                            <td><input id="addto" type="checkbox" onclick="PinMerchant('{!r.rtype}','{!r.recordID}')"/></td>
+                                            <td>{!r.NewOld}</td>
+                                            <td style="width:120px;"><a href="/{!r.RecordID}" target="_blank">{!r.Merchant}</a><br/><a href="http://{!r.website}" target="_blank">{!r.website}</a></td>
+                                            <td>{!r.owner}</td>
+                                            <td>{!r.ResearchRanking}</td>                                            
+                                            <td>{!r.Cat}</td>
+                                            <td>{!r.subcat}</td>
+                                            <td>{!r.subcat2}</td>
+                                            <td>{!r.SubDivision}</td>
+                                            <td>{!r.FeatureDate}</td>
+                                            <td>{!r.Stage}</td>
+                                            <td>{!r.LastActivity}</td>
+                                            <td>{!r.checked}</td>
+                              </tr>
+                        </apex:repeat>
+                       </tbody> 
+                    </table>    
+                  </apex:outputPanel>  
+                </apex:pageBlockSection>
+        </apex:pageBlock>
+           <div id="hiddenApex">
+                <apex:inputText value="{!MerchantName}" id="merchantName"/>
+                <apex:inputText value="{!Division}" id="division"/>
+                <apex:inputText value="{!category}" id="category"/>
+                <apex:inputText value="{!subcategory1}" id="subcategory1"/>
+                <apex:inputText value="{!subcategory2}" id="subcategory2"/>
+                <apex:inputText value="{!numResults}" id="numResults"/>                
+            </div>  
+</apex:form> 
+<div id="searching">
+<span class="inner">Searching.......</span>
+<span class="inner"><apex:image id="theImage" value="{!$Resource.Spinner}" width="25" height="25"/></span>
+<div id="twitter_update_list">
+<p id="tweet"></p>
+</div>
+</div> 
+<script>
+var j$ = jQuery.noConflict();
+$cat = j$("input[id$='category']");
+$sub1 = j$("input[id$='subcategory1']");
+$sub2 = j$("input[id$='subcategory2']");
+$merchantName = j$("input[id$='merchantName']");
+$division = j$("input[id$='division']");
+$numResults = j$("input[id$='numResults']");
+
+
+var subdivs = new Array();
+j$(document).ready(function() {
+    setupUI();
+    j$("#hiddenApex").hide();
+    addTableSorter();
+  });
+function hideLoader()
+    {
+        j$("#searching").hide();
+    }
+function setupUI()
+    {
+    j$("#searching").dialog({autoOpen:false});
+    
+    setupDropDowns();
+
+    }    
+function addTableSorter()
+    {
+        j$('#searching').dialog('close')
+        j$("#searchResults").tablesorter();
+            var PinnedProps =  { 
+                        on_keyup: true,
+                        remember_grid_values:true,
+                        col_0: "select",
+                        col_1: "select",
+                        col_2: "select",
+                        col_5: "select",
+                        col_6: "select",
+                        col_7: "select",
+                        col_8: "select",
+                        col_9: "select",
+                        col_10: "select",
+                        col_11: "select",
+                        col_12: "select",
+                        display_all_text: "< Show all >",
+                        alternate_rows: true,  
+                        page_selector_type:'select',
+                        paging_btns:false,
+                        paging:false,
+                        paging_length:25,
+                        refresh_filters: true,
+                        rows_counter: true,  
+                        rows_counter_text: "# of Search Results: ",  
+                        btn_reset: true,  
+                        loader: true,  
+                        loader_text: "Filtering data...",
+                        sort_num_desc:[9],
+                        on_keyup:true,
+                        on_keyup_delay:400,
+                        highlight_keywords:true,
+                        fixed_headers:true}
+  
+   
+           setFilterGrid("searchResults",PinnedProps);
+    }    
+function PinMerchant(type,id)
+    {
+        if(type=='Lead')
+            AddLead(id);
+        if(type=="Account"){
+            AddAccount(id);}    
+    } 
+function unPinMerchant(type,id,ev)
+    {    
+        
+        if(type=='Lead'){
+            unpinLead(id);}
+        if(type=="Account"){
+            unpinMerchant(id);}
+        ev.hide();    
+            
+    }        
+function setupDropDowns()
+    {
+        j$('#Cat').bind('keyup change blur',function(){
+
+                     var tempvar = ((this).value);
+                     $cat.val(tempvar);
+                     $sub1.val(null);
+                     $sub2.val(null);
+            });            
+        
+        j$('#Subcat1').bind('keyup change blur',function(){
+
+                     var tempvar = ((this).value);
+                     $sub1.val(tempvar);
+                     $sub2.val(null);
+
+            });     
+        
+        j$('#Subcat2').bind('keyup change blur',function(){
+
+                     var tempvar = ((this).value);
+                     $sub2.val(tempvar);
+
+            });
+        j$('#DivPicker').bind('keyup change blur',function(){
+                     var tempvar = j$(this).attr('value');
+                     $division.val(tempvar);
+
+            });    
+        j$('#merchantName').bind('keyup change blur',function(){
+
+                     var tempvar = ((this).value);
+                     $merchantName.val(tempvar);
+
+            });
+       j$('#numResults').bind('keyup change blur',function(){
+                    var tempvar = j$(this).attr('value');
+                    $numResults.val(tempvar);
+                
+            });          
+         //Setup the Picklists
+            var taxonomy = '{"Beauty":{"0":"Beauty","Hairdresser":{"0":"Hairdresser","Hairdresser":"Hairdresser","Barber":"Barber","Women&lsquo;s Hairdresser":"Women&lsquo;s Hairdresser","Hair Straightening":"Hair Straightening","Hair Extension":"Hair Extension","Wigs":"Wigs","Miscellaneous":"Miscellaneous"},"Hair removal":{"0":"Hair removal","Hair Removal":"Hair Removal","Waxing":"Waxing","Laser Hair Removal":"Laser Hair Removal","Epilation":"Epilation","Miscellaneous":"Miscellaneous"},"Nails":{"0":"Nails","Nails":"Nails","Nail Design":"Nail Design","Manicure":"Manicure","Pedicure":"Pedicure","Miscellaneous":"Miscellaneous"},"Footcare":{"0":"Footcare","Footcare":"Footcare","Medical Footcare":"Medical Footcare","Fish Pedicure":"Fish Pedicure","Miscellaneous":"Miscellaneous"},"Tanning":{"0":"Tanning","Tanning":"Tanning","Solarium":"Solarium","Airbrush Spray Tanning":"Airbrush Spray Tanning","Tanning Shower":"Tanning Shower","Miscellaneous":"Miscellaneous"},"Facial treatments":{"0":"Facial treatments","Facial Treatments":"Facial Treatments","Make-up":"Make-up","Permanent Make-Up":"Permanent Make-Up","Eyelashes and Eyebrows":"Eyelashes and Eyebrows","Eye Care":"Eye Care","Masks":"Masks","Peeling":"Peeling","Exfoliation":"Exfoliation","Microdermabrasion":"Microdermabrasion","Anti-Aging Face Care":"Anti-Aging Face Care","Miscellaneous":"Miscellaneous"},"Styling \/ Image consulting":{"0":"Styling \/ Image consulting","Styling \/ Image Consulting":"Styling \/ Image Consulting"},"Dental care":{"0":"Dental care","Dental Care":"Dental Care","Teeth Cleaning":"Teeth Cleaning","Teeth Whitening":"Teeth Whitening","Miscellaneous":"Miscellaneous"},"Body shaping (weight loss)":{"0":"Body shaping (weight loss)","Body Shaping (Weight Loss)":"Body Shaping (Weight Loss)","Ultrasonic Fat Reduction":"Ultrasonic Fat Reduction","Hypoxi Vacuum Training":"Hypoxi Vacuum Training","Electrical Muscle Stimulation EMS":"Electrical Muscle Stimulation EMS","Body Wrap":"Body Wrap","Miscellaneous":"Miscellaneous"},"Injections":{"0":"Injections","Injections":"Injections","Botox":"Botox","Mesotherapy":"Mesotherapy","Miscellaneous":"Miscellaneous"}},"Wellness":{"0":"Wellness","Steam bath":{"0":"Steam bath","Steam Bath":"Steam Bath","Hammam":"Hammam","Sauna":"Sauna","Miscellaneous":"Miscellaneous"},"Massage":{"0":"Massage","Massage":"Massage","Full Body Massage":"Full Body Massage","Head Masage":"Head Masage","Facial Massage":"Facial Massage","Back-Neck Massage":"Back-Neck Massage","Hand Massage":"Hand Massage","Foot Massage":"Foot Massage","Miscellaneous":"Miscellaneous"},"Spa":{"0":"Spa","Spa":"Spa","Day Spa":"Day Spa","Floating":"Floating","Salt Cave":"Salt Cave","Whirlpool \/ Jacuzzi":"Whirlpool \/ Jacuzzi","Thermal Bath":"Thermal Bath","Body Wraps":"Body Wraps","Miscellaneous":"Miscellaneous"}},"Healthcare":{"0":"Healthcare","Alternative medicine":{"0":"Alternative medicine","Alternative Medicine":"Alternative Medicine","Acupuncture":"Acupuncture","Reiki":"Reiki","Homoeopathy":"Homoeopathy","Chiropractic \/ Osteopathy":"Chiropractic \/ Osteopathy","Hypnosis":"Hypnosis","Miscellaneous":"Miscellaneous"},"Cosmetic Surgery":{"0":"Cosmetic Surgery","Cosmetic Surgery":"Cosmetic Surgery","Implants":"Implants","Breast Lift":"Breast Lift","Chin Surgery":"Chin Surgery","Fruit Acid Peel":"Fruit Acid Peel","Ear Pinning Surgery":"Ear Pinning Surgery","Eyelid Surgery":"Eyelid Surgery","Facelift":"Facelift","Laser Skin Resurfacing":"Laser Skin Resurfacing","Lip Enhancement":"Lip Enhancement","Liposuction":"Liposuction","Nose Job":"Nose Job","Tummy Tuck":"Tummy Tuck","Hair Implants":"Hair Implants","Miscellaneous":"Miscellaneous"},"Physiotherapy":{"0":"Physiotherapy","Physiotherapy":"Physiotherapy"},"Laser Eye Surgery":{"0":"Laser Eye Surgery","Laser Eye Surgery":"Laser Eye Surgery"},"Spa":{"0":"Spa","Spa":"Spa","Day Spa":"Day Spa","Floating":"Floating","Salt Cave":"Salt Cave","Whirlpool \/ Jacuzzi":"Whirlpool \/ Jacuzzi","Thermal Bath":"Thermal Bath","Body Wraps":"Body Wraps","Miscellaneous":"Miscellaneous"},"Dentistry":{"0":"Dentistry","Dentistry":"Dentistry","Dentistry Check Up":"Dentistry Check Up","Invisible Brace":"Invisible Brace","Implants \/ Corona \/ Veneers":"Implants \/ Corona \/ Veneers","Miscellaneous":"Miscellaneous"},"General Medicine":{"0":"General Medicine","General Medicine":"General Medicine","Medical Check Up":"Medical Check Up","Eye Test":"Eye Test","Miscellaneous":"Miscellaneous"},"Other":{"0":"Others","Others":"Others","Hydro Colon Therapy":"Hydro Colon Therapy","Detoxification":"Detoxification","Pain Therapy":"Pain Therapy"}},"Leisure Offers":{"Others":["Others"],"Flying":{"0":"Flying","Flying":"Flying","Hot Air Ballon":"Hot Air Ballon","Helicopter Rides":"Helicopter Rides","Sightseeing Tour":"Sightseeing Tour","Gliding":"Gliding","Parachuting":"Parachuting","Paragliding":"Paragliding","Wind Tunnel":"Wind Tunnel","Miscellaneous":"Miscellaneous"},"Climbing":{"0":"Climbing","Climbing":"Climbing","Canyoning":"Canyoning","High Rope Course":"High Rope Course","House Running":"House Running","Miscellaneous":"Miscellaneous"},"Jumping":{"0":"Jumping","Jumping":"Jumping","Bungee Jumping":"Bungee Jumping"},"Workout\/Fitness":{"0":"Workout\/Fitness","Workout\/Fitness":"Workout\/Fitness","Fitness Studio":"Fitness Studio","Aerobics":"Aerobics","Yoga":"Yoga","Pilates":"Pilates","Power Plate":"Power Plate","Boot Camp":"Boot Camp","Miscellaneous":"Miscellaneous"},"Leisure Sports ":{"0":"Leisure Sports ","Leisure Sports":"Leisure Sports","Golf":"Golf","Crazy Golf":"Crazy Golf","Tennis":"Tennis","Squash":"Squash","Badminton":"Badminton","Table tennis":"Table tennis","Pool \/ Snooker":"Pool \/ Snooker","Bowling \/ Skittles":"Bowling \/ Skittles","Inline Skating":"Inline Skating","Cycling Tour":"Cycling Tour","Fencing":"Fencing","Horse Back Riding":"Horse Back Riding","Skiing":"Skiing","Tobogganing":"Tobogganing","Ice Skating":"Ice Skating","Falconry":"Falconry","Miscellaneous":"Miscellaneous"},"Dancing":{"0":"Dancing","Dancing":"Dancing"},"Water Sports":{"0":"Water Sports","Water Sports":"Water Sports","Adventure Pool":"Adventure Pool","Open Air Pool":"Open Air Pool","Indoor Swimming Pool":"Indoor Swimming Pool","Sailing":"Sailing","Diving":"Diving","Canoe":"Canoe","Surfing \/ Wind Surfing \/ Kite Surfing ":"Surfing \/ Wind Surfing \/ Kite Surfing ","Kayak":"Kayak","Boat \/ Yacht \/ Motor Boat":"Boat \/ Yacht \/ Motor Boat","Jet Skiing":"Jet Skiing","White water rafting":"White water rafting","Wooden rafting tour":"Wooden rafting tour","Miscellaneous":"Miscellaneous"},"Motor Sports":{"0":"Motor Sports","Motor Sports":"Motor Sports","Go-Karting":"Go-Karting","Classic Car":"Classic Car","Quad":"Quad","Off-roading \/ Jeeps":"Off-roading \/ Jeeps","Sport Cars":"Sport Cars","Motorcycle":"Motorcycle","Limousine":"Limousine","Trike":"Trike","Race Car":"Race Car","Miscellaneous":"Miscellaneous"},"Experiences":{"0":"Experiences","Experiences":"Experiences","Digger Driving ":"Digger Driving ","Segway":"Segway","Speed Dating":"Speed Dating","Flight Simulator":"Flight Simulator","Indoor Play Area":"Indoor Play Area","Miscellaneous":"Miscellaneous"},"Shooting":{"0":"Shooting","Shooting":"Shooting","Paintball ":"Paintball ","Laser Quest":"Laser Quest","Air Rifle":"Air Rifle","Shooting Range":"Shooting Range","Archery":"Archery","Clay Pigeon Shooting":"Clay Pigeon Shooting","Miscellaneous":"Miscellaneous"},"Other":{"0":"Other","Other":"Other","Indoor_Other":"Indoor_Other","Outdoor_Other":"Outdoor_Other"}},"Travel":{"Accommodation":{"Accommodation":"Accommodation","Bed & Breakfast":"Bed & Breakfast","Holiday Home \/ Apartment":"Holiday Home \/ Apartment","Hostel":"Hostel","Hotel":"Hotel","Motel":"Motel","Resort":"Resort","Lodge\/cabin":"Lodge\/cabin"},"Transport":{"Car Hire":"Car Hire","Flight":"Flight"},"Travel":{"Cruise":"Cruise","Package Holiday":"Package Holiday"}},"Restaurant":{"Tour":["Tour"],"Restaurant":{"0":"Restaurant","Restaurant":"Restaurant"},"Central African ":{"0":"Central African ","Central African ":"Central African "},"East African":{"0":"East African","East African":"East African"},"North African":{"0":"North African","North African":"North African"},"South African":{"0":"South African","South African":"South African"},"West African":{"0":"West African","West African":"West African"},"Argentinian ":{"0":"Argentinian ","Argentinian ":"Argentinian ","Steak House":"Steak House"},"Brazilian":{"0":"Brazilian","Brazilian":"Brazilian","Steak House":"Steak House"},"Cuban ":{"0":"Cuban ","Cuban ":"Cuban "},"Jamaican":{"0":"Jamaican","Jamaican":"Jamaican"},"Mexican":{"0":"Mexican","Mexican":"Mexican","Fajitas":"Fajitas"},"Peruvian":{"0":"Peruvian","Peruvian":"Peruvian"},"US - American":{"0":"US - American","US - American":"US - American","Spare Ribs":"Spare Ribs","Steak House":"Steak House","Barbecue":"Barbecue"},"Australian":{"0":"Australian","Australian":"Australian"},"Chinese":{"0":"Chinese","Chinese":"Chinese","Dim Sum":"Dim Sum"},"Indian":{"0":"Indian","Indian":"Indian"},"Indonesian":{"0":"Indonesian","Indonesian":"Indonesian"},"Persian":{"0":"Persian","Persian":"Persian"},"Japanese":{"0":"Japanese","Japanese":"Japanese","Sushi":"Sushi","Teppanyaki":"Teppanyaki"},"Korean":{"0":"Korean","Korean":"Korean"},"Lebanese":{"0":"Lebanese","Lebanese":"Lebanese"},"Malaysian":{"0":"Malaysian","Malaysian":"Malaysian"},"Mongolian":{"0":"Mongolian","Mongolian":"Mongolian"},"Filipino":{"0":"Filipino","Filipino":"Filipino"},"Thai":{"0":"Thai","Thai":"Thai"},"Turkish":{"0":"Turkish","Turkish":"Turkish"},"Vietnamese":{"0":"Vietnamese","Vietnamese":"Vietnamese"},"Austrian":{"0":"Austrian","Austrian":"Austrian"},"British":{"0":"British","British":"British","Afternoon Tea":"Afternoon Tea"},"Polish":{"0":"Polish","Polish":"Polish"},"French":{"0":"French","French":"French","Crepe":"Crepe"},"German":{"0":"German","German":"German","Beer Garden":"Beer Garden"},"Greek":{"0":"Greek","Greek":"Greek"},"Hungarian":{"0":"Hungarian","Hungarian":"Hungarian"},"Italian":{"0":"Italian","Italian":"Italian","Pasta":"Pasta","Pizza":"Pizza"},"Portuguese ":{"0":"Portuguese ","Portuguese ":"Portuguese"},"Russian":{"0":"Russian","Russian":"Russian"},"Norwegian ":{"0":"Norwegian ","Norwegian":"Norwegian"},"Swedish":{"0":"Swedish","Swedish":"Swedish"},"Finnish":{"0":"Finnish","Finnish":"Finnish"},"Danish":{"0":"Danish","Danish":"Danish"},"Spanish":{"0":"Spanish","Spanish":"Spanish","Tapas":"Tapas"},"Swiss":{"0":"Swiss","Swiss":"Swiss","Fondue":"Fondue"},"Israeli ":{"0":"Israeli ","Israeli ":"Israeli "},"Arabic":{"0":"Arabic","Arabic":"Arabic"},"Belgian ":{"0":"Belgian ","Belgian ":"Belgian "},"Dutch ":{"0":"Dutch","Dutch":"Dutch"},"Irish":{"0":"Irish","Irish":"Irish"},"Columbian":{"0":"Columbian","Columbian":"Columbian"},"Uruguayan":{"0":"Uruguayan","Uruguayan":"Uruguayan"},"Chilean ":{"0":"Chilean ","Chilean ":"Chilean "},"All You Can Eat":{"0":"All You Can Eat","All You Can Eat":"All You Can Eat"},"Fast Food":{"0":"Fast Food","Fast Food":"Fast Food","Burger":"Burger","Chinese Fast Food":"Chinese Fast Food","Doner Kebab":"Doner Kebab","French Fries":"French Fries","Chicken ":"Chicken ","Hot Dog":"Hot Dog","Pizza Take Away":"Pizza Take Away","Sandwich ":"Sandwich ","Sausage":"Sausage","Tacos":"Tacos"},"Miscellaneous":{"Miscellaneous":"Miscellaneous"},"Experience Restaurants":{"0":"Experience Restaurants","Experience Restaurants":"Experience Restaurants","Dinner Cruise":"Dinner Cruise","Medieval Banquet":"Medieval Banquet","Wine Tasting ":"Wine Tasting ","Whisky Tasting":"Whisky Tasting","Live Cooking ":"Live Cooking ","Romantic Dinner":"Romantic Dinner","Theater Dinner":"Theater Dinner","Murder Mystery Dinner":"Murder Mystery Dinner","Dinner in the Dark":"Dinner in the Dark","Dinner in the Sky":"Dinner in the Sky"},"Gourmet":{"0":"Gourmet","Gourmet":"Gourmet","Molecular Cooking":"Molecular Cooking","Luxury Restaurant":"Luxury Restaurant"},"Fish Restaurant":{"0":"Fish Restaurant","Fish Restaurant":"Fish Restaurant"},"Organic":{"0":"Organic","Organic":"Organic"},"Vegetarian ":{"0":"Vegetarian ","Vegetarian":"Vegetarian","Soup Bar":"Soup Bar","Salad Bar":"Salad Bar"},"Breakfast \/ Brunch":{"0":"Breakfast \/ Brunch","Breakfast \/ Brunch":"Breakfast \/ Brunch","European Breakfast":"European Breakfast","English Breakfast":"English Breakfast","French Breakfast":"French Breakfast","Mediterranean Breakfast":"Mediterranean Breakfast","Asian Breakfast":"Asian Breakfast","Breakfast on a Boat":"Breakfast on a Boat"},"Dessert":{"0":"Dessert","Dessert":"Dessert","Cupcake":"Cupcake","Macaron":"Macaron","Cake":"Cake"},"Ice Cream":{"0":"Ice Cream","Ice Cream":"Ice Cream","Frozen Yoghurt":"Frozen Yoghurt"},"Drinks":{"0":"Drinks","Drinks":"Drinks","Bubble Tea":"Bubble Tea","Coffee":"Coffee","Tee":"Tee","Juice":"Juice","Lassi":"Lassi","Milk Shakes":"Milk Shakes"},"Bar":{"0":"Bar","Bar":"Bar","Beach Bar":"Beach Bar","Cocktail Bar":"Cocktail Bar","Ice Bar":"Ice Bar","Pub":"Pub","Live Music Bar":"Live Music Bar","Shisha Lounge":"Shisha Lounge","Rooftop Bar":"Rooftop Bar","Sports Bar":"Sports Bar"}},"Services":{"0":"Services","Cleaning":{"0":"Cleaning","Cleaning":"Cleaning","Room Cleaning":"Room Cleaning","Window Cleaning":"Window Cleaning","Carpet \/ Rug Cleaning":"Carpet \/ Rug Cleaning","Miscellaneous":"Miscellaneous"},"Car":{"0":"Car","Car":"Car","Service & Repair":"Service & Repair","Car Cleaning":"Car Cleaning","Petrol Station":"Petrol Station","Tyre Change":"Tyre Change","Miscellaneous":"Miscellaneous"},"Delivery Service":{"0":"Delivery Service","Delivery Service":"Delivery Service","Flowers":"Flowers","Groceries \/ Drinks":"Groceries \/ Drinks","Food Delivery":"Food Delivery","Catering":"Catering","Miscellaneous":"Miscellaneous"},"Photography":{"0":"Photography","Photography":"Photography","Photo Shoot Studio":"Photo Shoot Studio","Photo Shoot Outdoors":"Photo Shoot Outdoors","Photo Shoot including Hair & Make Up":"Photo Shoot including Hair & Make Up","Picture Digitalisation":"Picture Digitalisation"},"Pets":{"0":"Pets","Pets":"Pets","Pet Sitter":"Pet Sitter","Dog Salon":"Dog Salon","Pet Obedience School":"Pet Obedience School","Miscellaneous":"Miscellaneous"},"Rental":{"0":"Rental","Rental":"Rental","DVD Rental":"DVD Rental"},"Handyman services":{"0":"Handyman services","Handyman services":"Handyman services","Electrician":"Electrician","Painter":"Painter","Plumber":"Plumber","Tiling":"Tiling","Gardener":"Gardener","Miscellaneous":"Miscellaneous"},"Tattoo \/ Piercing":{"0":"Tattoo \/ Piercing","Tattoo \/ Piercing":"Tattoo \/ Piercing","Tattoo Making":"Tattoo Making","Tattoo Removal":"Tattoo Removal","Piercing":"Piercing"},"Moving":{"0":"Moving","Moving":"Moving"},"Tailor":{"0":"Tailor","Tailor":"Tailor"},"Online Services":{"0":"Online Services","Online Services":"Online Services","Dating Platform":"Dating Platform","Online Games":"Online Games","Online Music":"Online Music","Video On Demand":"Video On Demand","eBook Download":"eBook Download","Miscellaneous":"Miscellaneous"},"Product Customization":{"0":"Product Customization","Product Customization":"Product Customization"},"Subscriptions":{"0":"Subscriptions","Subscriptions":"Subscriptions","Papers":"Papers","Magazines":"Magazines"},"Course \/ Training":{"0":"Course \/ Training","Course \/ Training":"Course \/ Training","Cooking Course":"Cooking Course","Baking Course":"Baking Course","Sushi Course":"Sushi Course","Cocktail Course":"Cocktail Course","Drivers Licence":"Drivers Licence","Boat Licence":"Boat Licence","Diving License":"Diving License","Pilots Licence":"Pilots Licence","Dance Course":"Dance Course","Personal Trainer":"Personal Trainer","Swim Course":"Swim Course","Make Up Course":"Make Up Course","Massage Course":"Massage Course","Computer course":"Computer course","Language Course":"Language Course","Photography Course":"Photography Course","Music Lessons":"Music Lessons","Drawing Course":"Drawing Course","Handcraft Course":"Handcraft Course","Theater Course":"Theater Course","Etiquette Course":"Etiquette Course","Miscellaneous":"Miscellaneous"},"Luxury Services":{"0":"Luxury Services","Luxury Services":"Luxury Services","Wedding Planner":"Wedding Planner"},"Fortune Teller":{"0":"Fortune Teller","Fortune Teller":"Fortune Teller","Palm Analysis":"Palm Analysis"},"Counseling":{"0":"Counseling","Counseling":"Counseling","Nutritional Consultancy":"Nutritional Consultancy","Legal Consultancy":"Legal Consultancy"}},"Shopping":{"Counseling":["Counseling"],"Products - Groceries":{"0":"Products - Groceries","Products - Groceries":"Products - Groceries","Organic groceries":"Organic groceries","Cakes \/ Pastries \/ Bread":"Cakes \/ Pastries \/ Bread","Chocolate \/ Sweets":"Chocolate \/ Sweets","Milk Product":"Milk Product","Coffee":"Coffee","Meat":"Meat","Tea":"Tea","Ddelicatesses":"Ddelicatesses","Snacks":"Snacks","Drinks":"Drinks","Dietary Supplements":"Dietary Supplements"},"Products - Accessories":{"0":"Products - Accessories","Products - Accessories":"Products - Accessories","Jewellery":"Jewellery","Watches":"Watches","Bags":"Bags"},"Products - Alcohol":{"0":"Products - Alcohol","Products - Alcohol":"Products - Alcohol","Beer":"Beer","Spirits":"Spirits","Wine":"Wine","Champagne":"Champagne"},"Products - Chemist":{"0":"Products - Chemist","Products - Chemist":"Products - Chemist","Cosmetic & Make Up":"Cosmetic & Make Up","Natural Cosmetics & Make Up":"Natural Cosmetics & Make Up","Hair Care":"Hair Care","Perfume":"Perfume","Skin Care":"Skin Care","Foot Care":"Foot Care","Houshold":"Houshold"},"Products - Car":{"0":"Products - Car","Products - Car":"Products - Car","Car Accessories":"Car Accessories"},"Products - Motorbike \/ Scooter":{"0":"Products - Motorbike \/ Scooter","Products - Motorbike \/ Scooter":"Products - Motorbike \/ Scooter","Motorbike Accessories":"Motorbike Accessories"},"Products - Bicycle":{"0":"Products - Bicycle","Products - Bicycle":"Products - Bicycle","Bicycle Accessories":"Bicycle Accessories"},"Products - Electronics":{"0":"Products - Electronics","Products - Electronics":"Products - Electronics","TV & Video":"TV & Video","Audio & HiFi":"Audio & HiFi","Computer & Software":"Computer & Software","Photo & Camcorder":"Photo & Camcorder","Mobile Phone":"Mobile Phone","Navigation":"Navigation","Consoles & Games":"Consoles & Games","CD & DVD":"CD & DVD","Internet":"Internet","Accessories":"Accessories"},"Products - Optics":{"0":"Products - Optics","Products - Optics":"Products - Optics","Glasses":"Glasses","Sun Glasses":"Sun Glasses","Contact Lenses":"Contact Lenses","Care Products":"Care Products"},"Products - Home & Garden":{"0":"Products - Home & Garden","Products - Home & Garden":"Products - Home & Garden","Household Appliances":"Household Appliances","Kitchen Accessories":"Kitchen Accessories","Furniture":"Furniture","Home Accessories":"Home Accessories","Home Textiles":"Home Textiles","DIY":"DIY","Garden":"Garden","Pool \/ Jacuzzi \/ Whirlpool":"Pool \/ Jacuzzi \/ Whirlpool"},"Products - Pets":{"0":"Products - Pets","Products - Pets":"Products - Pets"},"Products - Sport":{"0":"Products - Sport","Products - Sport":"Products - Sport","Sport Clothing":"Sport Clothing","Sport Shoes":"Sport Shoes","Sport Equipment":"Sport Equipment","Swimwear":"Swimwear","Golf Accessoires":"Golf Accessoires","Camping & Outdoor":"Camping & Outdoor","Sports Nutrition":"Sports Nutrition"},"Products - Books":{"0":"Products - Books","Products - Books":"Products - Books"},"Products - Toys":{"0":"Products - Toys","Products - Toys":"Products - Toys"},"Products - Print":{"0":"Products - Print","Products - Print":"Products - Print","Photo Print":"Photo Print"},"Products - Pharmacy":{"0":"Products - Pharmacy","Products - Pharmacy":"Products - Pharmacy","Over the Counter Medicine \/ Tests":"Over the Counter Medicine \/ Tests","Stopping Smoking":"Stopping Smoking"},"Products - Fashion":{"0":"Products - Fashion","Products - Fashion":"Products - Fashion","Women&lsquo;s Fashion":"Women&lsquo;s Fashion","Men&lsquo;s Fashion":"Men&lsquo;s Fashion","Kids Fashion":"Kids Fashion","Designer Clothes":"Designer Clothes","Shoes":"Shoes","Underwear":"Underwear","Tailored Wear":"Tailored Wear","Outlet":"Outlet"},"Products - Erotic":{"0":"Products - Erotic","Products - Erotic":"Products - Erotic"},"Online-Shops":{"0":"Online-Shops","Online-Shop":"Online-Shop","Fully Assorted Supplier":"Fully Assorted Supplier","Books":"Books","Music, DVD&lsquo;s & Games":"Music, DVD&lsquo;s & Games","Computer & Software":"Computer & Software","Electronic & Photo":"Electronic & Photo","DIY, Garden":"DIY, Garden","Pet Supplies":"Pet Supplies","Kitchen & Household":"Kitchen & Household","Car & Motorbike":"Car & Motorbike","Groceries":"Groceries","Chemist":"Chemist","Toys":"Toys","Fashion":"Fashion","Sport & Leisure":"Sport & Leisure","Erotic":"Erotic","Pharmacy":"Pharmacy","Outdoor Supplies":"Outdoor Supplies","Print":"Print"}},"GrouponLive":{"Music Event":{"Country and folk":"Country and folk","R&B,Urban Soul":"R&B,Urban Soul","Rock & Pop":"Rock & Pop","Jazz & Blues":"Jazz & Blues","Rap and Hip Hop":"Rap and Hip Hop","Hard Rock and Metal":"Hard Rock and Metal","Dance\/Electronic":"Dance\/Electronic","Music festival":"Music festival"},"Sporting Events":{"Mixed Martial Arts ":"Mixed Martial Arts ","Wrestling":"Wrestling","Boxing":"Boxing","Lacrosse":"Lacrosse","Baseball:  MLB":"Baseball:  MLB","Baseball:  Other":"Baseball:  Other","Tennis":"Tennis","Hockey:  NHL":"Hockey:  NHL","Hockey:  Other":"Hockey:  Other","Golf:  PGA":"Golf:  PGA","Golf:  Other":"Golf:  Other","Motorsports: NASCAR":"Motorsports: NASCAR","Motorsports: INDY":"Motorsports: INDY","Motorsports: Other":"Motorsports: Other","Football:  NFL":"Football:  NFL","Football:  College":"Football:  College","Football:  Other":"Football:  Other","Soccer":"Soccer","Volleyball":"Volleyball","Basketball: NBA":"Basketball: NBA","Basketball: WNBA":"Basketball: WNBA","Basketball: College":"Basketball: College","Rodeo\/bull riding":"Rodeo\/bull riding","Roller Derby":"Roller Derby","Extreme Sports":"Extreme Sports","Other":"Other"},"Arts & theater":{"Museum\/Art Exhibit":"Museum\/Art Exhibit","Opera":"Opera","Ballet and Dance":"Ballet and Dance","Broadway":"Broadway","Off Broadway":"Off Broadway","Comedy ":"Comedy ","Orchestra\/Symphony":"Orchestra\/Symphony","Circque due Soleil":"Circque due Soleil","Plays":"Plays","Musicals":"Musicals"},"Family Events":{"Ice Shows":"Ice Shows","Circus":"Circus","Magic Shows":"Magic Shows","Other":"Other"}},"Product (Groupon Goods)":[""]}';
+
+            var parsed = j$.parseJSON(taxonomy);
+       
+       //Clear the html div     
+            j$('#Subcat1').html("");
+            j$('#Subcat2').html("");
+            
+       //Create the live append     
+            j$('#Cat').append('<option value=""></option>');
+            for (var key in parsed) {
+                if (key == 0 || key == "") {continue;}
+                if (key == "GrouponLive") {
+                    
+                    var optionName = "GrouponLive - Tickets";
+                } else {
+                    var optionName = key;
+                }
+                
+                j$('#Cat').append('<option value="'+key+'">'+optionName+'</option>');
+            }
+            j$('#Cat').live('change',function(){
+                
+                j$('#Subcat1').html("");
+                j$('#Subcat2').html("");
+                if (parsed[j$(this).val()].length != 1) {
+                    j$('#Subcat1').append('<option value=""></option>');
+                    for (var key in parsed[j$(this).val()]) {
+                        if (key == 0 || key == "") {continue;}
+                        var value = key.replace("&lsquo;", "'")
+                        j$('#Subcat1').append('<option value="'+value+'">'+key+'</option>');
+                    }
+                    if (j$('#Subcat1').html()!="") {
+                       
+                    }
+                    
+                } else {
+                    
+                }
+            });
+            j$('#Subcat1').live('change',function(){
+                j$('#Subcat2').html("");
+                var useThis = parsed[j$("#Cat").val()][j$(this).val()];
+                j$('#Subcat2').append('<option value=""></option>');
+                for (var key in useThis) {
+                    if (key == 0 || key == "") {continue;}
+                    var value = key.replace("&lsquo;", "'");
+                    j$('#Subcat2').append('<option value="'+value+'">'+key+'</option>');
+                }
+                if (j$('#Subcat2').html()!="") {
+                    
+                }
+            });
+    }          
+</script>
+<style>
+.inner {
+    width: 50%;
+    margin: 0px auto;
+}
+
+#searchResults tr:nth-of-type(odd) {
+  background-color:#ccc;
+  border:1px;
+}
+
+#Pinned tr:nth-of-type(odd) {
+  background-color:#ccc;
+  border:1px;
+}
+.merchantSearch
+{ 
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width:100%
+}
+
+</style>
+</apex:page>

@@ -1,0 +1,52 @@
+<apex:page standardController="Device_Request__c">
+    <body>
+        <apex:outputPanel layout="block" style="background-color:#FF0011; height:70px; font-size:20px" rendered="{!Device_Request__c.Approval_Status_read__c=='Not Submitted'}">
+            <center>
+                <br></br>
+                    <B>Your Device Request Has NOT Been Submitted for Approval</b>
+                <br></br>
+            </center>
+        </apex:outputPanel>
+        
+        <apex:outputPanel layout="block" style="background-color:#8A9EBE; height:70px; font-size:20px" rendered="{!Device_Request__c.Approval_Status_read__c=='Not Reviewed'}">
+            <center>
+                <br></br>
+                    <B>Your Device Request Has NOT Been Reviewed for Approval</b>
+                <br></br>
+            </center>
+        </apex:outputPanel>
+        
+        <apex:outputPanel layout="block" style="background-color:#E39321; height:70px; font-size:20px" rendered="{!Device_Request__c.Approval_Status_read__c=='Pending GP Projection'}">
+            <center>
+                <br></br>
+                    <B>Your Device Request is Pending per GP Projection</b>
+                <br></br>
+            </center>
+        </apex:outputPanel>     
+      
+        <apex:outputPanel layout="block" style="background-color:#608B06; height:70px; font-size:20px;" rendered="{!Device_Request__c.Approval_Status_read__c=='Approved'}">
+            <center>
+                <br></br>
+                    <b>Your Device Request Has Been Approved</b>
+                <br></br>
+            </center>
+        </apex:outputPanel>
+
+        <apex:outputPanel layout="block" style="background-color:#FF0011; height:70px; font-size:20px" rendered="{!Device_Request__c.Approval_Status_read__c=='Denied'}">
+            <center>
+                <br></br>
+                    <B>Your Device Request Has Been Denied</b>
+                <br></br>
+            </center>
+        </apex:outputPanel>
+
+        <apex:outputPanel layout="block" style="background-color:#99908C; height:70px; font-size:20px" rendered="{!Device_Request__c.Approval_Status_read__c=='Cancelled'}">
+            <center>
+                <br></br>
+                    <B>Your Device Request Has Been Cancelled</b>
+                <br></br>
+            </center>
+        </apex:outputPanel>
+
+    </body>
+</apex:page>

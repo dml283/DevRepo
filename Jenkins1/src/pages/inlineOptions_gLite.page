@@ -1,0 +1,135 @@
+<apex:page standardcontroller="Opportunity" extensions="InlineOptionsExt" id="page" showHeader="false" sidebar="false">
+
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:stylesheet value="{!URLFOR($Resource.bootstrap, 'bootstrap/css/bootstrap.css')}"/>
+<apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+<apex:includeScript value="{!URLFOR($Resource.formatCurrency)}"/>  
+    <apex:pageMessages />
+  
+    <table id="options" cellspacing="0" cellpadding="0" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Option Name</th>
+                <th>Display Order</th>
+                <th>Buy Price</th>
+                <th>Sell Price</th>
+                <th>Value</th>
+                <th>Margin</th>
+                <th>Discount</th>
+                <th>Option Cap</th>
+                <th>gLite Monthly Cap</th>
+                <th>Services</th>
+                <th>Attributes</th>
+            </tr>
+        </thead>
+    <tbody id="optionRecords">
+      
+    </tbody>
+    <div>
+        <td><div class="pull-left"><button id="newBtn" class="btn-primary" onclick="newOptionPop()"><i class="icon-plus-sign icon-white"></i> New</button></div></td>
+        <td/><td/><td/><td/><td/><td/><td/><td/><td/><td/>
+    </div>
+    </table>
+    
+<Script>
+var options = new Array({!Options});
+console.log(options);
+var j$ = jQuery.noConflict();
+j$(document).ready(function(){
+        loadOptions();
+    });
+
+function loadOptions(){
+        j$(options).each(function(){
+                j$("#viewOptionTemplate").tmpl(this).appendTo("#options");
+                j$(".currency").formatCurrency();
+            });
+        j$("#newBtn").show();
+    }
+
+function newOption(){
+        j$("#optionRecords").html('');
+        j$("#newOptionTemplate").tmpl(this).appendTo("#options");
+        hideNewButton();
+    }
+    
+function editOption(){
+        j$("#optionRecords").html('');
+        j$("#editOptionTemplate").tmpl(this).appendTo("#options");
+        hideNewButton();
+    }    
+
+function cancelNewOption(){
+        j$("#optionRecords").html('');
+        loadOptions();
+    }    
+
+function hideNewButton(){
+        j$("#newBtn").hide();
+    }
+    
+function newOptionPop(){
+        window.open("/a0Y/e?CF00NC0000004iQvK={!URLENCODE(Opportunity.Name)}&CF00NC0000004iQvK_lkid={!Opportunity.Id}");
+    }
+    
+function editOptionPop(recordId){
+        window.open("/"+recordId+"/e?retURL=%2F"+recordId);
+    }    
+
+</script>
+
+<script id="viewOptionTemplate" type="text/x-jquery-tmpl">
+    <tr id="viewOption">  
+        <td><a href="/${Id}" target="_blank">${Name}</a></td>
+        <td>${Display_Order__c}</td>
+        <td class="currency">${Unit_Buy_Price__c}</td>
+        <td class="currency">${Unit_Sell_Price__c}</td>
+        <td class="currency">${Unit_Value__c}</td>
+        <td>${Margin_Percent__c}%</td>
+        <td>${Discount__c}%</td>
+        <td>${Total_Deal_Max__c}</td>
+        <td>${GrouponLite_Monthly_Cap__c}</td>
+        <td>${Option_Services__c}</td>
+        <td>${Option_Attributes__c}</td>
+        
+    </tr>
+</script>
+
+<script id="editOptionTemplate" type="text/x-jquery-tmpl">
+    <tr id="editOption">  
+        <td><div align="center" class="pull-left"><a class="links"><i class="icon-check"></i> Save</a> | <a onclick="cancelNewOption()" class="links"><i class="icon-remove"></i> Cancel</a></div></td>
+        <td>editname</td>
+        <td>editStuff2</td>
+        <td>editStuff3</td>
+        <td>editStuff4</td>
+        <td>editStuff5</td>
+        <td>editStuff6</td>
+        <td>editStuff7</td>
+    </tr>
+</script>
+
+<script id="newOptionTemplate" type="text/x-jquery-tmpl">
+    <tr id="newOption">  
+        <td><div align="center" class="pull-left"><a class="links"><i class="icon-check"></i> Save</a> | <a onclick="cancelNewOption()" class="links"><i class="icon-remove"></i> Cancel</a></div></td>
+        <td><input id="optionName"/></td>
+        <td><input id="optionDisplayOrder"/></td>
+        <td><input id="optionBuyPrice"/></td>
+        <td><input id="optionSellPrice"/></td>
+        <td><input id="optionUnitValue"/></td>
+        <td><input id="optionCap"/></td>
+        <td><input id="optionGLiteCap"/></td>
+        <td><input id="optionServices"/></td>
+        <td><input id="optionAttributes"/></td>
+        <td>newStuff6</td>
+    </tr>
+
+</script>
+
+<style>
+a.links{
+align: center;
+cursor: pointer;
+}
+</style>
+</apex:page>

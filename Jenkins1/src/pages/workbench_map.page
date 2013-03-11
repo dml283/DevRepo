@@ -1,0 +1,201 @@
+<apex:page controller="workbench" standardStylesheets="false" showHeader="false" sidebar="true">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:includeScript value="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp9F6dL6fKeRwmKlMmE5yoXEhDcvATwEw&sensor=false"/>
+<apex:includeScript value="{!URLFOR($Resource.formatCurrency)}"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap)}"/>
+<apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css"/>
+<html>
+<TITLE>Map It!</TITLE>
+  <header>
+  <div class="container">
+    <nav>
+     <ul>
+       <li class="active">
+         <a href="/home/home.jsp" target="_blank">Workbench</a>
+       </li>  
+       <li>
+         <a href="/">Back to Salesforce</a>
+       </li>  
+     </ul>
+    </nav>
+  </div>
+  </header>
+  <div class="content clearfix">
+    <div class="container">
+      <aside>
+        <nav>
+          <ul class="nav-plain">
+              <li><a href="/apex/workbench_merchants">Merchants</a></li>
+              <li><a href="/apex/workbench_contracts">Contracts<span class="badge-counter pull-right">{!stat.my_contracts}</span></a></li>
+              <li><a href="/apex/workbench_pipeline">Pipeline<span class="badge-counter pull-right">{!stat.my_deals}</span></a></li>
+              <li><a href="/apex/workbench_IR">IRs<span class="badge-counter pull-right">{!stat.my_irs}</span></a></li>
+              <li><a href="/apex/workbench_commission">Commission</a></li>
+              <li><a href="/apex/workbench_transactions">Transactions</a></li>
+              <li class="active"><a href="/apex/workbench_map">Map It!</a></li>
+              <li><a href="/apex/workbench_rgi">Rep Getting Info<span class="badge-counter pull-right">{!stat.my_rgi}</span></a></li>
+              <li><a href="/apex/workbench_tasks">Tasks</a></li>
+              <li><a href="/apex/workbench_live_deals">Live Deals</a></li>  
+          </ul>
+        </nav>
+      </aside>
+    <section class="main">
+      <div class="container">
+        <body class="nav with-sidebar">
+          <h3 class="h3">Map My Merchants</h3>
+          <div id="selectors" style="display:none;">
+              <label for="accounts">Accounts</label>
+              <input type="checkbox" id="accounts" class="checkbox" onclick="drawMarkers();"/>
+              <label for="leads">Leads</label>
+              <input type="checkbox" id="leads" class="checkbox" onclick="drawMarkers();"/>
+          </div>
+          <div id="map_canvas" style="max-width:100%; position:relative; height:900px;">
+            Some Data
+          </div>
+        </body>
+      </div>
+    </section>
+    <section class="sidebar">
+      <div class="container">
+        <figure class="statbox">
+          <h3>Contracts
+            <em>MTD</em>
+            <strong>
+              <span class="low">{!stat.contract_percent_to_goal}% to Goal</span>
+            </strong>
+          </h3>
+          <ul class="progress-meter clearfix">
+            <li class="completed" style="width:{!stat.contract_percent_to_goal}%;"></li>
+          </ul>
+          <table class="table-dashboard">
+            <tfoot>
+              <tr>
+                <th>Closed</th>
+                <th>Sent</th>
+                <th>New Biz</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr>
+                <td>{!stat.contracts_won}</td>
+                <td>{!stat.my_contracts}</td>
+                <td>{!stat.contracts_new_business}</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <figure class="statbox">
+          <h3>GP
+            <em>MTD</em>
+            <strong>
+              <span class="low">{!stat.actual_percent_to_goal}% to Goal</span>
+            </strong>
+          </h3>
+          <ul class="progress-meter clearfix">
+            <li class="completed" style="width:{!stat.actual_percent_to_goal}%;"></li>
+          </ul>
+          <table class="table-dashboard">
+            <tfoot>
+              <tr>
+                <th>Deal</th>
+                <th>ST</th>
+                <th>Actual</th>
+                <th>Projected</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr>
+                <td>{!stat.gp_deals_run}</td>
+                <td>{!stat.gp_sure_thing}</td>
+                <td class="currency">{!stat.gp_actual}</td>
+                <td class="currency">{!stat.gp_run_rate}</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>        
+      </div>
+    </section>
+  </div>
+  </div>
+</html>
+<script>
+var map;
+var myLocation;
+var icons = new Object();
+icons['Beauty / Wellness / Healthcare'] = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/pink-dot.png';
+icons['Leisure Offers / Activities'] = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png';
+icons['Travel'] = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/red-dot.png';
+icons['Tickets'] = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/red-dot.png';
+icons['Food & Drink'] = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/blue-dot.png';
+icons['Services'] = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png';
+icons['Shopping'] = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/purple-dot.png';
+icons['Charity'] = 'http://maps.google.com/intl/en_us/mapfiles/ms/micons/green-dot.png';
+console.log(icons);
+$(document).ready(function(){
+    initiate_geolocation();
+    $('.currency').formatCurrency({roundToDecimalPlace:0});
+    $('#map_canvas').show();
+});
+function drawMarkers(){
+    workbench.getMapMarkers(function(result,event){
+    $(result).each(function(){
+    console.log(this.category);
+           var content = "<a href='/"+this.id+"' target='_blank'>"+this.title+"</a><br/><br/><span>Category: </span><span>"+this.category+"</span><br/><span>Subategory: </span><span>"+this.subcategory+"</span>";
+           var Latlng = new google.maps.LatLng(this.latlng.lat,this.latlng.lng);
+           var marker = new google.maps.Marker({        
+            position: Latlng,         
+            title: this.title,
+            animation: google.maps.Animation.DROP,
+            content: content,
+            map: map
+         });
+         console.log(this.category+':===='+icons[this.category]);
+         marker.setIcon(icons[this.category]);
+         google.maps.event.addListener(marker, 'click', function() {
+           var info = new google.maps.InfoWindow({content: this.content}).open(map,this);
+         });        
+        });
+    
+    });
+}
+function initiate_geolocation() {
+            navigator.geolocation.getCurrentPosition(handle_geolocation_query);
+        }
+
+function handle_geolocation_query(position){
+            myLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
+            initialize();
+        }
+function initialize() {
+        var myOptions = {
+          center: myLocation,
+          zoom: 8,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+        drawMarkers();
+      }
+</script>
+
+
+<script>
+      var uvOptions ={
+          custom_fields: {
+            "Product": "Workbench" }
+        }
+      
+      var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+      uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/vwN44TKtSIotuKFPOXwE7A.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);  
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26968040-11']); 
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);})();
+</script>
+</apex:page>

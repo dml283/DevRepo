@@ -1,0 +1,71 @@
+<apex:component >
+	<apex:attribute name="height" description="This is the map height"
+		type="integer" default="400" />
+	<apex:attribute name="width" description="This is the map width"
+		type="integer" default="550" />
+    <apex:attribute name="mapType" description="mapType    default is 'hybrid'    Possible values are 'normal', 'satellite' or 'hybrid'"
+        type="string" default="normal" />
+    <apex:attribute name="mapkey" description="This is the google map key"
+        type="string" required="true" />    
+ 	<apex:attribute name="jsondata" description="This is the data to map"
+        type="string" required="true" />    
+
+	<script src="http://maps.google.com/maps?file=api&v=2&key={!mapkey}"
+		type="text/javascript"></script>
+	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+	   <apex:form >
+	<script type="text/javascript">
+      google.load("visualization", "1", {packages:["map","table"]});
+      google.setOnLoadCallback(drawMap);
+      function drawMap() {
+        var data = new google.visualization.DataTable( eval( '({!jsondata})' ) );
+        var map = new google.visualization.Map(
+            document.getElementById('{!$Component.map_div}'));
+            
+       /*
+        http://code.google.com/apis/visualization/documentation/gallery/map.html
+       */
+      map.draw(data, {showTip: true, enableScrollWheel:true,mapType:"{!mapType}" });
+        
+      /*
+	  google.visualization.events.addListener(map, 'select', function() {
+	   var sel = map.getSelection()[0];
+	   var row = map.getSelection()[0].row;
+	   
+	   alert('You selected ' + data.getValue(row, 2));
+	   //debugger;
+	   //window.location.href = '/'+data.getValue(row, 0);
+	  });
+	  */
+	  
+      var table = new google.visualization.Table(
+      	document.getElementById('{!$Component.table_div}'));
+      table.draw(data, {showRowNumber: true, });    
+        
+	 
+	  google.visualization.events.addListener(table, 'select', function() { 
+	   map.setSelection(table.getSelection()); 
+	   sayHello();
+	   });
+	   
+	  google.visualization.events.addListener(map, 'select', function() { 
+	  	table.setSelection(map.getSelection()); });
+      }
+    </script>
+    <apex:actionFunction name="sayHello" action="{!sayHello}" 
+    rerender="out" status="myStatus">
+    <apex:param name="aid" value="a" />
+    </apex:actionFunction> 
+ 
+  <apex:panelGrid columns="2">
+	<apex:outputPanel id="map_div" layout="block"
+		style="width: {!width}px; height: {!height}px">
+	</apex:outputPanel>
+	
+	 <apex:outputPanel id="table_div" layout="block" 
+	 	style="width: {!width}px; height: {!height}px" >
+	 </apex:outputPanel>
+	</apex:panelGrid>
+    
+    </apex:form>
+</apex:component>

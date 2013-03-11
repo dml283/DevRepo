@@ -1,0 +1,103 @@
+<apex:page showHeader="true" sidebar="true" controller="marketrollout" renderAs="pdf">
+<apex:sectionHeader title="Market Rollout"/>
+ <apex:pageBlock title="Market Roll Out">
+  <apex:dataTable value="{!Divisions}" var="division" cellPadding="4" border="1" style="text-align:center">
+   <apex:column >
+    <apex:facet name="header" >Division Name</apex:facet>
+    <apex:outputField value="{!division.name}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">State</apex:facet>
+    <apex:outputField value="{!division.State__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Region</apex:facet>
+    <apex:outputField value="{!division.Region__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Training Begins</apex:facet>
+    <apex:outputField value="{!division.Training_Begins__c}"/>
+   </apex:column>    
+    <apex:column >
+    <apex:facet name="header">Original Launch</apex:facet>
+    <apex:outputField value="{!division.Original_Launch_Date__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Revised Launch</apex:facet>
+    <apex:outputField value="{!division.Revised_Launch__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Actual Launch</apex:facet>
+    <apex:outputField value="{!division.Actual_Launch__c}"/>
+   </apex:column>
+   <apex:column >   
+    <apex:facet name="header">Sales Team</apex:facet>
+    <apex:outputField value="{!division.Sales_Reps__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Lead Deal Planners</apex:facet>
+    <apex:outputField value="{!division.Lead_Deal_Planner_s__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Market Planner</apex:facet>
+    <apex:outputField value="{!division.Market_Planner__c}"/>
+   </apex:column>   
+   <apex:column >
+    <apex:facet name="header">Divisional Sales Manager</apex:facet>
+    <apex:outputField value="{!division.DSM__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Deal Vetter</apex:facet>
+    <apex:outputField value="{!division.Deal_Vetter__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">RVP</apex:facet>
+    <apex:outputField value="{!division.RVP__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Inside Rep Count</apex:facet>
+    <apex:outputField value="{!division.Inside_Rep_Count__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Outside Rep Count</apex:facet>
+    <apex:outputField value="{!division.Outside_Rep_Count__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Total Rep Count</apex:facet>
+    <apex:outputField value="{!division.Total_Rep_Count__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Soft Planned</apex:facet>
+    <apex:outputField value="{!division.Soft_Planned__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Soft Actual</apex:facet>
+    <apex:outputField value="{!division.Soft_Actual__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Hard Planned</apex:facet>
+    <apex:outputField value="{!division.Hard_Planned__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Hard Actual</apex:facet>
+    <apex:outputField value="{!division.Hard_Actual__c}"/>
+   </apex:column>   
+    <apex:column >
+    <apex:facet name="header">Saturday Planned</apex:facet>
+    <apex:outputField value="{!division.Saturday_Planned__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Saturday Actual</apex:facet>
+    <apex:outputField value="{!division.Saturday_Acutal__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Sunday Planned</apex:facet>
+    <apex:outputField value="{!division.Sunday_Planned__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Sunday Actual</apex:facet>
+    <apex:outputField value="{!division.Sunday_Actual__c}"/>
+   </apex:column>
+  </apex:dataTable>
+ </apex:pageBlock>
+</apex:page>

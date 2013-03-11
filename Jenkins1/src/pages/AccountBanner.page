@@ -1,0 +1,204 @@
+<apex:page standardController="Account" extensions="AccountBannerController" standardStylesheets="false" showheader="false" sidebar="false" docType="html-5.0" id="pgId" > 
+<html>
+<head>
+  <apex:stylesheet value="{!URLFOR($Resource.toolstrapbanner, '/toolstrapbanner/css/icon-font.css')}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.toolstrapbanner, '/toolstrapbanner/css/toolstrap.css')}"/>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" /> 
+  <meta name="viewport" content="width=device-width" />
+<!--[if lt IE 9]>
+  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<!--[if lt IE 9]>
+  <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<style>
+  #container {
+    text-align: center;
+  }
+  .sf-icon-container{
+      
+  }
+  .sf-banner {
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+    margin: 0;
+  }
+  .sf-banner li {
+    float: left;
+  }
+  .sf-banner div {
+    overflow: hidden;
+    height: 53px;
+    border-radius: 5px;
+    -webkit-transition: all .3s;
+    width: 48px;
+    overflow: hidden;
+  }
+
+  .sf-banner li + li {
+    margin-left: 5px;
+  }
+  .sf-banner a[class*="icon-"] {
+    float: left;
+    width: 48px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    display: block;
+  }
+  .sf-banner a[class*="icon-"]:before {
+    display: block;
+    line-height: 35px;
+    font-size: 20px;
+  }
+  .sf-banner span {
+    background-color: #333;
+    display: block;
+    border-radius: 0 0 5px 5px;
+    font-size: 11px;
+    line-height: 18px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+  }
+  .sf-banner .active {
+    width: 355px;
+  }
+  .sf-banner .active span {
+    border-radius: 0 0 0 5px;
+  }
+  .sf-banner p {
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 1.4;
+    padding: 10px 15px;
+    margin-left: 48px;
+    width: 302px;
+    text-align: left;
+  }
+  .sf-banner p a {
+    color: white;
+    text-decoration: underline;
+  }
+  .icon-clp:before {
+    content: attr(data-clp);
+    font-size: 16px !important;
+  }
+</style>
+</head>
+<body>
+
+<div id="container">
+  <ul class="sf-banner">
+
+    <li>
+     <apex:outputPanel rendered="{!Account.Result_of_Merchant_Survey__c=='Groupon Not Interested'&&Account.Account_Status__c!='Merchant Research Flag'}">
+        <div class="bg-danger">   
+        <a href="#" class="icon-dice">
+        <span>DNR</span>
+        </a>
+        <p>This Merchant is: ** {!Account.Account_Status__c} ** Contact WolfMothers with Questions. <br></br>
+        <b>LINK</b> to <apex:outputLink value="https://central.groupon.com/salesperson/merchant-escalations/dnr-removal-request" target="_blank"> Groupon Central</apex:outputLink>
+        </p>
+        </div>
+     </apex:outputPanel>
+    </li>
+
+    <li>  
+    <apex:outputPanel rendered="{!(Account.High_Risk_Subcategory_Grade_F__c==TRUE||Account.G1_Services_Override__c ==TRUE)&&(Account.Subcategory_v3__c=='Transportation'||Account.Subcategory_v3__c=='Handyman & Contractors'||Account.Subcategory_v3__c=='Car & Automotive'||Account.Subcategory_v3__c=='Cleaning Services'||Account.Subcategory_v3__c=='Transportation Rental'||Account.Subcategory_v3__c=='Event Rental Services'||Account.Subcategory_v3__c=='Delivery Service'||Account.Subcategory_v3__c=='Tour Provider'||Account.Subcategory_v3__c=='Accommodation'||Account.Subcategory_v3__c=='Driving'||Account.Subcategory_v3__c=='Transportation Rental'||Account.Subcategory_v3__c=='Event Rental Services'||Account.Subcategory_v3__c=='Delivery Service'||Account.Subcategory_v3__c=='Tour Provider'||Account.Subcategory_v3__c=='Accommodation'||Account.Subcategory_v3__c=='Driving'||Account.Subcategory_v3__c=='Cosmetic Surgery'||Account.Subcategory_v3__c=='Salon - Full Service'||Account.Subcategory_v3__c=='Spa - Medical'||Account.Subcategory_v3__c=='Flying'||Account.Subcategory_v3__c=='Boat Rental'||Account.Subcategory_v3__c=='Other Rental')}">
+     <div class="bg-warning">
+        <a href="#" class="icon-nuke">
+        <span>RISK</span>
+        </a>
+        <p>This merchant is on High-Risk Probation and must run with limited caps. 
+        <apex:outputLink value="http://bit.ly/high-risk-categories-on-glite-1" target="_blank">See Wiki</apex:outputLink></p>
+    </div>
+    </apex:outputPanel>
+    </li>
+    
+    <li>
+    <apex:outputPanel rendered="{!Account.Pay_On_Redemption_Only__c==TRUE}">
+    <div class="bg-warning">
+        <a href="#" class="icon-barcode">
+        <span>PoR</span>
+      </a>
+      <p>This merchant is <b>PAY ON REDEMPTION ONLY</b></p>
+    </div>
+    </apex:outputPanel>
+    </li>
+    
+    <li>
+    <apex:outputPanel rendered="{!Account.BillingCountry='US'&&Account.TIN_Status__c!='Valid'}">
+    <div class="bg-warning">     
+     <a href="#" class="icon-moneybag">
+        <span>TIN</span>
+      </a>
+      <p>This Merchant's Tax ID # issue. Click See SkyNet: 
+      <apex:outputLink value="https://sites.google.com/a/groupon.com/manual/2012-1099k-faq" target="_blank">here </apex:outputLink> for the full explanation. <br></br>
+      Edit TAX ID # and COMPANY LEGAL NAME</p>
+    </div>
+    </apex:outputPanel>
+    </li>
+    
+    <li>
+    <apex:outputPanel rendered="{!Account.Do_Not_Call__c=='POS'}">                   
+    <div class="bg-success">
+      <a href="#" class="icon-phone-nocall">
+        <span>BDNC</span>
+      </a>  
+      <p><b>Alert!</b> G1/G2/GLite/NOW!/Rewards/Scheduler SALES DO NOT CALL</p>
+    </div>
+    </apex:outputPanel>
+    </li>
+    
+    <li>
+    <apex:outputPanel rendered="{!Account.Top_Merchant_Campaign__c!=NULL}">
+    <div class="bg-success">
+     <a href="#" class="icon-tophat">
+        <span>TMC</span>
+      </a>
+      <p> This Account is a Top Merchant Campaign: {!Account.Top_Merchant_Campaign__c} </p>
+    </div>
+    </apex:outputPanel>
+    </li>
+    
+    <li>
+    <apex:outputPanel rendered="{!Account.BillingCountry=='US'&&Account.Payments_Product_Sales_Status__c!='Contract Closed'&&Account.Subcategory_v3__c!='Charity'&&Account.Subcategory_v3__c!='Dating Services'&&Account.Subcategory_v3__c!='Accommodation'&&Account.Subcategory_v3__c!=''&&Account.Subcategory_v3__c!='Commercial Airline'&&Account.Subcategory_v3__c!='Revenue Management'&&Account.Subcategory_v3__c!='Tour Provider'&&Account.Subcategory_v3__c!='Travel Agency'&&(Account.Payments_Handoff_Made_By__c==NULL||Account.Payments_Manager__c==NULL)&&(Account.Interested_in_Payments__c=='Yes'||Account.Payments_Eligible__c=='Yes'||Account.Top_Merchant_Campaign__c!=NULL)}">
+     <div class="bg-success">
+     <a href="#" class="icon-credit-card">
+        <span>PMTS</span>
+      </a>
+      <p>PLEASE PITCH PAYMENTS PROACTIVELY - <apex:outputLink value="https://sites.google.com/a/groupon.com/call-map-4/payment-resources" target="_blank">Payments Selling Points</apex:outputLink>. If interested, please send Warm Lead to:
+	  <apex:outputLink value="mailto:paymentsleads@groupon.com" target="_blank">paymentsleads@groupon.com</apex:outputLink></p>
+    </div>
+    </apex:outputPanel>
+    </li>
+
+   <li>
+    <apex:outputPanel rendered="{!qlp!=null && qlp!=0}">
+    <div class="bg-success">
+     <a href="#" class="icon-clp" data-clp="{!qlp}">
+        <span>CLP</span>
+     </a>
+        <p>This Merchant's QL Call List Priority is: {!qlp}</p>
+    </div>
+   </apex:outputPanel>
+   </li>
+
+  </ul>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script>
+  $('.sf-banner li div > a').click(function(e) {
+    e.preventDefault();
+    $(this).parent().parent().siblings().children().removeClass('active');
+    $(this).parent().toggleClass('active');
+  });
+</script>
+
+</body>
+</html>
+</apex:page>

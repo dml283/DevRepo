@@ -1,0 +1,221 @@
+<apex:page controller="workbench" standardStylesheets="false" showHeader="false" sidebar="true">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:includeScript value="{!URLFOR($Resource.formatCurrency)}"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap)}"/>
+<apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css"/>
+<html>
+<TITLE>Contracts</TITLE>
+  <header>
+  <div class="container">
+    <nav>
+     <ul>
+       <li class="active">
+         <a href="/home/home.jsp" target="_blank">Workbench</a>
+       </li>  
+       <li>
+         <a href="/">Back to Salesforce</a>
+       </li>  
+     </ul>
+    </nav>
+  </div>
+  </header>
+  <div class="content clearfix">
+    <div class="container">
+      <aside>
+        <nav>
+          <ul class="nav-plain">
+              <li><a href="/apex/workbench_merchants">Merchants</a></li>
+              <li class="active"><a href="/apex/workbench_contracts">Contracts<span class="badge-counter pull-right">{!stat.my_contracts}</span></a></li>
+              <li><a href="/apex/workbench_pipeline">Pipeline<span class="badge-counter pull-right">{!stat.my_deals}</span></a></li>
+              <li><a href="/apex/workbench_IR">IRs<span class="badge-counter pull-right">{!stat.my_irs}</span></a></li>
+              <li><a href="/apex/workbench_commission">Commission</a></li>
+              <li><a href="/apex/workbench_transactions">Transactions</a></li>    
+              <li><a href="/apex/workbench_map">Map It!</a></li>
+              <li><a href="/apex/workbench_rgi">Rep Getting Info<span class="badge-counter pull-right">{!stat.my_rgi}</span></a></li>
+              <li><a href="/apex/workbench_tasks">Tasks</a></li>      
+              <li><a href="/apex/workbench_live_deals">Live Deals</a></li>     
+
+          </ul>
+        </nav>
+      </aside>
+    <section class="main">
+      <div class="container">
+        <body class="nav with-sidebar">
+          <h2 class="h2">Contracts</h2>
+          <a href = "#" class="btn" onclick="contract('#contracts_sent')">Contracts Sent</a>
+          <a href = "#" class="btn" onclick="contract('#closed_won')">Closed Won</a>
+          <a href = "#" class="btn" onclick="contract('#prospecting')">Prospecting</a>
+          <div style="padding:30px 0 0 0;" class="clearfix">
+            <div id="contracts_sent" class="contract">
+              <h3 class="h3">Contracts Sent</h3>
+              <table class='table table-striped table-bordered table-condensed'>
+                <thead>
+                  <th>Merchant</th>
+                  <th>Deal</th>
+                  <th>Category</th>
+                  <th>Subcategory</th>
+                  <th>Sent Date</th>
+                  <th>Days Outstanding</th>
+                </thead>
+                <tbody>
+                  <apex:repeat value="{!Contrats.outstanding}" var="c">
+                    <tr>
+                      <td><a href="/{!c.account_id}" target="_blank">{!c.merchant_name}</a></td>
+                      <td><a href="/{!c.salesforce_id}" target="_blank">{!c.deal_name}</a></td>
+                      <td>{!c.category}</td>
+                      <td>{!c.subcategory}</td>
+                      <td>{!c.date_sent}</td>
+                      <td>{!c.days_outstanding}</td>
+                    </tr>
+                  </apex:repeat>
+                </tbody>
+              </table>
+            </div>
+            <div id="closed_won" class="contract" style="display:none;">
+              <h3 class="h3">Closed Won</h3>
+              <table class='table table-striped table-bordered table-condensed'>
+                <thead>
+                  <th>Merchant</th>
+                  <th>Deal</th>
+                  <th>Category</th>
+                  <th>Subcategory</th>
+                  <th>Sent Date</th>
+                  <th>Close Date</th>
+                </thead>
+                <tbody>
+                  <apex:repeat value="{!Contrats.closed}" var="c">
+                    <tr>
+                      <td><a href="/{!c.account_id}" target="_blank">{!c.merchant_name}</a></td>
+                      <td><a href="/{!c.salesforce_id}" target="_blank">{!c.deal_name}</a></td>
+                      <td>{!c.category}</td>
+                      <td>{!c.subcategory}</td>
+                      <td>{!c.date_sent}</td>
+                      <td>{!c.close_date}</td>
+                    </tr>
+                  </apex:repeat>
+                </tbody>
+              </table>
+            </div>
+            <div id="prospecting" class="contract" style="display:none;">
+              <h3 class="h3">Prospecting</h3>
+              <table class='table table-striped table-bordered table-condensed'>
+                <thead>
+                  <th>Merchant</th>
+                  <th>Deal</th>
+                  <th>Category</th>
+                  <th>Subcategory</th>
+                  <th>Created Date</th>
+                  <th>Days Since Creation</th>
+                </thead>
+                <tbody>
+                  <apex:repeat value="{!Contrats.closed}" var="c">
+                    <tr>
+                      <td><a href="/{!c.account_id}" target="_blank">{!c.merchant_name}</a></td>
+                      <td><a href="/{!c.salesforce_id}" target="_blank">{!c.deal_name}</a></td>
+                      <td>{!c.category}</td>
+                      <td>{!c.subcategory}</td>
+                      <td>{!c.created_date}</td>
+                      <td>{!c.days_since_created}</td>
+                    </tr>
+                  </apex:repeat>
+                </tbody>
+              </table>
+            </div>                          
+          </div>
+        </body>
+      </div>
+    </section>
+    <section class="sidebar">
+      <div class="container">
+        <figure class="statbox">
+          <h3>Contracts
+            <em>MTD</em>
+            <strong>
+              <span class="low">{!stat.contract_percent_to_goal}% to Goal</span>
+            </strong>
+          </h3>
+          <ul class="progress-meter clearfix">
+            <li class="completed" style="width:{!stat.contract_percent_to_goal}%;"></li>
+          </ul>
+          <table class="table-dashboard">
+            <tfoot>
+              <tr>
+                <th>Closed</th>
+                <th>Sent</th>
+                <th>New Biz</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr>
+                <td>{!stat.contracts_won}</td>
+                <td>{!stat.my_contracts}</td>
+                <td>{!stat.contracts_new_business}</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>
+        <figure class="statbox">
+          <h3>GP
+            <em>MTD</em>
+            <strong>
+              <span class="low">{!stat.actual_percent_to_goal}% to Goal</span>
+            </strong>
+          </h3>
+          <ul class="progress-meter clearfix">
+            <li class="completed" style="width:{!stat.actual_percent_to_goal}%;"></li>
+          </ul>
+          <table class="table-dashboard">
+            <tfoot>
+              <tr>
+                <th>Deal</th>
+                <th>ST</th>
+                <th>Actual</th>
+                <th>Projected</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <tr>
+                <td>{!stat.gp_deals_run}</td>
+                <td>{!stat.gp_sure_thing}</td>
+                <td class="currency">{!stat.gp_actual}</td>
+                <td class="currency">{!stat.gp_run_rate}</td>
+              </tr>
+            </tbody>
+          </table>
+        </figure>        
+      </div>
+    </section>
+  </div>
+  </div>
+</html>
+<script>
+$(document).ready(function(){
+    $('.currency').formatCurrency({roundToDecimalPlace:0});
+});
+function contract(elm){
+    $('.contract').hide();
+    $(elm).show();
+  }               
+</script>
+<script>
+      var uvOptions ={
+          custom_fields: {
+            "Product": "Workbench" }
+        }
+      
+      var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+      uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/vwN44TKtSIotuKFPOXwE7A.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);  
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26968040-11']); 
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);})();
+</script>
+</apex:page>

@@ -1,0 +1,40 @@
+<apex:page showHeader="false" sidebar="false">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"/>
+<qbdialer:c2c_component rendered="true"/>
+<script>
+var incall= false;
+$(document).ready(function(){
+    if(gup('phone')){
+     setTimeout(call,3000);
+     }
+    var cssCTI = $("link[href='/resource/qbdialer__c2c_resources/20120829045823/style/c2c.css']");
+
+    //cssCTI.remove();
+});
+
+var call = function(){
+    var phone = gup('phone');
+    var id =  gup('id');
+    var accountid = gup('accountid');
+    console.log(phone);
+    console.log(id);
+    console.log(accountid);
+    incall=true;
+    ISDial(phone,id,accountid);
+   
+}
+
+function gup( name )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}
+
+</script>
+</apex:page>

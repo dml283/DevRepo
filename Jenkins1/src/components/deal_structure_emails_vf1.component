@@ -1,0 +1,133 @@
+<apex:component controller="deal_structure_emails_controller" access="global" >
+<apex:attribute name="assignedtoId" type="String" description="TODO: Describe me" assignTo="{!assignedtoId}"/>
+
+Please Review the Deal Structure for {!Opportunity.Name} <br/><br/>
+<b>This Opportunity is a {!Opportunity.Feature_or_Refeature__c}. </b> <br/>
+Record Type: {!Opportunity.RecordType.Name}<br/>
+Eligible for Refeature: {!Opportunity.Account.Eligible_for_Refeature__c}<br/><br/>
+
+Opportunity Owner: {!Opportunity.Owner.Name} <br/>
+Submitted via Deal Wizard: {!Opportunity.Submitted_via_Deal_Wizard__c}<br/>
+Straight to Private Sale: {!Opportunity.Straight_to_Private_Sale__c}<br/>
+Division: {!Opportunity.Division__c} <br/>
+Subdivision: {!Opportunity.Subdivision__c} <br/>
+<br/>
+Top Merchant Campaign: {!Opportunity.Account.Top_Merchant_Campaign__c}<br/>
+Credit Card Fee: {!Opportunity.CC_Fee__c}%<br/>
+<b>Margin Alert: {!Opportunity.Margin_Alert__c}</b><br/>
+<b>Total Deal Margin Percent: {!Opportunity.Margin_Percent__c}%</b><br/>
+Category (v3): {!Opportunity.Category_v3__c}<br/>
+Primary Deal Services: {!Opportunity.Primary_Deal_Services__c}<br/>
+<br/>
+
+Account Name: {!Opportunity.Account.name} <br/>
+Merchant Tier: {!Opportunity.Account.Merchant_Tier__c} <br/>
+Highest Quantum Lead Ranking for Merchant: {!Opportunity.QL_Rank__c}<br/>
+Sales Value Reason: {!Opportunity.QL_Sales_Value__c}<br/>               
+Merchant Quality Ranking: {!Opportunity.Merchant_Quality_Ranking__c} <br/>
+Opportunity Name: {!Opportunity.Name} <br/>
+Total Feature Max: {!FLOOR(Opportunity.Total_Feature_Deal_Max__c)} <br/>
+Payment Preference: {!Opportunity.Payment_Preference__c} <br/>
+Payment Terms: {!Opportunity.Payment_Terms__c} <br/>
+Fine Print: {!Opportunity.conditions__c} <br/>
+Available Date/Restrictions: {!Opportunity.Available_Date__c} <br/><br/>
+
+This Opportunity has {!FLOOR(Opportunity.Amount_of_Multi_Deal_Children__c)} multi-deal(s) <br/><br/>
+<table> 
+  <th style="width:100px"><center> Deal <br/>Info</center></th>
+  <th style="width:100px"><center> Deal <br/>Unit Buy Price</center></th>
+  <th style="width:100px"><center> Deal <br/>Unit Sell Price</center></th>
+  <th style="width:100px"><center> Deal <br/>Unit Value</center></th>
+  <th style="width:100px"><center> Deal <br/>Option Cap</center></th>   
+  <th style="width:100px"><center> Deal <br/>GLite Monthly Cap </center></th>   
+  <th style="width:100px"><center> Deal <br/>Margin ($)</center></th>
+  <th style="width:100px"><center> Deal <br/>Margin (%)</center></th>
+  <th style="width:100px"><center> Deal <br/>Discount %</center></th> 
+  <th style="width:100px"><center> Deal <br/>Expiration Type</center></th>
+  <th style="width:100px"><center> Deal <br/>Months to Expiration</center></th>
+  <th style="width:100px"><center> Deal <br/>Expiration Date</center></th> 
+  <apex:repeat value="{!multideals}" var="multi">
+  <tr>
+    <td style="width:100px"><center> <a href="https://na8.salesforce.com/{!multi.Id}" target="_blank">{!multi.name} </a> </center> </td>
+    <td style="width:100px"><center> ${!multi.Unit_Buy_Price__c}</center></td>
+    <td style="width:100px"><center> ${!multi.Unit_Sell_Price__c}</center></td>
+    <td style="width:100px"><center> ${!multi.Unit_Value__c}</center></td>
+    <td style="width:100px"><center> {!FLOOR(multi.Total_Deal_Max__c)}</center></td>
+    <td style="width:100px"><center> {!FLOOR(multi.GrouponLite_Monthly_Cap__c)}</center></td>
+    <td style="width:100px"><center> ${!multi.Margin__c}</center></td>
+    <td style="width:100px"><center> {!multi.Margin_Percent__c}%</center></td>
+    <td style="width:100px"><center> {!multi.Discount__c}%</center></td>
+    <td style="width:100px"><center> {!multi.Expiration_Type__c}</center></td>
+    <td style="width:100px"><center> {!multi.Months_to_Expiration__c}</center></td>
+    <td style="width:100px"><center> {!multi.Alternative_Expiration_Date__c}</center></td>
+  </tr>
+  </apex:repeat>
+</table>
+<br/><br/>
+<a href="https://na8.salesforce.com/{!Opportunity.Id}">You can view the Opportunity here</a><br/>
+<br/><br/>
+
+<b>Past Deals (Limit 5):</b><br/>
+<table>
+  <th style="width:100px"><center> Name </center></th>
+  <th style="width:100px"><center> Division </center></th>
+  <th style="width:100px"><center> Feature Date </center></th>
+  <th style="width:100px"><center> Permalink </center></th>
+  <th style="width:100px"><center> Deal Strength </center></th>
+  <th style="width:100px"><center> Total GP </center></th>
+  <th style="width:100px"><center> Units Sold </center></th>
+  <apex:repeat value="{!PastDeals}" var="past">
+    <tr>
+      <td style="width:100px"><center><a href="https://na8.salesforce.com/{!past.Id}" target="_blank">{!past.Name} </a></center></td>
+      <td style="width:100px"><center>{!past.Division__c}</center></td>
+      <td style="width:100px"><center><apex:outputText value="{0,date,MM'/'dd'/'yyyy}"><apex:param value="{!past.Feature_Date__c}"/></apex:outputText></center></td>
+      <td style="width:100px"><center>{!past.Permalink__c}</center></td>
+      <td style="width:100px"><center>{!past.Deal_Strengh__c}</center></td>
+      <td style="width:100px"><center>${!past.Total_GP__c}</center></td>
+      <td style="width:100px"><center>{!FLOOR(past.Total_Units_Sold__c)}</center></td>
+    </tr>
+  </apex:repeat>
+</table>
+<br/><br/>
+
+<b>Opportunity Field History: </b><br/>
+<table> 
+  <th style="width:100px"><center>Field Name</center></th>
+  <th style="width:100px"><center>Edit Date</center></th>
+  <th style="width:100px"><center>Edited By</center></th>
+  <th style="width:100px"><center>Old Value</center></th>
+  <th style="width:100px"><center>New Value</center></th>
+
+  <apex:repeat value="{!OpportunityHistory}" var="oppHistory">
+    <tr>
+      <td style="width:100px"><center>{!opportunityFieldNameToLabel[oppHistory.Field]}</center></td>
+      <td style="width:100px"><center><apex:outputText value="{0,date,MM'/'dd'/'yyyy 'at' HH:mm a}"><apex:param value="{!oppHistory.CreatedDate}"/></apex:outputText></center></td>
+      <td style="width:100px"><center>{!oppHistory.CreatedBy.Name}</center></td>
+      <td style="width:100px"><center>{!oppHistory.OldValue}</center></td>
+      <td style="width:100px"><center>{!oppHistory.NewValue}</center></td>
+    </tr>
+  </apex:repeat>
+</table>
+<br/><br/>
+
+<b>Multi Deal Field History:</b> <br/>
+<table>
+  <th style="width:100px"><center>Option Name</center></th>
+  <th style="width:100px"><center>Field Name</center></th>
+  <th style="width:100px"><center>Edit Date</center></th>
+  <th style="width:100px"><center>Edited By</center></th>
+  <th style="width:100px"><center>Old Value</center></th>
+  <th style="width:100px"><center>New Value</center></th>
+  <apex:repeat value="{!MultiDealHistory}" var="mdHistory">
+    <tr>
+      <td style="width:100px"><center><a href="https://na8.salesforce.com/{!mdHistory.ParentId}" target="_blank">{!mdHistory.Parent.Name}</a></center></td>
+      <td style="width:100px"><center>{!multiDealFieldNameToLabel[mdHistory.Field]}</center></td>
+      <td style="width:100px"><center><apex:outputText value="{0,date,MM'/'dd'/'yyyy 'at' HH:mm a}"><apex:param value="{!mdHistory.CreatedDate}"/></apex:outputText></center></td>
+      <td style="width:100px"><center>{!mdHistory.CreatedBy.Name}</center></td>
+      <td style="width:100px"><center>{!mdHistory.OldValue}</center></td>
+      <td style="width:100px"><center>{!mdHistory.NewValue}</center></td>
+    </tr>
+  </apex:repeat>
+</table>
+<br/><br/>
+</apex:component>

@@ -1,0 +1,74 @@
+<apex:page standardController="Opportunity" extensions="AddressController">
+    <apex:form >
+        <apex:pageBlock mode="maindetail" id="theBlock">
+            <apex:pageMessages />
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Save Redemption Address{!IF(addyList.size = 1, '', 'es')}" action="{!saveAddresses}" rerender="theBlock" status="save1" />
+                <apex:commandButton value="Add Redemption Address" action="{!addAddress}" rerender="theBlock" status="add1" />
+                <apex:commandButton value="Delete Selected" action="{!deleteSelected}" rerender="theBlock" status="delete1" />
+                <apex:actionStatus stopText="" startText="Saving..." id="save1" />
+                <apex:actionStatus stopText="" startText="Adding..." id="add1" />
+                <apex:actionStatus stopText="" startText="Deleting..." id="delete1" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Save Redemption Address{!IF(addyList.size = 1, '', 'es')}" action="{!saveAddresses}" rerender="theBlock" status="save2" />
+                <apex:commandButton value="Add Redemption Address" action="{!addAddress}" rerender="theBlock" status="add2" />
+                <apex:commandButton value="Delete Selected" action="{!deleteSelected}" rerender="theBlock" status="delete2" />
+                <apex:actionStatus stopText="" startText="Saving..." id="save2" />
+                <apex:actionStatus stopText="" startText="Adding..." id="add2" />
+                <apex:actionStatus stopText="" startText="Deleting..." id="delete2" />
+            </apex:pageBlockButtons>                    
+            <apex:repeat value="{!addyList}" var="addy">
+                <apex:pageBlockSection title="{!IF(ISNULL(addy.addy.Id), 'New Redemption Address', 'Redemption Address: ' + addy.addy.Full_Address__c)}" columns="2" collapsible="true">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Select Redemption Address" />
+                        <apex:inputCheckbox value="{!addy.selected}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.Account__c.label}" />
+                        <apex:inputField value="{!addy.addy.Account__c}" />
+                    </apex:pageBlockSectionItem>            
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.Street_Line_1__c.label}" />
+                        <apex:inputField value="{!addy.addy.Street_Line_1__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.Street_Line_2__c.label}" />
+                        <apex:inputField value="{!addy.addy.Street_Line_2__c}" />
+                    </apex:pageBlockSectionItem>                
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.City__c.label}" />
+                        <apex:inputField value="{!addy.addy.City__c}" />
+                    </apex:pageBlockSectionItem>    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.State__c.label}" />
+                        <apex:inputField value="{!addy.addy.State__c}" />
+                    </apex:pageBlockSectionItem>    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.Zip_Postal_Code__c.label}" />
+                        <apex:inputField value="{!addy.addy.Zip_Postal_Code__c}" />
+                    </apex:pageBlockSectionItem>    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.Country__c.label}" />
+                        <apex:inputField value="{!addy.addy.Country__c}" />
+                    </apex:pageBlockSectionItem>    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.Venue_Name__c.label}" />
+                        <apex:inputField value="{!addy.addy.Venue_Name__c}" />
+                    </apex:pageBlockSectionItem>    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.Phone_Number__c.label}" />
+                        <apex:inputField value="{!addy.addy.Phone_Number__c}" />
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!$ObjectType.Address__c.fields.Subdivision__c.label}" />
+                        <apex:outputField value="{!addy.addy.Subdivision__c}" />
+                    </apex:pageBlockSectionItem>                                                            
+                </apex:pageBlockSection>
+            </apex:repeat>
+        </apex:pageBlock>
+    </apex:form>
+<script>
+       beenFocused = true;
+</script>
+</apex:page>

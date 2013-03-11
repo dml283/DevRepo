@@ -1,0 +1,54 @@
+<apex:page standardController="Opportunity" extensions="PastFeatures">
+ <apex:pageBlock title="Past Deals">
+  <apex:dataTable value="{!PastDeals}" var="p" cellPadding="4" border="1" style="text-align:center">
+   <apex:column >
+    <apex:facet name="header">Opportunity Name</apex:facet>
+    <apex:outputLink target="_blank" value="/{!p.id}" id="Permalink">{!p.name}</apex:outputLink>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Division</apex:facet>
+    <apex:outputField value="{!p.Division__c}"/>
+   </apex:column> 
+   <apex:column >
+    <apex:facet name="header">Feature Date</apex:facet>
+    <apex:outputField value="{!p.Feature_Date__c}"/>
+   </apex:column>      
+   <apex:column >
+    <apex:facet name="header">Permalink</apex:facet>
+    <apex:outputLink target="_blank" value="https://www.groupon.com/deals/{!p.Permalink__c}" id="theLink">{!p.Permalink__c}</apex:outputLink>
+   </apex:column>   
+   <apex:column >
+    <apex:facet name="header">Copy Coordinator</apex:facet>
+    <apex:outputField value="{!p.Copy_Coordinator__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Details Writer</apex:facet>
+    <apex:outputField value="{!p.Researcher__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Deal Vettter</apex:facet>
+    <apex:outputField value="{!p.DV__c}"/>
+   </apex:column>  
+   <apex:column >
+    <apex:facet name="header">Deal Strength</apex:facet>
+    <apex:outputField value="{!p.Deal_Strengh__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">WriteUp Status</apex:facet>
+    <apex:outputField value="{!p.Writeup_Status_del__c}"/>
+   </apex:column>   
+   <apex:column >
+    <apex:facet name="header">ePPM</apex:facet>
+    <apex:outputField value="{!p.ePPM__c}"/>
+   </apex:column> 
+   <apex:column >
+    <apex:facet name="header">Total GP</apex:facet>
+    <apex:outputField value="{!p.Total_GP__c}"/>
+   </apex:column> 
+   <apex:column >
+    <apex:facet name="header">Total Units Sold</apex:facet>
+    <apex:outputField value="{!p.Total_Units_Sold__c}"/>
+   </apex:column>          
+   </apex:dataTable>
+ </apex:pageBlock>
+</apex:page>

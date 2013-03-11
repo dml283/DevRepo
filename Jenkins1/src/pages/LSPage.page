@@ -1,0 +1,7 @@
+<apex:page standardController="Social_Living__c">
+ 
+ <iframe width="100%" height="1200" scrolling="true" marginheight="100%" marginwidth="100%"
+  src="{!Social_Living__c.Deal_Link__c}">  
+  </iframe>
+
+</apex:page>

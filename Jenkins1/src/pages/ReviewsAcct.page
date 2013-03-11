@@ -1,0 +1,566 @@
+<apex:page standardController="Account" extensions="reviews_controller" sidebar="false" showHeader="false">
+    
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+    <apex:stylesheet value="{!URLFOR($Resource.bootstrap, 'bootstrap/css/bootstrap.css')}"/>
+    <apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+    
+    <apex:form id="form">
+    <apex:pagemessages />
+    <div class="container">
+        <apex:pageblock >
+      
+            <table>
+                <tr>
+                    <td colspan="4" align="center"><h1><b>Reviews for {!Account.name}</b></h1></td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <apex:outputPanel id="messaging">
+                        <apex:outputText escape="false" value="<b> {!errorMessage} </b>" style="font-family:Serif; font-size:16px; color:RED"/>
+                        </apex:outputPanel>
+                    </td> 
+                </tr> 
+                <br/>
+                <tr>
+                    <td><b>New Review</b></td>
+                </tr>
+                    <tr>
+                        <td width="15%">Type:</td>
+                        <td width="25%">
+                            <apex:inputField id="typeNew" value="{!reviewvalue.Type__c}" required="true"  onchange="displayReviewFields()"/>
+                        </td>
+                        <td width="15%">Source:</td>
+                        <td width="25%"><apex:inputField id="sourceNew" value="{!reviewvalue.Source__c}" onchange="displayOtherSource()"/></td>
+                    </tr>
+                    <tr class="OtherSource">
+                        <td width="15%"></td>
+                        <td width="25%">
+                        </td>
+                        <td width="15%">Other Source:</td>
+                        <td width="25%"><apex:inputField value="{!reviewvalue.Other_Source__c}"/></td>
+                    </tr>
+                    <table id="RatingNew">
+                        <tr class="RatingNew">
+                            <td width="15%">Rating:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Rating__c}"/></td>
+                            <td width="15%"># of 1-star Reviews:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.of_1_star_Reviews__c}"/></td>
+                        </tr>
+                        <tr class="RatingNew">
+                            <td width="15%">Max Possible Rating:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Max_Possible_Rating__c}"/></td>
+                            <td width="15%"># of 2-star Reviews:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.of_2_star_Reviews__c}"/></td>
+                        </tr>
+                        <tr class="RatingNew">
+                            <td width="15%">Number of Ratings:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Number_of_Ratings__c}"/></td>
+                            <td width="15%"># of 3-star Reviews:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.of_3_star_Reviews__c}"/></td>
+                        </tr>
+                        <tr class="RatingNew">
+                            <td width="15%">Unit:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Unit__c}"/></td>
+                            <td width="15%"># of 4-star Reviews:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.of_4_star_Reviews__c}"/></td>
+                        </tr>
+                        <tr class="RatingNew">
+                            <td width="15%">Highly Suspect:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Highly_Suspect__c}"/></td>
+                            <td width="15%"># of 5-star Reviews:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.of_5_star_Reviews__c}"/></td>
+                        </tr>
+                        <tr class="QuoteNew">
+                            <td width="15%">Quote Attribution:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Quote_Attribution__c}"/></td>
+                            <td width="15%">Quote:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Quote__c}"/></td>
+                        </tr>
+                        <tr class="BBBNew">
+                            <td width="15%" class="BBBNew">BBB Grade:</td>
+                            <td width="25%" class="BBBNew"><apex:inputField value="{!reviewvalue.BBB_Grade__c}"/></td>
+                            <td width="15%" class="BBBNew">BBB Accredited:</td>
+                            <td width="25%" class="BBBNew"><apex:inputField value="{!reviewvalue.BBB_Accredited__c}"/></td>
+                        </tr>
+                        <tr class="BBBNew">
+                            <td width="15%"># of Complaints:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.of_Complaints__c}"/></td>
+                            <td width="15%"/>
+                            <td width="25%"/>
+                        </tr>
+                        <tr class="MixedLedeNew">
+                            <td width="15%">Mixed Lede:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Mixed_Lede__c}"/></td>
+                            <td width="15%"></td>
+                            <td width="25%"></td>
+                        </tr>
+                        <tr class="SocialMediaNew">
+                            <td width="15%">Facebook # of Fans:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Facebook_of_Fans__c}"/></td>
+                            <td width="15%">Twitter # of Followers:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Twitter_of_Followers__c}"/></td>
+                        </tr>
+                        <tr class="New">
+                            <td width="15%">Url:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Review_Link__c}"/></td>
+                            <td width="15%">Description:</td>
+                            <td width="25%"><apex:inputField value="{!reviewvalue.Description__c}"/></td>
+                        </tr>
+                    </table>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td align="right">
+                            <div align="right" class="btn-group">
+                                <apex:commandbutton value="Add Review" action="{!savenew}" onclick="hideSaveButton()" rerender="messaging" oncomplete="reloadpage('{!errorMessage}')"/>
+                            </div>
+                        </td>
+                    </tr>
+                <br />
+            </table>
+            <b>&nbsp; &nbsp;General Reviews (No specific location)</b>
+            <table title="General Reviews" class="table table-striped">
+                <tr>
+                    <td><apex:inputCheckbox value="{!Generalreview_cxbox}"></apex:inputcheckbox></td>
+                    <td>Account Name:</td>
+                    <td>Account Owner:</td>
+                    <td>Division:</td>
+                    <td>Reviews Summary:</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><apex:outputfield value="{!Account.name}"/></td>
+                    <td><apex:outputfield value="{!Account.OwnerId}"/></td>
+                    <td><apex:outputfield value="{!Account.Division__c}"/></td>
+                    <td><apex:outputfield value="{!Account.General_Reviews__c}"/></td>
+                </tr>
+                <tr>
+                    <table id="general" cellspacing="0" cellpadding="0" class="table table-striped">
+                        <thead>
+                        </thead>
+                    </table>
+                </tr>
+            </table>
+            <br/>
+            <b>Locations</b>
+            <apex:repeat value="{!merchaddydata}" var="mercha" id="CurrentAddy">
+            <table title="Merchant Addresses" class="table table-striped">
+                <tr>
+                    <td>
+                        <apex:inputCheckbox value="{!mercha.selected}" id="box1">
+                        <apex:actionSupport event="onclick" action="{!GetSelected}" rerender="null" />
+                        </apex:inputcheckbox>
+                    </td>
+                    <td>Address:</td>
+                    <td>Phone Number:</td>
+                    <td>Venue Name:</td>
+                    <td>Reviews Summary:</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <apex:outputfield value="{!mercha.addy.Street_Line_1__c}"/><br />
+                        <apex:outputfield value="{!mercha.addy.Street_Line_2__c}"/><br />
+                        <apex:outputfield value="{!mercha.addy.City__c}"/>, &nbsp;<apex:outputfield value="{!mercha.addy.State_Province__c}"/>&nbsp;<apex:outputfield value="{!mercha.addy.Zip_Postal_Code__c}"/>
+                    </td>
+                    <td><apex:outputfield value="{!mercha.addy.Phone_Number__c}"/></td>
+                    <td><apex:outputfield value="{!mercha.addy.Venue_Name__c}"/></td>
+                    <td><apex:outputfield value="{!mercha.addy.Reviews__c}"/></td>
+                </tr>
+                <tr>
+                    <table id="{!mercha.addy.id}" cellspacing="0" cellpadding="0" class="table table-striped">
+                        <thead></thead>
+                    </table>
+                </tr>
+            </table>
+            </apex:repeat>
+        </apex:pageblock>
+    </div>
+    
+  <Script>
+    var DisplayGenReviews = new Array({!DisplayGenReviews});
+    var DisplayAddyReviews = new Array({!DisplayAddyReviews});
+    var j$ = jQuery.noConflict();
+    var error = '';
+    error = '{!errorMessage}';
+    j$(document).ready(function(){
+        displayReviewFields();
+        loadGeneralRevs();
+        loadAddyRevs();
+        showSaveButton();
+        displayOtherSource();
+    });
+    
+    function hideSaveButton()
+        {
+            if(error.length > 0)
+                {
+                    j$(".btn-group").hide();
+                }
+        }
+        
+    function showSaveButton()
+        {
+            j$(".btn-group").show();
+        }
+    
+    function displayReviewFields()
+        {
+            var typeVal = j$("select[id$='typeNew']").val();
+            if(typeVal == 'Rating')
+                {
+                    j$(".RatingNew").show();
+                    j$(".New").show();
+                    j$(".QuoteNew").hide();
+                    j$(".BBBNew").hide();
+                    j$(".MixedLedeNew").hide();
+                    j$(".SocialMediaNew").hide();
+                    j$(".Press").hide();
+                }
+            else if(typeVal == 'Press/Award')
+                {
+                    j$(".RatingNew").hide();
+                    j$(".QuoteNew").hide();
+                    j$(".BBBNew").hide();
+                    j$(".MixedLedeNew").hide();
+                    j$(".SocialMediaNew").hide();
+                    j$(".New").show();
+                    j$(".Press").show();
+                }
+            else if(typeVal == 'Quote')
+                {
+                    j$(".QuoteNew").show();
+                    j$(".New").show();
+                    j$(".RatingNew").hide();
+                    j$(".BBBNew").hide();
+                    j$(".MixedLedeNew").hide();
+                    j$(".SocialMediaNew").hide();
+                    j$(".Press").hide();
+                }
+            else if(typeVal == 'Mixed Lede')
+                {
+                    j$(".RatingNew").hide();
+                    j$(".QuoteNew").hide();
+                    j$(".BBBNew").hide();
+                    j$(".New").hide();
+                    j$(".SocialMediaNew").hide();
+                    j$(".Press").hide();
+                    j$(".MixedLedeNew").show();
+                }
+            else if(typeVal == 'BBB/Ripoff')
+                {
+                    j$(".BBBNew").show();
+                    j$(".New").show();
+                    j$(".RatingNew").hide();
+                    j$(".QuoteNew").hide();
+                    j$(".MixedLedeNew").hide();
+                    j$(".SocialMediaNew").hide();
+                    j$(".Press").hide();
+                }
+            else if(typeVal == 'Social Media')
+                {
+                    j$(".BBBNew").hide();
+                    j$(".New").show();
+                    j$(".RatingNew").hide();
+                    j$(".QuoteNew").hide();
+                    j$(".MixedLedeNew").hide();
+                    j$(".Press").hide();
+                    j$(".SocialMediaNew").show();
+                }
+        }
+        
+        function displayOtherSource()
+        {
+            var sourceVal = j$("select[id$='sourceNew']").val();
+            
+            if(sourceVal == 'Other')
+                {
+                    j$(".OtherSource").show();
+                }
+            else
+                {
+                    j$(".OtherSource").hide();                    
+                }
+        }
+    
+    function loadGeneralRevs(){
+    j$({!DisplayGenReviews }).each(function(index,field){                       
+        if(field.Type__c == 'Rating')
+            {
+                j$("#ratingTemplate").tmpl(this).appendTo("#general");
+            }
+        else if(field.Type__c == 'Quote')
+            {
+                j$("#quoteTemplate").tmpl(this).appendTo("#general");
+            }
+        else if(field.Type__c == 'BBB/Ripoff')
+            {
+                j$("#BBBTemplate").tmpl(this).appendTo("#general");
+            }
+        else if(field.Type__c == 'Mixed Lede')
+            {
+                j$("#mixedLedeTemplate").tmpl(this).appendTo("#general");
+            }        
+        
+        else if(field.Type__c == 'Social Media')
+            {
+                j$("#socialMediaTemplate").tmpl(this).appendTo("#general");
+            }
+        else if(field.Type__c == 'Press/Award')
+            {
+                j$("#PressTemplate").tmpl(this).appendTo("#general");
+            }
+        else
+            {
+                j$("#otherTemplate").tmpl(this).appendTo("#general");
+            }
+
+    });
+    }
+      
+    function loadAddyRevs(){
+    j$({!DisplayAddyReviews}).each(function(index,field){         
+        if(field.Type__c == 'Rating')
+            {
+                j$("#ratingTemplate").tmpl(this).appendTo("#"+field.Merchant_Address__c+"");
+            }
+        else if(field.Type__c == 'Quote')
+            {                
+                j$("#quoteTemplate").tmpl(this).appendTo("#"+field.Merchant_Address__c+"");
+            }
+        else if(field.Type__c == 'BBB/Ripoff')
+            {
+                j$("#BBBTemplate").tmpl(this).appendTo("#"+field.Merchant_Address__c+"");
+            }
+        else if(field.Type__c == 'Mixed Lede')
+            {
+                j$("#mixedLedeTemplate").tmpl(this).appendTo("#"+field.Merchant_Address__c+"");
+            }
+        else if(field.Type__c == 'Social Media')
+            {
+                j$("#socialMediaTemplate").tmpl(this).appendTo("#"+field.Merchant_Address__c+"");
+            }
+        else 
+            {
+                j$("#otherTemplate").tmpl(this).appendTo("#"+field.Merchant_Address__c+"");
+            }
+    });
+    }
+    
+    function reloadpage(booleanval)
+        {
+            if(booleanval.length == 0)
+                {
+                     window.location.reload()
+                }
+         }    
+    
+    </script>
+
+    <script id="ratingTemplate" type="text/x-jquery-tmpl">
+            <tr>
+                <td width="5%"><b>Record Link:</b></td>
+                <td><font color=="blue"><b><u><a href ="/${Id}" target="_blank" >${Name}</a></u></b></font></td>
+                <td width="5%"><b>Created Date:</b></td>
+                <td width="10%"><b>${Created_Date__c}</b></td>
+            </tr>
+            <tr>
+                <td width="5%">Type:</td>
+                <td width="10%">${Type__c}</td>
+                <td width="5%">Source:</td>
+                <td width="10%">${Source__c}</td>
+            </tr>
+            <tr>
+                <td width="5%">Rating:</td>
+                <td width="10%">${Rating__c}</td>
+                <td width="5%"># of 1-star Reviews:</td>
+                <td width="10%">${of_1_star_Reviews__c}</td>
+            </tr>
+            <tr>
+                <td width="5%">Max Possible Rating:</td>
+                <td width="10%">${Max_Possible_Rating__c}</td>
+                <td width="5%"># of 2-star Reviews:</td>
+                <td width="10%">${of_2_star_Reviews__c}</td>
+            </tr>
+            <tr>
+                <td width="5%">Number of Ratings:</td>
+                <td width="10%">${Number_of_Ratings__c}</td>
+                <td width="5%"># of 3-star Reviews:</td>
+                <td width="10%">${of_3_star_Reviews__c}</td>
+            </tr>
+            <tr>
+                <td width="5%">Unit:</td>
+                <td width="10%">${Unit__c}</td>
+                <td width="5%"># of 4-star Reviews:</td>
+                <td width="10%">${of_4_star_Reviews__c}</td>
+            </tr>
+            <tr>
+                <td width="5%">Url:</td>
+                <td><font color=="blue"><u><a href ="${Review_Link__c}" target="_blank" >${Review_Link__c}</a></u></font></td>
+                <td width="5%"># of 5-star Reviews:</td>
+                <td width="10%">${of_5_star_Reviews__c}</td>
+            </tr>
+            <tr>
+                <td width="15%">Highly Suspect:
+                <td width="25%">${Highly_Suspect__c}</td>
+                <td width="5%">Description:</td>
+                <td width="10%">${Description__c}</td>
+            </tr>
+    </script>
+    <script id="quoteTemplate" type="text/x-jquery-tmpl">
+        <tr>
+            <td width="5%"><b>Record Link:</b></td>
+            <td><font color=="blue"><b><u><a href ="/${Id}" target="_blank" >${Name}</a></u></b></font></td>
+            <td width="5%"><b>Created Date:</b></td>
+            <td width="10%"><b>${Created_Date__c}</b></td>
+        </tr>
+        <tr>
+            <td width="5%">Type:</td>
+            <td width="10%">${Type__c}</td>
+            <td width="5%">Source:</td>
+            <td width="10%">${Source__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Quote Attribution:</td>
+            <td width="10%">${Quote_Attribution__c}</td>
+            <td width="5%">Quote:</td>
+            <td width="10%">${Quote__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Url:</td>
+            <td><font color=="blue"><u><a href ="${Review_Link__c}" target="_blank" >${Review_Link__c}</a></u></font></td>
+            <td width="5%">Description:</td>
+            <td width="10%">${Description__c}</td>
+        </tr>
+    </script>
+    <script id="BBBTemplate" type="text/x-jquery-tmpl">
+        <tr>
+            <td width="5%"><b>Record Link:</b></td>
+            <td><font color=="blue"><b><u><a href ="/${Id}" target="_blank" >${Name}</a></u></b></font></td>
+            <td width="5%"><b>Created Date:</b></td>
+            <td width="10%"><b>${Created_Date__c}</b></td>
+        </tr>
+        <tr>
+            <td width="5%">Type:</td>
+            <td width="10%">${Type__c}</td>
+            <td width="5%">Source:</td>
+            <td width="10%">${Source__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Url:</td>
+            <td><font color=="blue"><u><a href ="${Review_Link__c}" target="_blank" >${Review_Link__c}</a></u></font></td>
+            <td width="5%"># of Complaints:</td>
+            <td width="10%">${of_Complaints__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">BBB Accredited:</td>
+            <td width="10%">${BBB_Accredited__c}</td>
+            <td width="5%">BBB Grade:</td>
+            <td width="10%">${BBB_Grade__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Description:</td>
+            <td width="10%">${Description__c}</td>
+            <td width="5%"/>
+            <td width="10%"/>
+        </tr>
+        <br/>
+    </script>
+    <script id="mixedLedeTemplate" type="text/x-jquery-tmpl">
+        <tr>
+            <td width="5%"><b>Record Link:</b></td>
+            <td><font color=="blue"><b><u><a href ="/${Id}" target="_blank" >${Name}</a></u></b></font></td>
+            <td width="5%"><b>Created Date:</b></td>
+            <td width="10%"><b>${Created_Date__c}</b></td>
+        </tr>
+        <tr>
+            <td width="5%">Type:</td>
+            <td width="10%">${Type__c}</td>
+            <td width="5%">Source:</td>
+            <td width="10%">${Source__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Mixed Lede:</td>
+            <td width="10%">${Mixed_Lede__c}</td>
+            <td width="5%"></td>
+            <td width="10%"></td>
+        </tr>
+    </script>
+    <script id="socialMediaTemplate" type="text/x-jquery-tmpl">
+        <tr>
+            <td width="5%"><b>Record Link:</b></td>
+            <td><font color=="blue"><b><u><a href ="/${Id}" target="_blank" >${Name}</a></u></b></font></td>
+            <td width="5%"><b>Created Date:</b></td>
+            <td width="10%"><b>${Created_Date__c}</b></td>
+        </tr>
+        <tr>
+            <td width="5%">Type:</td>
+            <td width="10%">${Type__c}</td>
+            <td width="5%">Source:</td>
+            <td width="10%">${Source__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Facebook # of Fans:</td>
+            <td width="10%">${Facebook_of_Fans__c}</td>
+            <td width="5%">Twitter # of Followers:</td>
+            <td width="10%">${Twitter_of_Followers__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Url:</td>
+            <td><font color=="blue"><u><a href ="${Review_Link__c}" target="_blank" >${Review_Link__c}</a></u></font></td>
+            <td width="5%">Description:</td>
+            <td width="10%">${Description__c}</td>
+        </tr>
+    </script>
+    <script id="PressTemplate" type="text/x-jquery-tmpl">
+        <tr>
+            <td width="5%"><b>Record Link:</b></td>
+            <td><font color=="blue"><b><u><a href ="/${Id}" target="_blank" >${Name}</a></u></b></font></td>
+            <td width="5%"><b>Created Date:</b></td>
+            <td width="10%"><b>${Created_Date__c}</b></td>
+        </tr>
+        <tr>
+            <td width="5%">Type:</td>
+            <td width="10%">${Type__c}</td>
+            <td width="5%">Source:</td>
+            <td width="10%">${Source__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Url:</td>
+            <td><font color=="blue"><u><a href ="${Review_Link__c}" target="_blank" >${Review_Link__c}</a></u></font></td>
+            <td width="5%">Press Source:</td>
+            <td width="10%">${Press_Source__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Description:</td>
+            <td width="10%">${Description__c}</td>
+            <td width="5%"></td>
+            <td width="10%"></td>
+        </tr>
+        <br/>
+    </script>
+    <script id="otherTemplate" type="text/x-jquery-tmpl">
+        <tr>
+            <td width="5%"><b>Record Link:</b></td>
+            <td><font color=="blue"><b><u><a href ="/${Id}" target="_blank" >${Name}</a></u></b></font></td>
+            <td width="5%"><b>Created Date:</b></td>
+            <td width="10%"><b>${Created_Date__c}</b></td>
+        </tr>
+        <tr>
+            <td width="5%">Type:</td>
+            <td width="10%">${Type__c}</td>
+            <td width="5%">Source:</td>
+            <td width="10%">${Source__c}</td>
+        </tr>
+        <tr>
+            <td width="5%">Url:</td>
+            <td><font color=="blue"><u><a href ="${Review_Link__c}" target="_blank" >${Review_Link__c}</a></u></font></td>
+            <td width="5%">Description:</td>
+            <td width="10%">${Description__c}</td>
+        </tr>
+        <br/>
+    </script>
+  </apex:form>
+</apex:page>

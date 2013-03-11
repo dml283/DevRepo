@@ -1,0 +1,331 @@
+<apex:component controller="Allpurchaseorder" access="global" >
+<apex:attribute name="AssignedToID" description="This is the ID of the Assigneto field." type="ID" assignTo="{!AssignedToID}" />
+<apex:attribute name="AssignedToname" description="This is the ID of the Assigneto field." type="string" assignTo="{!AssignedToname}" />
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Project24012012_email</title>
+    <style type="text/css">
+      
+        .ExternalClass {display:block !important;}
+        body {margin:0 !important;}
+    </style>
+</head>
+
+
+<body bgcolor="#eeeeee" leftmargin="0" marginwidth="0" topmargin="0" marginheight="0">
+ <table width="100%" bgcolor="#eeeeee" cellspacing="0" cellpadding="0" >
+ <tr>
+            <td bgcolor="#000000">
+                <table align="center" width="662" cellspacing="0" cellpadding="0">
+                    <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="23" alt="" /></td></tr>
+                    <tr>
+                        <td valign="middle" width="662" align="center" style="text-align:center; font-size:14px; line-height:24px; font:14px Helvetica, Arial, sans-serif;">
+                            <img align="left" hspace="0" vspace="0" src="https://merchants.groupon.com/images/main_app/logo.png" width="23" height="24" alt="" />
+                          <font face="Helvetica, Arial, sans-serif" color="#999999" size="2" style="font-size:14px; line-height:24px;"><strong><a style="text-decoration:none;" href="#"><font color="#8cb213">Leads for {!AssignedToname}  </font></a></strong>&nbsp;&nbsp;&nbsp;&nbsp;<strong>{!assigneduserval.purchase_order__r.Division__r.name} : {!MONTH(TODAY())}/{!DAY(TODAY())}/{!YEAR(TODAY())} TO {!MONTH(TODAY()+ 42)}/{!DAY(TODAY()+ 42)}/{!YEAR(TODAY()+ 14)}</strong></font>
+
+                        </td>
+                    </tr>
+
+                    <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="22" alt="" /></td></tr>
+                    <tr>
+                        <td bgcolor="ffffff" width="662">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr><td colspan="5" bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="0" alt="" /></td></tr> 
+                                <tr>
+                                    <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="0" alt="" /></td>
+                                    <td width="23" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="0" alt="" /></td>
+                                    <td valign="top" width="618">
+                                 
+                                    </td>
+                                    <td width="19" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                    <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+<!--HTML-->
+</table>
+ <apex:repeat value="{!pinnedlead}" var="PO">
+    <table width="100%" bgcolor="#eeeeee" cellspacing="0" cellpadding="0" >
+        <tr>
+
+                <table align="center" width="662" cellspacing="0" cellpadding="0"> 
+               
+                    <tr>
+                        <td bgcolor="ffffff" width="662">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                             <!--   <tr><td colspan="5" bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+                               -->
+                               
+                                <tr>
+                                    <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                    <td width="23" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                    <td valign="top" width="618">
+                                        <table width="100%" cellspacing="0" cellpadding="0">
+                                            <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="15" alt="" /></td></tr>
+                                            <tr>
+                                                <td style="font-size:12px;line-height:19px; font:12px Helvetica, Arial, sans-serif;">
+                                                    <table align="right" cellspacing="0" cellpadding="0">
+                                                        <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="4" alt="" /></td></tr>
+                                                        <tr>
+                                                            <td width="75" style="line-height:0;"><a href="{!pageredirect}" target="_blank"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIX&oid=00DM0000000As3k&lastMod=1328567335000" width="121" height="30" vspace="0" hspace="0" alt="View Pipeline" align="left" border="0" /></a></td>
+                                                        </tr>
+                                                    </table>
+                                                   <font face="Helvetica, Arial, sans-serif" color="#333333" size="2" style="font-size:12px; line-height:18px;">Purchase orders targeted for <br /><font style="font-size:16px;line-height:19px;" size="3"><strong>
+<apex:outputText value="{0,date,EEEE','MMMM d}">
+    <apex:param value="{!PO.master.Target_Feature_Date__c}" /> 
+</apex:outputText></strong></font></font>
+
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td width="19" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                    <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+        </tr>
+
+        <tr>
+            <td>
+                <table bgcolor="#ffffff" width="662" align="center" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                        <td width="19" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                        <td style="font-size:12px;line-height:19px; font:12px Helvetica, Arial, sans-serif;" valign="top" width="622">
+                            <table width="100%" cellspacing="0" cellpadding="0">
+                                <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="19" alt="" /></td></tr>
+                                <tr><td bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+
+
+<!--apex:repeat value="{!pinnedlead}" var="PO"-->
+<apex:repeat value="{!PO.datemaster}" var="datemas"/>
+<apex:repeat value="{!subdivisions}" var="sub"/> 
+
+
+                             <tr>
+                                    <td valign="top" width="622">
+                                        <table width="100%" align="center" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td valign="top" width="622" bgcolor="#eff5e7">
+                                                    <table width="100%" cellspacing="0" cellpadding="0">
+                                                        <tr>
+                                                            <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="10" alt="" /></td>
+                                                            <td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="17" height="1" alt="" /></td>
+                                                            <td width="593">
+                                                                <table width="100%" cellspacing="0" cellpadding="0">
+                                                                    <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="10" alt="" /></td></tr>
+                                                                    <tr>
+                                                                        <td style="font-size:12px;line-height:14px; font:12px Helvetica, Arial, sans-serif;">
+                                                                            <table cellspacing="0" cellpadding="0" align="right">
+                                                                                <tr>
+                                                                                    <td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="53" height="1" alt="" /></td>
+                                                                                    <td width="180">
+                                                                                       <apex:outputPanel rendered="{!PO.master.Rep_PO_Notes__c!= null}">
+                                                                                        <table width="100%" cellspacing="0" cellpadding="0" >
+                                                                                            <tr>
+                                                                                                <td valign="top" width="178">
+                                                                                            
+                                                                                                    <table bgcolor="#fcf6d7" width="100%" cellspacing="0" cellpadding="0">
+                                                                                                        <tr><td bgcolor="#cececd" colspan="5" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+
+                                                                                                        <tr>
+                                                                                                            <td width="1" bgcolor="#cececd" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                                                                                            <td width="11" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                                                                                            <td width="154">
+                                                                                                            
+                                                                                                                <table width="100%" cellspacing="0" cellpadding="0">
+                                                                                                                    <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="6" alt="" /></td></tr>
+                                                                                                                    <tr>
+                                                                                                                        <td style="font-size:12px;line-height:14px; font:12px Helvetica, Arial, sans-serif;">
+                                                                                                                            <font face="Helvetica, Arial, sans-serif" style="font-size:12px;line-height:14px;" color="#666666" size="2"><em>{!PO.master.Rep_PO_Notes__c}</em></font>
+                                                                                                                        </td>
+                                                                                                                    </tr>
+                                                                                                                    <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="17" alt="" /></td></tr>
+                                                                                                                </table>
+                                                                                                             
+                                                                                                            </td>
+                                                                                                            <td width="11" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                                                                                            <td width="1" bgcolor="#cececd" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+
+                                                                                                        </tr>
+                                                                                                        
+                                                                                                        <tr><td bgcolor="#cececd" colspan="5" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+                                                                                                    </table>
+                                                                                              
+                                                                                                </td>
+                                                                                                <td bgcolor="#d8ddd0" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="5" alt="" /></td>
+                                                                                                <td bgcolor="e3e9db" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="5" alt="" /></td>
+                                                                                            </tr>
+                                                                                            <tr><td colspan="3" bgcolor="#d8ddd0" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+                                                                                            <tr><td colspan="3" bgcolor="#e3e9db" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>                                
+
+                                                                                        </table>   
+                                                                                        </apex:outputPanel>                                                                                                    
+                                                                                    </td>
+                                                                                </tr>                                                                                     
+                                                                           </table>
+
+     <!--apex:repeat value="{!subdivisions}" var="sub"/-->                                                                            
+                                                                           <font face="Helvetica, Arial, sans-serif" color="#333333" size="2" style="font-size:12px; line-height:14px;"><font style="color:#f27e2c"><strong>{!PO.master.subdivision__r.name}</strong></font><br /><font style="line-height:22px; font-size:14px;"><strong><a style="text-decoration:none;" href="https://na8.salesforce.com/{!PO.master.Id}" TARGET="_blank"><font color="#006699"><apex:outputText value="{!PO.master.Global_SFDC_Category__c}"/> &raquo; </font></a>&nbsp;<a style="text-decoration:none;" href="https://na8.salesforce.com/{!PO.master.Id}" TARGET="_blank"><font color="#006699">{!PO.master.Global_SFDC_Subcategory_1__c} &raquo; </font></a>&nbsp;<a style="text-decoration:none;" href="https://na8.salesforce.com/{!PO.master.Id}" TARGET="_blank"><font color="#006699">{!PO.master.Global_SFDC_Subcategory_2__c}</font></a></strong></font>&nbsp;<br /><em>Range:{!PO.master.Ideal_Price_Range__c}</em> - {!PO.master.PO_Notes__c} <br /><font style="line-height:22px;"><apex:outputPanel rendered="{!PO.master.Example_Deal_1__c!= null}"><a style="text-decoration:none;" href="#"><font color="#006699">{!PO.master.Example_Deal_1__c}</font></a></apex:outputPanel>&nbsp;<apex:outputPanel rendered="{!PO.master.Example_Deal_2__c!= null}"><a style="text-decoration:none;" href="#"><font color="#006699">,{!PO.master.Example_Deal_2__c}</font></a></apex:outputPanel></font></font><br/>
+
+                                                                        </td>
+                                                                    </tr>
+                                                                  <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="10" alt="" /></td></tr>
+                                                             
+                                                                </table>
+                                                            </td>
+                                                            <td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="10" height="1" alt="" /></td>
+                                                           
+                                                            <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="10" alt="" /></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                               
+                            <!--    <tr><td bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+-->
+<apex:repeat value="{!PO.related}" var="pinned">
+
+                                <tr><td bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+                                <tr>
+                                    <td valign="top" width="622">
+                                        <table width="100%" align="center" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td valign="top" width="622" bgcolor="#f8f8f8">
+                                                    <table width="100%" cellspacing="0" cellpadding="0">
+                                                        <tr>
+                                                            <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                                            <td width="17" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="17" height="1" alt="" /></td>
+                                                            <td width="593">
+                                                                <table width="100%" cellspacing="0" cellpadding="0">
+                                                                    <tr><td colspan="3" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="11" alt="" /></td></tr>
+                                                                    <tr>
+                                                                        <td valign="top" width="232">
+                                                                            <table width="100%" cellspacing="0" cellpadding="0">
+                                                                                <tr>
+                                                                                    <td style="font-size:12px;line-height:14px; font:12px Helvetica, Arial, sans-serif;">
+                                                                                <!--     <font face="Helvetica, Arial, sans-serif" color="#006699" size="2" style="font-size:12px; line-height:14px;"><a style="text-decoration:none;" href="#"><strong><font color="#006699">{!pinned.pinnedmerch.lead__r.company}{!pinned.pinnedmerch.opportunity__r.Account.name}</font></strong></a></font> -->
+                                                                                  <font face="Helvetica, Arial, sans-serif" color="#006699" size="2" style="font-size:12px; line-height:14px;"><a style="text-decoration:none;" href="https://na8.salesforce.com/{!pinned.pinnedmerch.Lead__c}" TARGET="_blank"><strong><font color="#006699">{!pinned.pinnedmerch.lead__r.company}</font></strong></a></font>
+                                                                                     <font face="Helvetica, Arial, sans-serif" color="#006699" size="2" style="font-size:12px; line-height:14px;"><a style="text-decoration:none;" href="https://na8.salesforce.com/{!pinned.pinnedmerch.opportunity__r.Account.Id}" TARGET="_blank"><strong><font color="#006699">{!pinned.pinnedmerch.opportunity__r.Account.name}</font></strong></a></font>
+                                                                                     <font face="Helvetica, Arial, sans-serif" color="#006699" size="2" style="font-size:12px; line-height:14px;"><a style="text-decoration:none;" href="https://na8.salesforce.com/{!pinned.pinnedmerch.Account__r.Id}" TARGET="_blank"><strong><font color="#006699">{!pinned.pinnedmerch.Account__r.name}</font></strong></a></font>
+                                                                                     
+
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="4" alt="" /></td></tr>
+                                                                                <tr>
+                                                                                    <td style="font-size:12px;line-height:14px; font:12px Helvetica, Arial, sans-serif;">
+ <font face="Helvetica, Arial, sans-serif" color="#77a046" size="2" style="font-size:12px; line-height:14px;">
+
+  <apex:outputpanel rendered="{!ISNULL(pinned.pinnedmerch.Opportunity__r.Feature_Date__c) == false}"> 
+ <apex:outputtext value="{0,date,MM'/'dd'/'yyyy}"> 
+     Featured:  
+     <apex:param value="{!pinned.pinnedmerch.opportunity__r.Feature_Date__c}" />  
+ </apex:outputtext>
+  </apex:outputpanel> 
+
+
+ <apex:outputpanel > 
+ <apex:outputtext value="New" rendered="{!pinned.pinnedmerch.Lead__c!= null}">
+ </apex:outputtext>
+  </apex:outputpanel> 
+ </font>                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </td>
+                                                                        <td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="20" height="1" alt="" /></td>
+                                                                        <td valign="top" width="341">
+                                                                            <table width="100%" cellspacing="0" cellpadding="0">
+                                                                                <tr>
+                                                                                    <td width="341">
+                                                                                        <table width="100%" cellspacing="0" cellpadding="0">
+                                                                                            <tr>
+                                                                                               <td width="139" style="vertical-align:text-top;font-size:12px;line-height:14px; font:12px Helvetica, Arial, sans-serif;"><font face="Helvetica, Arial, sans-serif" color="#333333" size="2" style="font-size:12px; line-height:14px;"><strong>{!pinned.pinnedmerch.lead__r.name}<apex:outputlabel rendered="{!pinned.pinnedmerch.Opportunity__r.Account.Id != null}">{!pinned.contactinfo.name}</apex:outputlabel><apex:outputlabel rendered="{!pinned.pinnedmerch.Account__r.Id != null}">{!pinned.contactinfo.name}</apex:outputlabel></strong></font></td>
+                                                                                                <td width="5" style="vertical-align:text-top;line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="5" height="1" alt="" /></td>
+                                                                                                <td width="103" style="vertical-align:text-top;font-size:12px;line-height:14px; font:12px Helvetica, Arial, sans-serif;"><font face="Helvetica, Arial, sans-serif" color="#333333" size="2" style="font-size:12px; line-height:14px;"><strong>{!pinned.pinnedmerch.lead__r.phone}<apex:outputlabel rendered="{!pinned.pinnedmerch.Opportunity__r.Account.Id != null}">{!pinned.contactinfo.phone}</apex:outputlabel><apex:outputlabel rendered="{!pinned.pinnedmerch.Account__r.Id != null}">{!pinned.contactinfo.phone}</apex:outputlabel></strong></font></td> 
+                                                                                                <td width="5" style="vertical-align:text-top;line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="5" height="1" alt="" /></td>
+                                                                                                <td style="vertical-align:text-top;font-size:12px;line-height:14px; font:12px Helvetica, Arial, sans-serif;"><font face="Helvetica, Arial, sans-serif" color="#333333" size="2" style="font-size:12px; line-height:14px;"><strong>{!pinned.pinnedmerch.lead__r.status}{!pinned.pinnedmerch.opportunity__r.Account.Re_Feature_Status_Rep__c}{!pinned.pinnedmerch.account__r.Re_Feature_Status_Rep__c}</strong></font></td>
+                                                                                            </tr>
+                                                                                        </table>
+                                                                                    </td>
+                                                                                </tr>
+        
+                                                                                <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="5" alt="" /></td></tr>
+                                                                                <tr>
+                                                                                    <td valign="top" style="font-size:11px;line-height:13px; font:11px Helvetica, Arial, sans-serif;">
+                                                                                    <font face="Helvetica, Arial, sans-serif" color="#666666" size="1" style="font-size:11px; line-height:13px;">
+                                                                                    <em>
+                                                                                 <apex:outputLabel rendered="{!pinned.pinnedmerch.Lead__c !=null}">
+                                                                                 <apex:outputpanel rendered="{!pinned.pinnedmerch.Lead__r.RepnotesDate__c !=null}">  {!Month(pinned.pinnedmerch.Lead__r.RepnotesDate__c)} <apex:outputlabel rendered="{!ISBLANK(pinned.pinnedmerch.Lead__r.RepnotesDate__c)== False}"> / </apex:outputlabel> {!Year(pinned.pinnedmerch.Lead__r.RepnotesDate__c)}      </apex:outputpanel>
+                                                                                 <apex:outputpanel rendered="{!pinned.pinnedmerch.Lead__r.Repnotes__c !=null}">             &nbsp; - &nbsp; {!pinned.pinnedmerch.Lead__r.Repnotes__c}                                                   </apex:outputpanel>
+                                                                                 </apex:outputLabel>
+                                                                                 <apex:outputLabel rendered="{!pinned.pinnedmerch.Opportunity__c !=null}">
+                                                                                 <apex:outputpanel rendered="{!pinned.pinnedmerch.opportunity__r.account.RepnotesDate__c !=null}">  {!Month(pinned.pinnedmerch.opportunity__r.account.RepnotesDate__c)} <apex:outputlabel rendered="{!ISBLANK(pinned.pinnedmerch.opportunity__r.account.RepnotesDate__c)== False}"> / </apex:outputlabel> {!Year(pinned.pinnedmerch.opportunity__r.account.RepnotesDate__c)}     </apex:outputpanel>
+                                                                                 <apex:outputpanel rendered="{!pinned.pinnedmerch.opportunity__r.account.Repnotes__c !=null}">       &nbsp; - &nbsp; {!pinned.pinnedmerch.opportunity__r.account.Repnotes__c}             </apex:outputpanel>
+                                                                                 </apex:outputLabel>
+                                                                                  <apex:outputLabel rendered="{!pinned.pinnedmerch.Account__c!=null}">
+                                                                                 <apex:outputpanel rendered="{!pinned.pinnedmerch.account__r.RepnotesDate__c !=null}">  {!Month(pinned.pinnedmerch.account__r.RepnotesDate__c)} <apex:outputlabel rendered="{!ISBLANK(pinned.pinnedmerch.account__r.RepnotesDate__c)== False}"> / </apex:outputlabel> {!Year(pinned.pinnedmerch.account__r.RepnotesDate__c)}     </apex:outputpanel>
+                                                                                 <apex:outputpanel rendered="{!pinned.pinnedmerch.account__r.Repnotes__c !=null}">       &nbsp; - &nbsp; {!pinned.pinnedmerch.account__r.Repnotes__c}             </apex:outputpanel>
+                                                                                 </apex:outputLabel>
+                                                                                    </em></font>
+                                                                                  
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr><td colspan="3" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="13" alt="" /></td></tr>
+                                                                </table>
+                                                            </td>
+                                                            <td width="10" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="10" height="1" alt="" /></td>
+                                                            <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+
+</apex:repeat> 
+
+  <!--                              <tr><td bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>                              
+   
+                                <tr><td bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+    -->
+                                <tr><td bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+                                <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="20" alt="" /></td></tr>                                                                                                                                            
+
+                            
+                            </table>
+                        </td>
+
+                        <td width="19" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+                        <td bgcolor="#cccccc" width="1" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td>
+
+                    </tr>
+                 <tr><td colspan="5" bgcolor="#cccccc" style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="1" height="1" alt="" /></td></tr>
+              
+                </table>
+            </td>
+        </tr>
+       <!-- <tr><td style="line-height:0; font-size:0;"><img src="https://c.cs7.content.force.com/servlet/servlet.ImageServer?id=015M00000000jIn&oid=00DM0000000As3k&lastMod=1328567564000" width="182" height="23" alt="" /></td></tr> -->
+    </table>
+</apex:repeat> 
+</body>
+</html>
+</apex:component>

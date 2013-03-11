@@ -1,0 +1,59 @@
+<apex:page controller="CommissionExport" contenttype="application/vnd.ms-excel#commission.xls">
+
+<apex:pageBlock title="Commission Result for: {!commission.salesRep}">
+  <apex:dataTable value="{!commission}" var="c" rowClasses="odd,even" styleClass="tableClass" cellspacing="5px">
+      <apex:column headerValue="In Market GP">
+          <apex:outputText value="{0, number,$###,###,###.00}">
+              <apex:param value="{!c.inMarketGPwAccelerator}"/>
+            </apex:outputText>
+      </apex:column>
+      <apex:column headerValue="In Market GB before Accelerator">
+          <apex:outputText value="{0, number,$###,###,###.00}">
+              <apex:param value="{!c.inMarketGBbeforeAccelerator}"/>
+            </apex:outputText>
+      </apex:column>
+      <apex:column headerValue="In Market GB with Accelerator">
+          <apex:outputText value="{0, number,$###,###,###.00}">
+              <apex:param value="{!c.inMarketGBwAccelerator}"/>
+            </apex:outputText>
+      </apex:column>
+      <apex:column value="{!c.OOMarketGP}" headerValue="Out of Market GP"/>
+      <apex:column value="{!c.inMarketGBwAccelerator}" headerValue="Name"/>
+      <apex:column value="{!c.percentToGoal}" headerValue="Percent to Goal"/>
+      <apex:column value="{!c.totalCommission}" headerValue="Total Commission"/>
+  </apex:dataTable>
+</apex:pageBlock>
+<apex:pageBlock title="Deals">
+
+
+
+ <apex:dataTable value="{!commission.deals}" var="deal" rowClasses="odd,even" styleClass="tableClass" cellspacing="5px">
+         <apex:column value="{!deal.id}" headerValue="Opportunity Id"/>
+         <apex:column value="{!deal.permalink}" headerValue="Permalink"/>
+         <apex:column value="{!deal.Name}" headerValue="Name"/>
+         <apex:column value="{!deal.type}" headerValue="Type"/>
+         <apex:column value="{!deal.featureDate}" headerValue="Feature Date"/>
+         <apex:column value="{!deal.featureEndDate}" headerValue="Feature End Date"/>
+         <apex:column value="{!deal.division}" headerValue="Division"/>
+         <apex:column value="{!deal.dealBankGP}" headerValue="Deal Bank GP"/>
+         <apex:column value="{!deal.dealBankGB}" headerValue="Deal Bank GB"/>
+         <apex:column value="{!deal.first30DaysGP}" headerValue="First 30days GP"/>
+         <apex:column value="{!deal.first30DaysGB}" headerValue="First 30days GB"/>
+         <apex:column value="{!deal.featureGP}" headerValue="Feature Period GP"/>
+         <apex:column value="{!deal.featureGB}" headerValue="Feature Period GB"/>
+         <apex:column value="{!deal.grossProfit}" headerValue="Gross Profit"/>
+         <apex:column value="{!deal.grossProfitWithAccelerator}" headerValue="GP w AcceleratorP"/>
+         <apex:column value="{!deal.grossBillings}" headerValue="Gross Billings"/>
+         <apex:column value="{!deal.grossBillingsWithAccelerator}" headerValue="GB w Accelerator"/>
+         <apex:column value="{!deal.inMarket}" headerValue="In Market"/>
+         <apex:column value="{!deal.refeature}" headerValue="Refeature?"/>
+         <apex:column value="{!deal.rate}" headerValue="Commission %"/>
+         <apex:column value="{!deal.commission}" headerValue="Commission"/>
+         <apex:column headerValue="Thresholds">
+             <apex:repeat value="{!deal.thresholds}" var="threshold">
+                 {!threshold.name} : {!threshold.value}
+             </apex:repeat>
+         </apex:column>
+     </apex:dataTable>
+ </apex:pageBlock>
+</apex:page>

@@ -1,0 +1,19 @@
+<apex:page standardController="Opportunity" showheader="false" sidebar="false">
+<body>
+
+<apex:outputPanel layout="block" style="background-color:#e97fa5;height:30px;padding:0px;font-size:100%;text-align:center"  rendered="{!Opportunity.Account.BillingCountry='US'&& Opportunity.Account.TIN_Status__c!='Valid'}">
+        <apex:image URL="{!$Resource.TINStop}" height="20px"/>
+        This Merchant's <b>TIN Status is: <apex:outputField value="{!Opportunity.Account.TIN_Status__c}"/></b> 
+        See SkyNet: <a herf="https://sites.google.com/a/groupon.com/manual/2012-1099k-faq" target="_blank">TIN 1099-K Info FAQ</a>
+        <b>- Edit TAX ID # and COMPANY LEGAL NAME ON the<apex:outputLink value="https://na8.salesforce.com/{!Opportunity.AccountID}" target="_blank"> ACCOUNT</apex:outputLink></b>
+        <apex:image URL="{!$Resource.TINStop}" height="20px"/>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FFFF00;font-size:100%;text-align:center" rendered="{!(Opportunity.Account.High_Risk_Subcategory_Grade_F__c==TRUE||Opportunity.Account.G1_Services_Override__c ==TRUE)&&(Opportunity.Account.Subcategory_v3__c=='Transportation'||Opportunity.Account.Subcategory_v3__c=='Handyman & Contractors'||Opportunity.Account.Subcategory_v3__c=='Car & Automotive'||Opportunity.Account.Subcategory_v3__c=='Cleaning Services'||Opportunity.Account.Subcategory_v3__c=='Transportation Rental'||Opportunity.Account.Subcategory_v3__c=='Event Rental Services'||Opportunity.Account.Subcategory_v3__c=='Delivery Service'||Opportunity.Account.Subcategory_v3__c=='Tour Provider'||Opportunity.Account.Subcategory_v3__c=='Accommodation'||Opportunity.Account.Subcategory_v3__c=='Driving'||Opportunity.Account.Subcategory_v3__c=='Transportation Rental'||Opportunity.Account.Subcategory_v3__c=='Event Rental Services'||Opportunity.Account.Subcategory_v3__c=='Delivery Service'||Opportunity.Account.Subcategory_v3__c=='Tour Provider'||Opportunity.Account.Subcategory_v3__c=='Accommodation'||Opportunity.Account.Subcategory_v3__c=='Driving'||Opportunity.Account.Subcategory_v3__c=='Cosmetic Surgery'||Opportunity.Account.Subcategory_v3__c=='Salon - Full Service'||Opportunity.Account.Subcategory_v3__c=='Spa - Medical'||Opportunity.Account.Subcategory_v3__c=='Flying'||Opportunity.Account.Subcategory_v3__c=='Boat Rental'||Opportunity.Account.Subcategory_v3__c=='Other Rental')}">
+        <apex:image URL="{!$Resource.warning}" width="20px" height="20px"/>
+        <b>WARNING!</b> This merchant is on High-Risk Probation and must run with limited caps. See Wiki: <apex:outputLink value="http://bit.ly/high-risk-categories-on-glite-1" target="_blank"><u>Wiki Link</u></apex:outputLink>
+        <apex:image URL="{!$Resource.warning}" width="20px" height="20px"/>
+</apex:outputPanel>
+
+</body>
+</apex:page>

@@ -1,0 +1,56 @@
+<apex:component controller="deal_structure_emails_goods_controller" access="global">
+
+<apex:attribute name="assignedtoId" type="String" description="TODO: Describe me" assignTo="{!assignedtoId}"/>
+Please Review the Deal Structure for {!Opportunity.Name} <br/><br/><br/>
+
+Account Name: {!Opportunity.Account.name} <br/>
+Opportunity Name: {!Opportunity.Name} <br/>
+Opportunity Owner: {!Opportunity.Owner.Name} <br/><br/>
+Deal Structure Notes: {!Opportunity.Deal_Structure_Approval_Notes__c}<br/><br/>
+Payment Terms: {!Opportunity.Payment_Terms__c} <br/>
+Fulfillment Method: {!Opportunity.Fulfillment_Method__c}<br/>
+Freight Terms: {!Opportunity.Freight_Terms__c}<br/>
+Freight Allowance: {!Opportunity.Freight_Allowance__c}<br/>
+Refund Allowance: {!Opportunity.Refund_Allowance__c}<br/><br/>
+
+Total Option Cap (Sum of all Multi-Deal Option Caps): {!Opportunity.Total_Multi_Deal_Max__c}<br/>
+Total Cost to Purchase All Units (Sum of all Multi-Deal CPAU): {!Opportunity.Total_Cost_to_Purchase_All_Units__c}<br/><br/>
+
+
+
+This Opportunity has {!Opportunity.Amount_of_Multi_Deal_Children__c} purchase order line(s). <br/><br/>
+  <table> 
+   <th style="width:100px"><center> <br/>Info                          </center> </th>
+   <th style="width:100px"><center> <br/>Unit Buy Price                </center> </th>
+   <th style="width:100px"><center> <br/>Unit Sell Price               </center> </th>
+   <th style="width:100px"><center> <br/>Unit Value                    </center> </th>
+   <th style="width:100px"><center> <br/>Cost to Purchase All Units    </center> </th>    
+   <th style="width:100px"><center> <br/>Option Cap                    </center> </th>   
+   <th style="width:100px"><center> <br/>Est Ship/Unit 3PL             </center> </th>
+   <th style="width:100px"><center> <br/>Margin                        </center> </th>
+   <th style="width:100px"><center> <br/>Sell SKU                      </center> </th>
+
+    
+   <apex:repeat value="{!multideals}" var="multi">
+    <tr>
+        <td style="width:100px"><center> <a href="https://na8.salesforce.com/{!multi.Id}" target="_blank">{!multi.name} </a> </center> </td>
+        <td style="width:100px"><center> {!multi.Unit_Buy_Price__c}                            </center> </td>
+        <td style="width:100px"><center> {!multi.Unit_Sell_Price__c}                           </center> </td>
+        <td style="width:100px"><center> {!multi.Unit_Value__c}                                </center> </td>
+        <td style="width:100px"><center> {!multi.Cost_to_Purchase_All_Units__c}                </center> </td>
+        <td style="width:100px"><center> {!multi.Total_Deal_Max__c}                            </center> </td>
+        <td style="width:100px"><center> {!multi.Estimated_Shipping_Cost_per_Unit_3PL__c}      </center> </td>
+        <td style="width:100px"><center> {!multi.Margin__c}                                    </center> </td>
+        <td style="width:100px"><center> {!multi.Product_SKU__c}                               </center> </td>
+
+    </tr>
+    </apex:repeat>
+    </table>
+    <br/><br/>
+You can view the opportunity here:
+<a href="https://na8.salesforce.com/{!Opportunity.Id}" target="_blank">{!Opportunity.Name} </a> <br/><br/><br/>
+
+To approve or reject this item, reply to this email with APPROVE, APPROVED, YES, REJECT, REJECTED, or NO in the first line of the email message. <br/><br/>
+
+If replying via email, you can also add comments on the second line. Comments will be stored with the approval request in Salesforce CRM. <br/><br/>
+</apex:component>

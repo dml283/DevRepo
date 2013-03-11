@@ -1,0 +1,1 @@
+<apex:page standardController="account" action="{!URLFOR('/apex/forseva1__ForsevaInsight?id=' + account.Id + '&objectName=forseva1__DnBCustomReport__c')}"/>

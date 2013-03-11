@@ -1,0 +1,263 @@
+<apex:page standardcontroller="Opportunity" extensions="Opportunity_info_request" id="page" >
+
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:includeScript value="{!URLFOR($Resource.tablesorter, 'jquery.tablesorter.js')}"/>
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/flick/jquery-ui.css"/>
+
+
+    <apex:form id="form">
+    <apex:pageMessages />
+  
+        <apex:pageBlock id="Pgblck" rendered="{!newmode}">
+         <apex:pageBlockSection Title="New Information Requests" id="pgblk1">
+                     
+                 <apex:pageBlockSectionitem >    
+                 <apex:commandbutton value="Save" action="{!savenew}">   
+                 </apex:commandbutton>      
+                 <apex:commandButton value="Cancel" action="{!cancelnewmode}" immediate="True"/>
+                </apex:pageBlockSectionitem>   
+                        <apex:pageblocksectionitem />
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Date Requested"/>
+                        <apex:outputField value="{!infovalue.Date_Requested__c}"/>
+                        </apex:pageblockSectionItem>    
+ 
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Information Requested By"/>
+                        <apex:inputField value="{!infovalue.Information_Requested_By__c}" required="true"/>
+                        </apex:pageblockSectionItem> 
+                                                                                               
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Requestor"/>
+                        <apex:inputField value="{!infovalue.Requestor__c}" required="true"/>
+                        </apex:pageblockSectionItem>
+                                                
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Who do you need information from?"/>
+                        <apex:inputField value="{!infovalue.Who_do_you_need_information_from__c}" required="true"/>
+                        </apex:pageblockSectionItem>
+                                                
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Please Describe the Information you need"/>
+                        <apex:inputField value="{!infovalue.Please_describe_the_information_you_need__c}" required="true"/>                         
+                        </apex:pageblockSectionItem>
+                                                
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Reply back to the request"/>
+                        <apex:inputField value="{!infovalue.Response__c}"/>
+                        </apex:pageblockSectionItem>
+                                                                                                                     
+                        <!--apex:pageblockSectionItem -->
+                        <!--apex:outputLabel value="Issue Resolved"/ -->
+                        <!--apex:inputfield value="{!infovalue.Issue_Resolved__c}"/ -->
+                        <!--/apex:pageblockSectionItem --> 
+                        
+                        <!--apex:pageblockSectionItem  -->
+                        <!--apex:outputLabel value="Date Resolved"/ -->
+                        <!--apex:inputField value="{!infovalue.Date_Resolved__c}"/ -->
+                        <!--/apex:pageblockSectionItem -->
+                                     
+        </apex:pageBlockSection>              
+      </apex:pageblock>
+           
+        <apex:pageblock rendered="{!IF(NOT(newmode),true,false)}" mode="maindetail" id="pgblkhide">
+                <apex:actionStatus id="mySaveStatus1">
+                <apex:facet name="stop">
+                <apex:commandButton action="{!deleteSelected}" value="Delete" id="cmdbtndel" status="mySaveStatus1" disabled="false" rerender="mySaveStatus,form"  rendered="{!IF(NOT(selectedinfo),true,false)}"/>
+                </apex:facet>               
+                <apex:facet name="start">               
+                <apex:commandButton action="{!deleteSelected}" status="mySaveStatus1" value="Deleting..." disabled="true"/> </apex:facet>              
+                </apex:actionStatus>                     
+                 <apex:commandButton value="New" action="{!Addaddress}" rendered="{!selectedinfo}"/>
+                 <apex:commandlink value="Show All Information Request" action="{!cancel}" rendered="{!IF(NOT(selectedinfo),true,false)}" immediate="true" />
+                <apex:pageBlockSection rendered="{!selectedinfo}" columns="1">
+
+                    <apex:pageBlockTable value="{!infodata}" var="Info" border="1" id="Datatbl" style="width:100%">                  
+                       <apex:column style="width:10px"  >                        
+                         <apex:facet name="header"> <div align="center">  Select <br/> to Edit  </div> </apex:facet>
+                            <apex:inputCheckbox value="{!Info.selected}" id="checkedone">
+                                <apex:actionSupport event="onclick" action="{!GetSelected}" rerender="form" onsubmit="disableall(this)"/>
+                            </apex:inputCheckbox>
+                        </apex:column>
+                       
+                       <apex:column style="width:20px">
+                            <apex:facet name="header"> <div align="center"> Date Requested  </div> </apex:facet>
+                           <div style = "font-size:13px;"> <apex:outputLink value="/{!Info.InformationRequest.Id}" target="_blank"><apex:outputText value="{!Info.InformationRequest.Date_Requested__c}"/></apex:outputLink> </div> 
+
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Issue Resolved </div> </apex:facet>           
+                            <div align="center"><apex:outputfield value="{!Info.InformationRequest.Issue_Resolved__c}"/></div>                              
+                        </apex:column>
+ 
+                        <apex:column style="width:80px" >                 
+                            <apex:facet name="header">  <div  align="center">  Requestor </div>  </apex:facet>
+                            <!--apex:outputfield value="{!Info.InformationRequest.Requestor__c}"/-->
+                            <div align="center"><apex:outputLink value="/{!Info.InformationRequest.Requestor__c}" target="_blank"><apex:outputText value="{!Info.InformationRequest.Requestor__r.name}"/></apex:outputLink></div>
+                            <div align="center"><apex:outputfield value="{!Info.InformationRequest.Information_Requested_By__c}"/></div>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:80px" >
+                        <apex:facet name="header"> <div align="center"> Information Requested From </div> </apex:facet>
+                       
+                        <div align="center">
+                        <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'City Planner'}" >
+                        <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.User__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.user__r.name}"/></apex:outputLink>
+                        </apex:pageblocksectionItem>
+                        
+                        <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Deal Vetter'}" >
+                        <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.DV__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.DV__r.name}"/></apex:outputLink>
+                        </apex:pageblocksectionItem>
+                        
+                        <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Merchant Manager'}" >
+                        <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.AccountCoordinator__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.AccountCoordinator__r.name}"/></apex:outputLink>
+                        </apex:pageblocksectionItem>
+                        
+                       <apex:pageblocksectionitem >
+                            <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Merchant Manager & City Planner'}" >
+                            <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.AccountCoordinator__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.AccountCoordinator__r.name}"/></apex:outputLink>
+                            <br/>
+                            </apex:pageblocksectionItem>
+                            <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Merchant Manager & City Planner'}" >
+                            <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.User__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.user__r.name}"/></apex:outputLink>
+                            </apex:pageblocksectionItem>
+                       </apex:pageblocksectionitem>
+                       
+                        <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Account Coordinator'}" >
+                         <apex:outputLink value="/{!oppteammem.userid}" target="_blank" ><apex:outputText value="{!oppteammem.user.Name}"/></apex:outputLink>
+                        </apex:pageblocksectionItem>                 
+                         
+                        <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Sales Rep'}" >
+                        <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.Owner_lookup__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.Owner_lookup__r.name}"/></apex:outputLink>
+                        </apex:pageblocksectionItem>   
+                       
+                        <apex:pageblocksectionitem >
+                            <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Sales Rep & City Planner'}" >
+                            <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.Owner_lookup__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.Owner_lookup__r.name}"/></apex:outputLink>
+                            <br/>
+                            </apex:pageblocksectionItem> 
+                            
+                            <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Sales Rep & City Planner'}" >
+                            <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.User__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.user__r.name}"/></apex:outputLink>
+                            </apex:pageblocksectionItem>
+                        </apex:pageblocksectionitem>
+
+                        <apex:pageblocksectionitem >
+                            <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Sales Rep & Merchant Manager'}" >
+                            <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.Owner_lookup__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.Owner_lookup__r.name}"/></apex:outputLink>
+                            <br/>
+                            </apex:pageblocksectionItem> 
+                        
+                            <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'Sales Rep & Merchant Manager'}" >
+                            <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.AccountCoordinator__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.AccountCoordinator__r.name}"/></apex:outputLink>
+                            </apex:pageblocksectionItem>
+                        </apex:pageblocksectionitem>    
+                        
+                        <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'DSM'}" >
+                        <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.Divisional_Sales_Manager__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.Divisional_Sales_Manager__r.name}"/></apex:outputLink>
+                        </apex:pageblocksectionItem> 
+                        
+                        <apex:pageblocksectionitem >
+                            <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'DSM & City Planner'}" >
+                            <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.Divisional_Sales_Manager__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.Divisional_Sales_Manager__r.name}"/></apex:outputLink>
+                            <br/>
+                            </apex:pageblocksectionItem>   
+                           
+                            <apex:pageblocksectionItem rendered="{!Info.InformationRequest.Who_do_you_need_information_from__c = 'DSM & City Planner'}" >
+                            <apex:outputLink value="/{!Info.InformationRequest.opportunity__r.User__c}" target="_blank" ><apex:outputText value="{!Info.InformationRequest.opportunity__r.user__r.name}"/></apex:outputLink>
+                            </apex:pageblocksectionItem> 
+                        </apex:pageblocksectionitem>         
+                        </div>
+                        
+                        <div align="center"><apex:outputfield value="{!Info.InformationRequest.Who_do_you_need_information_from__c}" /></div>
+                        
+                        
+                        </apex:column>
+                       
+                        <apex:column style="width:200px" >
+                            <apex:facet name="header"> <div align="center">Detailed Request  </div> </apex:facet>           
+                            <div style = "font-size:10px;"><apex:outputfield value="{!Info.InformationRequest.Please_describe_the_information_you_need__c}"/> </div>                             
+                        </apex:column>
+                        
+                        <apex:column style="width:200px" >
+                            <apex:facet name="header"> <div align="center"> Reply to Request </div> </apex:facet>           
+                            <div style = "font-size:10px;"><apex:outputfield value="{!Info.InformationRequest.Response__c}"/> </div>                             
+                        </apex:column>
+                        
+
+                         <apex:column style="width:80px">
+                            <apex:facet name="header"> <div align="center"> Date Resolved  </div> </apex:facet>           
+                            <apex:outputfield value="{!Info.InformationRequest.Date_Resolved__c}"/>                              
+                        </apex:column>
+                      
+                    </apex:pageblocktable>
+                </apex:pageBlockSection>
+        </apex:pageblock>
+
+
+        <apex:pageblock id="pgblock1" mode="maindetail" rendered="{!IF(NOT(selectedinfo),true,false)}" >
+                 <apex:InputHidden value="{!strSelectedRec}" id="hidId"/>
+                <apex:pageBlockSection id="Selected_PBS" Title=" Selected Information Request" rendered="{!IF(NOT(newmode),true,false)}" columns="2">               
+                <apex:repeat value="{!SelectedInforequest}" var="s" id="pgblktab">
+                             <apex:pageblocksectionitem >                                          
+                            <apex:commandbutton action="{!Save}" value="Save" id="savebutton" onclick="putSelectedId('{!s.Id}');"  />
+                            <apex:commandbutton action="{!Cancel}" value="Cancel" id="cancelbutton" immediate="true"/>
+                            </apex:pageblocksectionitem> 
+                            <apex:pageblocksectionItem />
+                            <apex:outputField value="{!s.Date_Requested__c}" />                    
+                            <apex:inputfield value="{!s.Information_Requested_By__c}"/> 
+                            <apex:inputfield value="{!s.Requestor__c}"/>
+                            <apex:inputfield value="{!s.Who_do_you_need_information_from__c}"/>
+                            <apex:inputField value="{!s.Please_describe_the_information_you_need__c}"  style="height:80px;width:400px"/>                    
+                            <apex:inputfield value="{!s.Response__c}" style="height:80px;width:400px"/>                  
+                            <apex:inputfield value="{!s.Issue_Resolved__c}" />  
+                            <apex:inputfield value="{!s.Date_Resolved__c}"/>
+
+                    </apex:repeat>
+
+                    <br/>
+                </apex:pageBlockSection>     
+        </apex:pageBlock>            
+    </apex:form>
+  
+<Script>
+var j$ = jQuery.noConflict();
+    j$(document).ready(function()
+    {
+    j$("#Datatbl").tablesorter();
+    });
+
+function putSelectedId(id)
+{
+     var $hiddenId = j$("input[id$='hidId']");
+     $hiddenId.val(id);
+}
+
+
+</script>
+<script>
+function disableall(db)
+{
+     //var hidesec = document.getElementById('page:form:pgblkhide');
+    var inputElem = document.getElementsByTagName("input");
+    var total=0;
+    for(var i=0; i<inputElem.length; i++)
+    {
+        if(inputElem[i].checked )
+        {
+            total =total +1;
+        }
+        if(total > 1)
+        {
+        alert("More than one Information Request cannot be edited at a time.");
+        inputElem[i].checked = false;
+        return false;
+        }
+    }
+}
+</script>
+
+</apex:page>

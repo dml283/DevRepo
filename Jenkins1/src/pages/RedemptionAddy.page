@@ -1,0 +1,89 @@
+<apex:page standardController="Opportunity" extensions="AddressHelper">
+
+    <apex:form id="form">
+    <script>
+        function setFocusOnLoad() {} 
+    </script>
+    <apex:pagemessages />
+        <apex:pageBlock id="MultiAddy" rendered="{!viewMode}" mode="maindetail">
+            <table id ="Results" title="Merchant Addresses" width="50%" align="center">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Locations Available for this Deal</th>
+                        <th>Locations Selected for this Deal</th>
+                        <th></th>  
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <apex:commandButton value="Create New" action="{!insertAddy}"/>
+                        </td>
+                        <td>
+                            <apex:selectList value="{!MerchantAddresses}" multiselect="true" size="3">
+                                <apex:selectOptions value="{!MerchAddys}"/>
+                            </apex:selectList>     
+                        </td>
+                       
+                        <td>
+                            <apex:selectList value="{!RedemptionAddresses}" multiselect="true" size="3">
+                                <apex:selectOptions value="{!RedempAddys}"/>
+                            </apex:selectList> 
+                        </td>
+                    </tr>
+                    <tr style = "border:none">                                                
+                        <td></td>
+                        <td>
+                            <apex:commandButton value="Add to Selected" action="{!addRedemptionAddress}" rerender="MultiAddy" status="status"/>
+                        </td>
+                        
+                        <td>
+                            <apex:commandButton value="Remove from Selected" action="{!deleteRedemptionAddress}" rerender="MultiAddy" status="status"/>                    
+                        </td>
+                        
+                        
+                    </tr>
+                </tbody>
+            </table>       
+        </apex:pageBlock>
+
+        <apex:pageBlock rendered="{!newMode}" mode="maindetail">
+            
+            <table width="75%" align="center">
+                <tr>
+                <td align="right"><apex:outputLabel value="Street 1"/><apex:inputText value="{!street1}"/></td>
+                <td align="right"><apex:outputLabel value="Street 2"/><apex:inputText value="{!street2}"/></td>
+                <td align="right"><apex:outputLabel value="City"/><apex:inputText value="{!city}"/></td>
+                
+                </tr>
+                
+                <tr>
+                <td align="right"><apex:outputLabel value="State"/><apex:inputText value="{!state}"/></td>
+                <td align="right"><apex:outputLabel value="Zip/Postal"/><apex:inputText value="{!zip}"/></td>
+                <td align="right"><apex:outputLabel value="Country"/><apex:inputText value="{!country}"/></td>
+                <td align="center"><apex:commandButton action="{!addMerchantAddress}" value="Save New Address"/></td>
+                </tr>
+                
+                <tr>
+                <td align="right"><apex:outputLabel value="Venue"/><apex:inputText value="{!venue}"/></td>
+                <td align="right"><apex:outputLabel value="Phone"/><apex:inputText value="{!phone}"/></td>
+                <td align="right"><apex:outputLabel value="Merchant ID"/><apex:inputText value="{!merchantId}"/></td>
+                <td align="center"><apex:commandButton value="Cancel" action="{!cancelNewAddy}"/></td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <apex:outputLabel value="Type"/>
+                        <apex:selectList id="addyType" value="{!type}" size="1">
+                            <apex:selectOption itemValue="Redemption" itemLabel="Redemption"/>
+                            <apex:selectOption itemValue="Shipping Origination" itemLabel="Shipping Origination"/>
+                            <apex:selectOption itemValue="Vendor Warehouse" itemLabel="Vendor Warehouse"/>
+                        </apex:selectList>
+                    </td> 
+                </tr>
+                </table> 
+                
+        </apex:pageBlock>
+    </apex:form> 
+   
+</apex:page>

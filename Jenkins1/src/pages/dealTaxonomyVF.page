@@ -1,0 +1,61 @@
+<apex:page standardController="Opportunity" extensions="dealTaxonomyClass" sidebar="false" showHeader="false">
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryChosen)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Chosentest)}"/>
+    <apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+
+    <apex:form >
+        <apex:pageBlock >
+            <table width="75%" align="center">
+                <tr>
+                    <td>
+                        <apex:outputPanel id="messaging">
+                            <apex:outputText escape="false" value="<b> {!successMessages} </b>" style="font-family:Serif; font-size:25px; color:GREEN"/>
+                            <apex:outputText escape="false" value="<b> {!errorMessages} </b>" style="font-family:Serif; font-size:25px; color:RED"/>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+                <tr><th>Merchant Category</th></tr>
+                <tr><td><apex:outputField value="{!Opportunity.Category_v3__c}"/></td></tr>
+                <tr><th>Merchant Subcategory</th></tr>
+                <tr><td><apex:outputField value="{!Opportunity.Subcategory_v3__c}"/></td></tr>
+                <tr><th>Primary Deal Service</th></tr>
+                <tr>
+                    <td id="PrimaryService">
+                        <select data-placeholder="Select Primary Service" style="width:250px; display:none;" class="chzn-select" tabindex="6" id="primaryService">
+                            <option selected="selected">{!Opportunity.Primary_Deal_Services__c}</option>
+                            <apex:repeat value="{!PrimaryOptions}" var="pOption">
+                                <option>{!pOption}</option>
+                            </apex:repeat>    
+                        </select>
+                    </td>
+                </tr>
+                <tr><td><apex:inputHidden value="{!primaryService}" id="pServ"/></td></tr>
+                <tr>
+                    <td>
+                        <apex:commandButton value="Submit Primary Service" action="{!insertPrimaryService}" onclick="submitPrimaryService()" oncomplete="loadTags();" reRender="messaging">
+                        </apex:commandButton>
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+    
+    <script>
+        var j$ = jQuery.noConflict();
+        
+        j$(document).ready(function(){
+                j$("#primaryService").chosen();
+            });
+        
+        j$("#primaryService").change(function(){primaryServiceSelection();}); 
+        function primaryServiceSelection(){
+                j$("input[id$='pServ']").val(j$("select[id$='primaryService']").val());        
+            }
+        
+        function submitPrimaryService(){
+                primaryServiceSelection();
+            }    
+    </script>
+    </apex:form>
+</apex:page>

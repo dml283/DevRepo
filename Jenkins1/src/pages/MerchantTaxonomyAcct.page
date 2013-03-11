@@ -1,0 +1,216 @@
+<apex:page standardController="Account" extensions="AcctTaxonomy" sidebar="false" showHeader="false">
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+    <apex:includeScript value="{!URLFOR($Resource.jQueryChosen)}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.Chosentest)}"/>
+    <apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+ 
+    <apex:form >
+        <apex:messages />
+    <div id="AcctTaxonomy">
+        <apex:pageblock id="MerchTaxonomy" >
+            <table id ="Results" title="Merchant Addresses" width="75%" align="center">
+                <tr>
+                    <td>
+                        <apex:outputPanel id="messaging">
+                        <apex:outputText escape="false" value="<b> {!errorMessages} </b>" style="font-family:Serif; font-size:25px; color:RED"/>
+                        <apex:outputText escape="false" value="<b> {!successMessages} </b>" style="font-family:Serif; font-size:25px; color:GREEN"/>
+                        </apex:outputPanel>
+                    </td> 
+                </tr>
+                <tr><th>Category</th></tr>
+                <tr><td><apex:inputField value="{!Account.Category_v3__c}" style="width:350px;" id="category" onchange="categorySelect();"/></td></tr>
+                <tr><th>SubCategory</th></tr>
+                <tr><td><apex:inputField value="{!Account.Subcategory_v3__c}" style="width:350px;" id="subcategory" onchange="subCategorySelect();"/></td></tr>
+                <tr><th>Merchant Services Offered</th></tr>
+                <tr> 
+                    <td id="services">
+                        <select data-placeholder="Select Merchant Services Offered" style="width:350px;" class="chzn-select" multiple="true" tabindex="6" id="srvslct">
+                            <apex:repeat value="{!preSelectedServices}" var="preselsrvc">        
+                                <option id="preselectedservice" selected="selected">{!preselsrvc}</option>
+                            </apex:repeat>    
+                        </select>
+                    </td>
+                </tr>
+                <tr><th>Merchant Attributes</th></tr>
+                <tr>        
+                    <td id="attributes">
+                        <select data-placeholder="Select Merchant Attributes" style="width:350px;" class="chzn-select" multiple="true" tabindex="6" id="attrslct">
+                            <apex:repeat value="{!preSelectedAttributes}" var="preselattr">
+                                <option id="preselectedattribute" selected="selected">{!preselattr}</option>
+                            </apex:repeat>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><apex:inputHidden value="{!SelectedCategory}" id="SelCat"/></td>
+                    <td><apex:inputHidden value="{!SelectedSubcategory}" id="SelSubCat"/></td>
+                    <td><apex:inputHidden value="{!SelectedServicesArray}" id="SelSrvc"/></td>
+                    <td><apex:inputHidden value="{!SelectedMerchAttributesArray}" id="SelAttr"/></td>
+                </tr>
+                <tr>
+                    <td><apex:commandbutton action="{!inlineSave}" value="Submit Taxonomy" onclick="submitSelections()" oncomplete="loader();" rerender="messaging"/></td>
+                </tr>        
+            </table>
+        </apex:pageblock>
+    </div>
+    
+    <script type="text/javascript">
+        beenFocused = true;
+        var j$ = jQuery.noConflict();
+        var recordId = "{!ctrlId}";
+        
+        
+        
+        j$(document).ready(function() 
+            {
+                loader();
+            });
+
+        function loader() 
+            {
+                loadServices();
+                loadAttributes();
+            }
+        
+        function categorySelect()
+            {
+                var catChange = confirm('Changing the Merchant Category will remove any services and attributes on Deals/Opportunities that are not currently closed. Do you want to continue?');
+                if(catChange == true){
+                    j$("input[id$='SelCat']").val(j$("select[id$='category']").val());
+                    reloadServices();
+                    reloadAttributes();
+                    }else{window.location.reload};
+            }
+        
+        function subCategorySelect()
+            {
+                j$("input[id$='SelSubCat']").val(j$("select[id$='subcategory']").val());
+            }
+        
+        function categorySubmit()
+            {
+                j$("input[id$='SelCat']").val(j$("select[id$='category']").val());
+            }
+            
+        function subcategorySubmit()
+            {
+                j$("input[id$='SelSubCat']").val(j$("select[id$='subcategory']").val());
+            }        
+        
+        function loadServices()
+            {
+                var queryCat = j$("select[id$='category']").val();
+                var currentIDservices = recordId;
+                AcctTaxonomy.getServiceOptions(queryCat, currentIDservices, function(result,event){
+                    j$(result).each(function(){
+                        j$("#optionTemplate").tmpl(this).appendTo("#srvslct");
+                        });
+                    j$("#srvslct").chosen();    
+                }); 
+            }
+        
+        function loadAttributes()
+            {
+                var queryCat = j$("select[id$='category']").val();
+                var currentIDattr = recordId;
+                AcctTaxonomy.getAttributeOptions(queryCat, currentIDattr, function(result,event){
+                    j$(result).each(function(){
+                        j$("#optionTemplate").tmpl(this).appendTo("#attrslct");
+                        });
+                        j$("#attrslct").chosen();
+                    });
+            }
+            
+        function reloadServices()
+            {
+                j$("#srvslct").html('');
+                var queryCat = j$("select[id$='category']").val();
+                var currentIDservices = recordId;
+                AcctTaxonomy.getServiceOptions(queryCat, currentIDservices, function(result,event){
+                    console.log(result);
+                    console.log(event);
+                    j$(result).each(function(){
+                        j$("#optionTemplate").tmpl(this).appendTo("#srvslct");
+                        });
+                    j$("#srvslct").trigger("liszt:updated");  
+                });
+            }
+            
+        function reloadAttributes()
+            {
+                j$("#attrslct").html('');
+                var queryCat = j$("select[id$='category']").val();
+                var currentIDattr = recordId;
+                AcctTaxonomy.getAttributeOptions(queryCat, currentIDattr, function(result,event){
+                    j$(result).each(function(){
+                        j$("#optionTemplate").tmpl(this).appendTo("#attrslct");
+                        });
+                        j$("#attrslct").trigger("liszt:updated");
+                    });
+            }
+        
+        j$("#srvslct").change(function(){serviceSelect();});            
+        function serviceSelect()
+           {
+               var MerchantServices = new Array();
+               j$("#SelSrvc").val('');
+               j$(".search-choice").each(function(){
+                   if(j$(this).parent().parent().parent().attr('id')=='services')
+                       {
+                           MerchantServices.push(j$(this).find('span').text());
+                       }  
+                   });   
+              j$("input[id$='SelSrvc']").val(makeArray(MerchantServices));
+           }
+           
+        j$("#attrslct").change(function(){attributeSelect();});
+        function attributeSelect()
+           {
+               var MerchantAttributes = new Array();
+               j$("#SelAttr").val('');
+               j$(".search-choice").each(function(){
+                   if(j$(this).parent().parent().parent().attr('id')=='attributes')
+                       {
+                           MerchantAttributes.push(j$(this).find('span').text());
+                       }    
+                   });
+               j$("input[id$='SelAttr']").val(makeArray(MerchantAttributes));
+           }
+        
+        function makeArray(a)
+            {
+                var pipe='';
+                for(x=0;x<a.length;x++)
+                    {
+                        pipe+=a[x];
+                        if((x+1)<a.length)
+                            pipe+=' | ';
+                    }
+                 return pipe;   
+            }
+         
+        function submitSelections()
+           {
+               categorySubmit();
+               subcategorySubmit();               
+               serviceSelect();
+               attributeSelect();       
+           }
+           
+        function refreshPage()
+            {
+                alert("Your Selections have been Saved!");
+            }  
+      
+    </script>
+    <script id="optionTemplate" type="text/x-jquery-tmpl">
+        <optgroup label="${Header}">
+            {{each MerchServices}}
+                <option value="" >${this}</option>
+            {{/each}}
+       </optgroup>
+    </script>
+    </apex:form>
+
+</apex:page>

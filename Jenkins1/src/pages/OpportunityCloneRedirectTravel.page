@@ -1,0 +1,4 @@
+<apex:page standardController="Opportunity" extensions="OpptyCloneChannelTravel" action="{!cloneAndRedirectTravel}" >
+<apex:pagemessages />
+
+</apex:page>

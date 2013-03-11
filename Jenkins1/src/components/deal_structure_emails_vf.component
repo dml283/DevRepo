@@ -1,0 +1,64 @@
+<apex:component controller="deal_structure_emails_controller" access="global" >
+<apex:attribute name="assignedtoId" type="String" description="TODO: Describe me" assignTo="{!assignedtoId}"/>
+
+Please Review the Deal Structure for {!Opportunity.Name} <br/><br/>
+<b>This Opportunity is a {!Opportunity.Feature_or_Refeature__c}. </b> <br/>
+Record Type: {!Opportunity.RecordType.Name}<br/>
+Eligible for Refeature: {!Opportunity.Account.Eligible_for_Refeature__c}<br/><br/>
+
+Opportunity Owner: {!Opportunity.Owner.Name} <br/>
+Submitted via Deal Wizard: {!Opportunity.Submitted_via_Deal_Wizard__c}<br/>
+Straight to Private Sale: {!Opportunity.Straight_to_Private_Sale__c}<br/>
+Division: {!Opportunity.Division__c} <br/>
+Subdivision: {!Opportunity.Subdivision__c} <br/>
+<br/>
+Top Merchant Campaign: {!Opportunity.Account.Top_Merchant_Campaign__c}<br/>
+Credit Card Fee: {!Opportunity.CC_Fee__c}%<br/>
+<b>Margin Alert: {!Opportunity.Margin_Alert__c}</b><br/>
+<b>Total Deal Margin Percent: {!Opportunity.Margin_Percent__c}%</b><br/>
+Category (v3): {!Opportunity.Category_v3__c}<br/>
+Primary Deal Services: {!Opportunity.Primary_Deal_Services__c}<br/>
+<br/>
+
+Account Name: {!Opportunity.Account.name} <br/>
+Merchant Tier: {!Opportunity.Account.Merchant_Tier__c} <br/>
+<!--  Highest Quantum Lead Ranking for Merchant: {!Opportunity.Account.Highest_QL_Rank__c}<br/>-->
+Highest Quantum Lead Ranking for Merchant: {!Opportunity.QL_Rank__c}<br/>
+<!--  Sales Value Reason: {!Opportunity.Account.Sales_Value_Reasons__c}<br/>-->
+Sales Value Reason: {!Opportunity.QL_Sales_Value__c}<br/>               
+Merchant Quality Ranking: {!Opportunity.Merchant_Quality_Ranking__c} <br/>
+Opportunity Name: {!Opportunity.Name} <br/>
+Total Feature Max: {!Opportunity.Total_Feature_Deal_Max__c} <br/>
+Payment Preference: {!Opportunity.Payment_Preference__c} <br/>
+Payment Terms: {!Opportunity.Payment_Terms__c} <br/>
+Fine Print: {!Opportunity.conditions__c} <br/>
+Available Date/Restrictions: {!Opportunity.Available_Date__c} <br/><br/>
+
+This Opportunity has {!Opportunity.Amount_of_Multi_Deal_Children__c} multi-deal(s) <br/><br/>
+   <table> 
+       <th style="width:100px"><center> Deal <br/>Info              </center>  </th>
+       <th style="width:100px"><center> Deal <br/>Unit Buy Price    </center> </th>
+       <th style="width:100px"><center> Deal <br/>Unit Sell Price   </center> </th>
+       <th style="width:100px"><center> Deal <br/>Unit Value        </center> </th>
+       <th style="width:100px"><center> Deal <br/>Option Cap        </center> </th>   
+       <th style="width:100px"><center> Deal <br/>GLite Monthly Cap </center> </th>   
+       <th style="width:100px"><center> Deal <br/>Margin ($)        </center> </th>
+       <th style="width:100px"><center> Deal <br/>Margin (%)        </center> </th>
+       <th style="width:100px"><center> Deal <br/>Discount %        </center> </th> 
+       <apex:repeat value="{!multideals}" var="multi">
+         <tr>
+            <td style="width:100px"><center> <a href="https://na8.salesforce.com/{!multi.Id}" target="_blank">{!multi.name} </a> </center> </td>
+            <td style="width:100px"><center> ${!multi.Unit_Buy_Price__c}          </center> </td>
+            <td style="width:100px"><center> ${!multi.Unit_Sell_Price__c}         </center> </td>
+            <td style="width:100px"><center> ${!multi.Unit_Value__c}              </center> </td>
+            <td style="width:100px"><center> {!multi.Total_Deal_Max__c}           </center> </td>
+            <td style="width:100px"><center> {!multi.GrouponLite_Monthly_Cap__c}  </center> </td>
+            <td style="width:100px"><center> ${!multi.Margin__c}                  </center> </td>
+            <td style="width:100px"><center> {!multi.Margin_Percent__c}%          </center> </td>
+            <td style="width:100px"><center> {!multi.Discount__c}%                </center> </td>
+         </tr>
+    </apex:repeat>
+  </table>
+<br/><br/>
+<a href="https://na8.salesforce.com/{!Opportunity.Id}">You can view the Opportunity here</a><br/>
+</apex:component>

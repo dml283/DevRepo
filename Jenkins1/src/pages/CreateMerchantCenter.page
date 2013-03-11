@@ -1,0 +1,135 @@
+<apex:page controller="MerchantCenterAPI" showHeader="false" sidebar="false" standardStylesheets="false">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:stylesheet value="{!URLFOR($Resource.toolstrap)}"/>
+<apex:includeScript value="https://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js"/>
+<apex:stylesheet value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css"/>
+
+<html>
+  <header>
+  <div class="container">
+    <nav>
+     <ul>
+       <li class="active">
+         <a href="/">Merchant Center: {!Merchant.name}</a>
+       </li>  
+     </ul>
+    </nav>
+  </div>
+  </header>
+  <div class="content clearfix">
+    <div class="container">
+      <aside>
+        <nav>
+          <ul class="nav-plain">
+            <br/><br/><br/><br/>
+            <li><button class="btn btn-primary" onclick="createMerchantCenter()">Create Merchant Center</button></li>
+          </ul>
+        </nav>
+        <br/>
+        <br/>
+        <apex:pageblock >
+        <apex:pageblockSection id="error_msg"> 
+        
+        <apex:outputPanel rendered="{!response.created}">
+         <div class="badge badge-success">Merchant Center Created! Go You! </div><br/>
+         Merchant Permalink: {!response.permalink}<br/><br/>
+         </apex:outputPanel><br/>
+         
+         <apex:outputPanel rendered="{!response.failed}">
+         <div class="badge badge-warning">Failed to Create MC</div>
+         <apex:repeat var="msg" value="{!response.errorMsg}">
+         {!msg}<br/>
+         </apex:repeat>
+         </apex:outputPanel><br/>
+         <br/><hr/>
+         <apex:outputPanel rendered="{!response.contacts_created}">
+         <div class="badge badge-success">Contacts Created! Go You!</div><br/>
+         </apex:outputPanel><br/>
+         <br/>
+         <apex:outputPanel rendered="{!response.contacts_failed}">
+         <div class="badge badge-warning">Contacts Failed to create </div><br/>
+         <apex:repeat var="msg" value="{!response.contactErrorMsg}">
+         {!msg}<br/>
+         </apex:repeat> 
+         </apex:outputPanel><br/>
+        </apex:pageblockSection>  
+        </apex:pageblock>   
+      </aside>
+    <section class="main">
+      <div class="container">
+        <body class="nav">
+        <h2 class="h2">Merchant Center Details</h2><br/>
+        <form class="form">
+            <label for="merchant_name">Merchant Name: </label>
+            <input id="merchant_name" type="text" disabled="disabled" value="{!Merchant.name}"/><br/><br/>
+            <label for="salesforce_account_id">Salesforce Account ID: </label>
+            <input id="salesforce_account_id" type="text" disabled="disabled" value="{!Merchant.salesforce_account_id}"/> <br/><br/>
+            <label for="website">Website: </label>
+            <input id="website" type="text" disabled="disabled" value="{!Merchant.website}"/><br/><br/>       
+            <label for="facebook_url">Facebook URL: </label>
+            <input id="facebook_url" type="text" disabled="disabled" value="{!Merchant.facebook_url}"/><br/><br/>      
+            <label for="twitter_name">Twitter Name: </label>
+            <input id="twitter_name" type="text" disabled="disabled" value="{!Merchant.twitter_name}" class="input-m"/><br/><br/>
+            <h3 class="h3">Emails/User Accounts to be Created</h3><hr/>         
+            <apex:repeat value="{!Merchant.contacts}" var="contact" id="contacts">
+            <label for="contact_email">Email: </label>
+            <input id="contact_email" type="text" disabled="disabled" value="{!contact.email_address}"/><br/><br/>                       
+            </apex:repeat>
+            <h3 class="h3">Remittance Info</h3><hr/>     
+            <label for="remit_to">Remit To: </label>
+            <input id="remit_to" type="text" disabled="disabled" value="{!Merchant.remit_to}"/><br/><br/>            
+            <label for="remittance_address1">Remittance Address Line 1: </label>
+            <input id="remittance_address1" type="text" disabled="disabled" value="{!Merchant.remittance_address1}"/><br/><br/> 
+            <label for="remittance_address2">Remittance Address Line 2: </label>
+            <input id="remittance_address2" type="text" disabled="disabled" value="{!Merchant.remittance_address2}"/><br/><br/> 
+            <label for="remittance_city">Remittance City: </label>
+            <input id="remittance_city" type="text" disabled="disabled" value="{!Merchant.remittance_city}" class="input-m"/><br/><br/> 
+            <label for="remittance_state">Remittance State: </label>
+            <input id="remittance_state" type="text" disabled="disabled" value="{!Merchant.remittance_state}" class="input-xs"/><br/><br/>       
+            <label for="remittance_zip">Remittance Zip/Postal:  </label>
+            <input id="remittance_zip" type="text" disabled="disabled" value="{!Merchant.remittance_zip}" class="input-s"/><br/><br/> 
+            <label for="remittance_country">Remittance Country:  </label>
+            <input id="remittance_country" type="text" disabled="disabled" value="{!Merchant.remittance_country}" class="input-s"/><br/><br/>   
+            <h3 class="h3">Merchant Locations</h3><hr/>
+                <apex:repeat value="{!Merchant.locations}" var="addy" id="loication">
+                  <label for="address1">Address Line 1: </label>
+                  <input id="address1" type="text" disabled="disabled" value="{!addy.address1}"/><br/><br/>
+                  <label for="address2">Address Line 2: </label>
+                  <input id="address2" type="text" disabled="disabled" value="{!addy.address2}"/><br/><br/>
+                  <label for="city">City: </label>
+                  <input id="city" type="text" disabled="disabled" value="{!addy.city}" class="input-m"/><br/><br/>
+                  <label for="state">State: </label>
+                  <input id="state" type="text" disabled="disabled" value="{!addy.state}" class="input-xs"/><br/><br/>
+                  <label for="zip">Zip/Postal Code: </label>
+                  <input id="zip" type="text" disabled="disabled" value="{!addy.zip}" class="input-s"/><br/><br/>
+                  <label for="country">Country: </label>
+                  <input id="country" type="text" disabled="disabled" value="{!addy.country}" class="input-s"/><br/><br/>
+                  <label for="venue_name">Venue Name: </label>
+                  <input id="venue_name" type="text" disabled="disabled" value="{!addy.venue_name}"/><br/><br/>
+                  <label for="phone_number">Phone: </label>
+                  <input id="phone_number" type="text" disabled="disabled" value="{!addy.phone_number}"/><br/><br/>
+                </apex:repeat>                                                                                            
+        </form>    
+        </body>
+      </div>
+    </section>
+  </div>
+  </div>
+<apex:form >
+<apex:actionFunction name="createMC" action="{!CreateMerchantCenter}" rerender="error_msg"/>
+</apex:form>
+<script>
+    function createMerchantCenter(){
+    createMC();
+    }
+</script>  
+<style>
+label {
+float: left;
+width: 10em;
+margin-right: 1em;
+}
+</style>
+</html>
+</apex:page>

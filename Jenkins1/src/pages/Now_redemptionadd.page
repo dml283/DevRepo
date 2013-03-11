@@ -1,0 +1,190 @@
+<apex:page standardcontroller="GrouponNow__c" extensions="Now_redemptionadd" id="page" showHeader="false" sidebar="false">
+
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:stylesheet value="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/flick/jquery-ui.css"/>
+    <apex:form id="form" >
+     <apex:pageMessages />
+      <apex:outputPanel rendered="{!backtomainpage}">
+                <apex:commandButton value="OK"  immediate="True" onclick="timedRefresh();"/>
+               </apex:outputPanel>
+        <apex:pageBlock id="Pgblck" rendered="{!newmode}" >
+
+                <apex:pageBlockSection Title="New Redemption Addresses" id="pgblk1" >
+                     
+                 <apex:pageBlockSectionitem >    
+                 <apex:commandbutton value="Save" action="{!savenew}">  
+                 </apex:commandbutton>
+                 <apex:commandButton value="Cancel" action="{!cancelnewmode}" immediate="True" />
+                </apex:pageBlockSectionitem>
+                <apex:pageBlocksection />
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Phone Number" id="phonenumber"/>
+                        <apex:inputfield value="{!redemptionadd.Phone_Number__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Venue Name"/>
+                        <apex:inputfield value="{!redemptionadd.Venue_Name__c}" />
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Address Line 1"/>
+                        <apex:inputfield value="{!redemptionadd.Address_Line_1__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Address Line 2"/>
+                        <apex:inputfield value="{!redemptionadd.Address_Line_2__c}"/>
+                        </apex:pageblockSectionItem>
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="City"/>
+                        <apex:inputfield value="{!redemptionadd.City__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="State"/>
+                        <apex:inputfield value="{!redemptionadd.State__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Zip Code"/>
+                        <apex:inputfield value="{!redemptionadd.Zip_Code__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                        
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Country"/>
+                        <apex:inputfield value="{!redemptionadd.Country__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                        
+         </apex:pageBlockSection>               
+        </apex:pageblock>
+        
+        
+        <apex:pageblock rendered="{!IF(NOT(newmode),true,false)}" mode="maindetail" id="pgblkhide">
+        
+                <apex:commandlink value="Show All Additional Redepmtion Addresses" action="{!cancel}" rendered="{!IF(NOT(selecteddeal),true,false)}" immediate="true" />
+              
+                 
+                <apex:pageBlockSection rendered="{!selecteddeal}" columns="1">
+
+                    <apex:pageBlockTable value="{!alladdress}" var="address" border="1" id="Datatbl" style="width:100%">
+
+                       <apex:column style="width:40px;"  > 
+
+                       <apex:facet name="header">                       
+                       <apex:commandButton style="width:30px;height:30px" value="New" action="{!Addaddress}" rendered="{!selecteddeal}"/>
+                       </apex:facet>       
+                            <apex:commandlink value="edit" action="{!editRedemptionadd}" onclick="putEditId('{!address.redemption.Id}',false);"></apex:commandlink>
+                            <apex:actionSupport event="onsubmit" onsubmit="{!address.passid}"/>
+                           <apex:InputHidden value="{!strEditSelId}" id="hidId1"/>
+                           &nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:commandlink value="del" action="{!delredemptaddress}" onclick="putDelId('{!address.redemption.Id}',false);"/>
+                            <apex:InputHidden value="{!strDelSelId}" id="hidId2"/>
+                      
+                                
+                        </apex:column>
+                        
+                        <apex:column style="width:30px" >
+                            <apex:facet name="header"> <div align="center"> Phone  <br/> Number </div> </apex:facet>           
+                            <apex:outputfield value="{!address.redemption.Phone_Number__c}"/>                              
+                        </apex:column>
+                        
+                         <apex:column style="width:100px">
+                            <apex:facet name="header"> <div align="center"> Venue <br/> Name</div> </apex:facet>           
+                            <apex:outputfield value="{!address.redemption.Venue_Name__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:100px">
+                            <apex:facet name="header"> <div align="center"> Address  <br/> Line 1 </div> </apex:facet>           
+                            <apex:outputfield value="{!address.redemption.Address_Line_1__c}"/>                              
+                        </apex:column>
+                        
+                       <apex:column style="width:100px">
+                            <apex:facet name="header"> <div align="center"> Address  <br/> Line 2 </div> </apex:facet>           
+                            <apex:outputfield value="{!address.redemption.Address_Line_2__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px" >
+                            <apex:facet name="header"> <div align="center"> City </div> </apex:facet>           
+                            <apex:outputfield value="{!address.redemption.City__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> State </div> </apex:facet>           
+                            <apex:outputfield value="{!address.redemption.State__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Zip  <br/> Code </div> </apex:facet>           
+                            <apex:outputfield value="{!address.redemption.Zip_Code__c}"/>                              
+                        </apex:column>
+                        
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Country </div> </apex:facet>           
+                            <apex:outputfield value="{!address.redemption.Country__c}"/>                              
+                        </apex:column>
+                    </apex:pageblocktable>
+                </apex:pageBlockSection>
+              
+        </apex:pageblock>
+         
+         <apex:pageblock id="pgblock1" mode="maindetail" rendered="{!IF(NOT(selecteddeal),true,false)}" >
+                <apex:pageBlockSection Title="Selected Redemption Address" id="Selected_PBS"  rendered="{!IF(NOT(newmode),true,false)}" >               
+                     
+                    <apex:repeat value="{!selectedaddress}" var="s" id="pgblktab">
+                     <apex:pageblocksectionitem >                                          
+                            <apex:commandbutton action="{!Updatemethod}" value="Save" id="savebutton" onclick="putSelectedId('{!s.Id}');">
+                           <apex:InputHidden value="{!strSelectedRec}" id="hidId3"/>
+                           </apex:commandbutton>
+                            <apex:commandbutton action="{!Cancel}" value="Cancel" id="cancelbutton" immediate="true"/>
+                        </apex:pageblocksectionitem> 
+                        <apex:pageblocksectionitem />
+                            <apex:inputfield value="{!s.Phone_Number__c}" required="True"/>
+                             <apex:inputfield value="{!s.Venue_Name__c}" />
+                            <apex:inputfield value="{!s.Address_Line_1__c}" required="True" /> 
+                            <apex:inputfield value="{!s.Address_Line_2__c}"/>
+                            <apex:inputfield value="{!s.City__c}" required="True"/>
+                            <apex:inputfield value="{!s.State__c}" required="True"/>
+                            <apex:inputfield value="{!s.Zip_Code__c}" required="True"/>       
+                            <apex:inputfield value="{!s.Country__c}" required="True"/>                              
+                   </apex:repeat>      
+               </apex:pageblocksection>   
+        </apex:pageblock>       
+        </apex:form>
+<Script>
+var j$ = jQuery.noConflict();
+    j$(document).ready(function()
+    {
+    j$("Results").tablesorter();
+    });
+
+function timedRefresh()
+    {
+        
+        setTimeout("location.reload(true);");
+    }
+
+function putEditId(id)
+    {
+         var $hiddenId1 = j$("input[id$='hidId1']");
+         $hiddenId1.val(id);
+    }
+function putSelectedId(id)
+{
+         var $hiddenId3 = j$("input[id$='hidId3']");
+         $hiddenId3.val(id);
+}
+function putDelId(id)
+    {
+
+                 var $hiddenId2 = j$("input[id$='hidId2']");
+                 $hiddenId2.val(id);
+ 
+    }
+
+</script>
+
+       </apex:page>

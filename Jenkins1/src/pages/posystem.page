@@ -1,0 +1,329 @@
+<apex:page StandardController="Purchase_Order__c" extensions="POSystem">
+
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js"/>
+
+<apex:includeScript value="{!URLFOR($Resource.TableFilterPackage, 'TableFilter/tablefilter_all.js')}"/>
+<apex:stylesheet value="{!URLFOR($Resource.TableFilterPackage, 'TableFilter/filtergrid.css')}"/>
+
+
+
+<apex:form id="JSForm">
+<apex:actionFunction name="AddAccount" action="{!addAccount}" rerender="Results, PinnedMerchants" oncomplete="makeDraggable();">
+    <apex:param name="recordID" assignTo="{!RecordID}" value="" />
+</apex:actionFunction>
+<apex:actionFunction name="AddLead" action="{!addLead}" rerender="Results, PinnedMerchants" oncomplete="makeDraggable();">
+    <apex:param name="recordID" assignTo="{!RecordID}" value="" />
+</apex:actionFunction>
+<apex:actionFunction name="unpinLead" action="{!unpinLead}" rerender="Results, PinnedMerchants" oncomplete="makeDraggable();">
+    <apex:param name="recordID" assignTo="{!RecordID}" value="" />
+</apex:actionFunction>
+<apex:actionFunction name="unpinMerchant" action="{!unpinMerchant}" rerender="Results, PinnedMerchants" oncomplete="makeDraggable();">
+    <apex:param name="recordID" assignTo="{!RecordID}" value="" />
+</apex:actionFunction>
+
+
+
+</apex:form>
+
+<html>
+<b>Pinned Merchants</b>
+<div id ="Dropable" class="Drag" width="100%">
+<apex:pageBlock id="PinnedMerchants">
+<table id ="Pinned" title="Pinned Merchants" width="100%"  align="center" class="hasborder" >
+<tr align="center" class="hasborder">
+    <th>Unpin</th>
+    <th>New/Existing Business</th>
+    <th>Company Name</th>
+    <th>Owner</th>
+    <th>Contact Name</th>
+    <th>Contact Phone</th>
+    <th>Category</th>
+    <th>Subcategory 1</th>
+    <th>Subcategory 2</th>
+    <th>Subdivision</th>
+    <th>Research Ranking</th>
+    <th>Feature Date</th>
+    <th>Stage</th>
+
+</tr>
+    <apex:repeat value="{!Pinned}" var="r" id="Pinned">
+            <tr align="center">
+                <td class="unPin" data-type="{!r.RType}" data-RecordId="{!r.RecordID}"><img width="30" height="30" src="{!$Resource.TrashCan}"/></td>
+                <td>{!r.NewOld}</td>
+                <td data-POID ="{!r.POID}" data-type="{!r.RType}" data-RecordId="{!r.RecordID}" ><a href="/{!r.RecordID}" target="_blank">{!r.Merchant}</a></td>
+                <td>{!r.owner}</td>
+                <td>{!r.ContactName}</td>
+                <td>{!r.Phone}</td>
+                <td>{!r.Cat}</td>
+                <td>{!r.subcat}</td>
+                <td>{!r.subcat2}</td>
+                <td>{!r.SubDivision}</td>
+                <td>{!r.ResearchRanking}</td>
+                <td>{!r.FeatureDate}</td>
+                <td>{!r.Stage}</td>
+
+            </tr>
+    </apex:repeat>
+</table>
+</apex:pageBlock>
+
+</div>
+
+<apex:pageBlock id="Results">
+
+<b>All Merchants</b>
+<table id ="Results" style="width=100%;" align="center" class="hasborder">
+<tr align="center">
+    <th>Select</th>
+    <th>New/Existing Business</th>
+    <th>Company Name</th>
+    <th>Owner</th>
+    <th>Contact Name</th>
+    <th>Contact Phone</th>
+    <th>Category</th>
+    <th>Subcategory 1</th>
+    <th>Subcategory 2</th>
+    <th>Subdivision</th>
+    <th>Research Ranking</th>
+    <th>Feature Date</th>
+    <th>Last Activity</th>
+    <th>Stage</th>
+</tr>
+<tbody style="width=100%;">
+    <apex:repeat value="{!Results}" var="r" id="theRepeat">
+            <tr align="center" >
+                <td><input type="checkbox" value="" data-type="{!r.RType}" data-RecordId="{!r.RecordID}" class="ButtonClass"/></td>
+                <td>{!r.NewOld}</td>
+                <td class="ResultCSS" data-POID="{!r.POID}" data-type="{!r.RType}" data-RecordId="{!r.RecordID}" style="border: 1px solid black;"><a href="/{!r.RecordID}" target="_blank">{!r.Merchant}</a></td>
+                <td>{!r.owner}</td>
+                <td>{!r.ContactName}</td>
+                <td>{!r.Phone}</td>
+                <td>{!r.Cat}</td>
+                <td>{!r.subcat}</td>
+                <td>{!r.subcat2}</td>
+                <td>{!r.SubDivision}</td>
+                <td>{!r.ResearchRanking}</td>
+                <td>{!r.FeatureDate}</td>
+                <td>{!r.LastActivity}</td>
+                <td>{!r.Stage}</td>
+            </tr>
+    </apex:repeat>
+</tbody>    
+</table>
+</apex:pageBlock>
+</html>
+<script>
+
+
+var j$ = jQuery.noConflict();
+    j$(document).ready(function(){
+            makeDraggable();
+        });
+function makeDraggable()
+    {
+
+        j$(".unPin").click(function(e){
+                                    var typeVar =j$(this);
+                                    var LeadOrAcct = typeVar.attr('data-type');
+                                    var unPinID = typeVar.attr('data-RecordId');
+                                    if(LeadOrAcct=='Lead')
+                                        {
+                                            //alert(unPinID);
+                                            unpinLead(unPinID);
+                                        }
+                                   if(LeadOrAcct=='Account')
+                                        {
+                                            //alert(unPinID);
+                                            unpinMerchant(unPinID);
+                                        }
+                                   
+                                    //alert('Clicking this will Unpin the lead, Im lazy and have not done it yet, but thanks for clicking!');
+                                    });
+        j$(".ButtonClass").click(function(event,ui){
+            var myCheckBox = j$(this);
+            //checkBoxHandler(myCheckBox.attr('data-RecordId'),myCheckBox.attr('data-type'));
+            
+            var LorA = myCheckBox.attr('data-type');
+                              if(LorA=='Lead')
+                                  {
+                                      //alert('lead fire');
+                                      AddLead(myCheckBox.attr('data-RecordId'));
+                                      
+                                  }
+                              if(LorA=='Account')
+                                  {
+                                      //alert('Account fire');
+                                      AddAccount(myCheckBox.attr('data-RecordId'));
+                                      
+                                  }
+            });                          
+        j$(".ResultCSS").draggable({revert: 'invalid'});
+        j$(".Drag").droppable({
+                        drop: function(event, ui){
+                              //alert(ui.draggable.attr('data-RecordId'));
+                              //alert(ui.draggable.attr('data-type'));
+                              var LorA = ui.draggable.attr('data-type');
+                              if(LorA=='Lead')
+                                  {
+                                     // alert('lead fire');
+                                      AddLead(ui.draggable.attr('data-RecordId'));
+                                      
+                                  }
+                              if(LorA=='Account')
+                                  {
+                                      //alert('Account fire');
+                                      AddAccount(ui.draggable.attr('data-RecordId'));
+                                      
+                                  }
+                              } 
+                        });
+    var PinnedProps =  { 
+                        on_keyup: true,
+                        remember_grid_values:true,
+                        col_0: "select",
+                        col_1: "select",
+                        col_2: "select",
+                        col_5: "select",
+                        col_6: "select",
+                        col_7: "select",
+                        col_8: "select",
+                        col_9: "select",
+                        col_10: "select",
+                        col_11: "select",
+                        display_all_text: "< Show all >",
+                        alternate_rows: true,  
+                        page_selector_type:'select',
+                        paging_btns:false,
+                        paging:false,
+                        paging_length:25,
+                        refresh_filters: true,
+                        rows_counter: true,  
+                        rows_counter_text: "# of Pinned Merchants: ",  
+                        btn_reset: true,  
+                        loader: true,  
+                        loader_text: "Filtering data...",
+                        sort_num_desc:[9],
+                        on_keyup:true,
+                        on_keyup_delay:400,
+                        highlight_keywords:true,
+                        fixed_headers:true}
+  
+   var AllProps =     { on_keyup: true,
+                        remember_grid_values:true,
+                        selection_model: "multiple",
+                        default_selection: "row",
+                        col_1: "select",
+                        col_3: "select",
+                        col_6: "select",
+                        col_7: "select",
+                        col_8: "select",
+                        col_9: "select",
+                        col_10: "select",
+                        col_13: "select",
+                        display_all_text: "< Show all >",
+                        alternate_rows: true,  
+                        page_selector_type:'select',
+                        paging_btns:true,
+                        paging:true,
+                        paging_length:25,
+                        refresh_filters: true,
+                        rows_counter: true,  
+                        rows_counter_text: "# of Merchants: ",  
+                        btn_reset: true,  
+                        loader: true,  
+                        loader_text: "Filtering data...",
+                        sort_num_desc:[10],
+                        on_keyup:true,
+                        on_keyup_delay:400,
+                        highlight_keywords:true
+                      
+                        }    
+        
+   setFilterGrid("Results",AllProps);
+   setFilterGrid("Pinned",PinnedProps);
+    }
+function checkBoxHandler(recId,type)
+    {
+        alert(recId);
+        alert(type);
+    }                
+</script>
+<style type="text/css" media="screen">
+
+        .ResultCSS{
+                background-color:#75DEA9;
+            }  
+    body{ 
+        margin:15px; padding:15px; border:1px solid #666;
+        font-family:Arial, Helvetica, sans-serif; font-size:88%; 
+    }
+    pre{ margin:5px; padding:5px; background-color:#f4f4f4; border:1px solid #ccc; }
+    
+    /*====================================================
+        - Table columns text alignments
+    =====================================================*/
+    table.colsAlignments tr td:first-child { text-align:left; } 
+    table.colsAlignments tr td:first-child + td { text-align:center; } 
+    table.colsAlignments tr td:first-child + td  + td{ text-align:center; }
+    table.colsAlignments tr td:first-child + td  + td + td{ text-align:right; }
+    table.colsAlignments tr td:first-child + td  + td + td + td{ text-align:right; }
+    table.colsAlignments tr td:first-child + td  + td + td + td + td{ text-align:right; }
+    table.colsAlignments tr td:first-child + td  + td + td + td + td + td{ text-align:right; }
+    table.colsAlignments tr td:first-child + td  + td + td + td + td + td + td{ text-align:right; }
+    table.colsAlignments tr td:first-child + td  + td + td + td + td + td + td + td{ text-align:right; }
+    .hasborder td{border: 1px solid black;}
+    .hasborder th{border: 3px solid black; align:center;}
+    .hasborder {}
+    .Drag{ }
+    .ButtonClass{ }
+    .fltrow{ /* filter grid row appearance */
+    height:20px;
+    background-color:#f4f4f4;
+}
+.btnflt{ /* button appearance */
+    font-size:11px;
+    margin:0 2px 0 2px; padding:0 1px 0 1px;
+    text-decoration:none; color: #fff;
+    background-color:#666;
+}
+.flt{ /* filter (input) appearance */
+    background-color:#f4f4f4; border:1px inset #ccc; 
+    margin:0; width:100%;
+}
+.flt_s{ /* small filter (input) appearance */
+    background-color:#f4f4f4; border:1px inset #ccc; 
+    margin:0; width:80%;
+}
+.inf{ /* div containing left, middle and right divs */
+    clear:both; width:auto; height:20px; 
+    background:#f4f4f4; font-size:11px; 
+    margin:0; padding:1px 3px 1px 3px; 
+    border:1px solid #ccc;
+}
+.ldiv{ /* left div */
+    float:left; width:30%; position:inherit; 
+}
+.mdiv{ /* middle div */
+    float:left; width:30%; position:inherit; text-align:center; 
+}
+.rdiv{ /* right div */
+    float:right; width:30%; position:inherit; text-align:right; 
+}
+.loader{ /* loader appearance */
+    position:absolute; padding: 15px 0 15px 0;
+    margin-top:7%; width:200px; left:40%; 
+    z-index:1000; font-size:14px; font-weight:bold;
+    border:1px solid #666; background:#f4f4f4; 
+    text-align:center; vertical-align:middle;
+}
+div.mdiv select{ height:20px; }/*paging drop-down list*/
+div.inf a{ color:#CC0000; }/*link appearence in .inf div*/
+div.inf a:hover{ text-decoration:none; }/*link appearence in .inf div*/
+.tot{ font-weight:bold; }/*rows counter*/
+.even{ background-color:#fff; }/*row bg alternating color*/
+.odd{ background-color:#f4f4f4; }/*row bg alternating color*/
+      
+</style>
+
+</apex:page>

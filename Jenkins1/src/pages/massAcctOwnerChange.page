@@ -1,0 +1,22 @@
+<apex:page standardController="Account" recordSetVar="Accounts" showHeader="false"  id="muacct">
+    <apex:form id="muform">
+        <apex:pageBlock title="Account Mass Re-Assign" mode="edit" id="mub1">
+            <apex:pageMessages />
+            <apex:pageBlockSection id="mus1">
+                <apex:inputField value="{!Account.OwnerId}" id="acctowner">
+                    <apex:actionSupport event="onchange" rerender="muselectedlist"/>
+                </apex:inputField>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom" id="mubut">
+                <apex:commandButton value="Save" action="{!save}" id="butsav"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" id="butcan"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <apex:pageBlock title="Selected Accounts" id="muselectedlist">
+            <apex:pageBlockTable value="{!selected}" var="acct" id="mutab">
+                <apex:column value="{!acct.name}" id="acctname"/>
+                <apex:column value="{!acct.ownerId}" id="acctowner"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

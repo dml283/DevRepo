@@ -1,0 +1,197 @@
+<apex:page standardController="Account" extensions="MerchantAddresses2" showHeader="false" sidebar="false">
+
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:includeScript value="{!URLFOR($Resource.tablesorter, 'jquery.tablesorter.js')}"/>
+<apex:pagemessages />
+<apex:form id="form" >
+
+    <div id="MerchAddyBlock">
+        <apex:pageblock id="ViewAddys" rendered="{!viewAddy}">
+         
+            <table id ="Results" title="Merchant Addresses" width="100%" class="tablesorter list" >
+                <thead>
+                    <tr>
+                        <th width="5.5%">
+                            <div align = "center">
+                            <apex:commandbutton id="createAddy" value="New Address" action="{!insertAddy}" rendered="{!IF(newAddy,false,true)}"/>
+                            </div>
+                        </th>
+                        <th>Street Line 1</th>
+                        <th>Street Line 2</th>
+                        <th>City</th>
+                        <th>State/Province</th>
+                        <th>Zip/Postal</th>
+                        <th>Country</th>
+                        <th>Phone</th>
+                        <th>Venue Name</th>
+                        <th>Rewards MID</th>
+                        <th>Type</th>
+                        <th>Link to Address</th>  
+                    </tr>
+                </thead>
+                    <tbody>
+                        <apex:repeat value="{!merchaddydata}" var="m" id="CurrentAddy">
+                                <tr>
+                                    <td align="center">
+                                       
+                                        <apex:commandlink value="edit" action="{!editMerchAddy}" onclick="putEditId('{!m.merchantaddy.Id}',false);"></apex:commandlink>
+                                           <apex:actionSupport event="onsubmit" onsubmit="{!m.passid}"/>
+                                            <apex:InputHidden value="{!strEditSelId}" id="hidId1"/>  
+                                        <span style="padding:0 5px 0 5px;">|</span>
+                                        <apex:commandlink value="del" action="{!delMerchAddy}" onclick="putDelId('{!m.merchantaddy.Id}',false);" oncomplete="timedRefresh();" />
+                                            <apex:InputHidden value="{!strDelSelId}" id="hidId2"/>
+                                    </td>   
+                                    <td><apex:outputfield value="{!m.merchantaddy.Street_Line_1__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Street_Line_2__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.City__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.State_Province__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Zip_Postal_Code__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Country__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Phone_Number__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Venue_Name__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Merchant_Id__c}"/></td>
+                                    <td><apex:outputField value="{!m.merchantaddy.Type__c}"/></td>
+                                    <td><a href="/{!m.merchantaddy.Id}" target="_blank">Address Link</a></td>
+                                </tr>
+                        </apex:repeat>
+                    </tbody>
+            </table>
+        </apex:pageblock>
+    </div>
+
+    <div id="NewMerchAddy">
+        <apex:pageblock id="NewAddy" rendered="{!newAddy}">   
+            <table id ="insertNew" title="Merchant Addresses" class="tablesorter list" >
+                <thead>
+                    <tr align="center" class="hasborder">
+                        <th></th>
+                        <th>Street Line 1</th>
+                        <th>Street Line 2</th>
+                        <th>City</th>
+                        <th>State/Province</th>
+                        <th>Zip/Postal</th>
+                        <th>Country</th>
+                        <th>Phone</th>
+                        <th>Venue Name</th>
+                        <th>Rewards MID</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                            <tr>
+                                <td align="center">
+                                    <apex:commandlink value="cancel" action="{!cancelMerchAddy}"/>
+                                    <span style="padding:0 5px 0 5px;">|</span>
+                                    <apex:commandlink value="save" action="{!saveNewMerchAddy}" oncomplete="timedRefresh()" />
+                                </td>
+                                <td><apex:inputField value="{!MerchFields.Street_Line_1__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.Street_Line_2__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.City__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.State_Province__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.Zip_Postal_Code__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.Country__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.Phone_Number__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.Venue_Name__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.Merchant_Id__c}"/></td>
+                                <td><apex:inputField value="{!MerchFields.Type__c}"/></td>
+                            </tr>
+                            <apex:repeat value="{!merchaddydata}" var="m" id="CurrentAddy">
+                                <tr>
+                                    <td></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Street_Line_1__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Street_Line_2__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.City__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.State_Province__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Zip_Postal_Code__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Country__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Phone_Number__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Venue_Name__c}"/></td>
+                                    <td><apex:outputfield value="{!m.merchantaddy.Merchant_Id__c}"/></td>
+                                    <td><apex:outputfield value="{!MerchFields.Type__c}"/></td>
+                                </tr>
+                            </apex:repeat>        
+                    
+                </tbody>
+            </table>
+        </apex:pageblock>
+    </div>
+    
+    <div id="EditMerchAddy">
+        <apex:pageblock id="editAddy" rendered="{!IF(editAddy,true,false)}">   
+            <table id ="editMode" title="Merchant Addresses" class="tablesorter list" >
+                <thead>
+                    <tr align="center" class="hasborder">
+                        <th></th>
+                        <th>Street Line 1</th>
+                        <th>Street Line 2</th>
+                        <th>City</th>
+                        <th>State/Province</th>
+                        <th>Zip/Postal</th>
+                        <th>Country</th>
+                        <th>Phone</th>
+                        <th>Venue Name</th>
+                        <th>Rewards MID</th>
+                        <th>Type</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                            <apex:repeat value="{!SelectedMerchAddress}" var="sel" id="CurrentAddy">
+                                <tr>
+                                    <td align="center">
+                                        <apex:commandlink value="cancel" action="{!cancelMerchAddy}"/>
+                                        <span style="padding:0 5px 0 5px;">|</span>
+                                        <apex:commandlink value="save" action="{!updatemethod}"></apex:commandlink>
+                                    </td>
+                                    <td><apex:inputField value="{!sel.Street_Line_1__c}"/></td>
+                                    <td><apex:inputField value="{!sel.Street_Line_2__c}"/></td>
+                                    <td><apex:inputField value="{!sel.City__c}"/></td>
+                                    <td><apex:inputField value="{!sel.State_Province__c}"/></td>
+                                    <td><apex:inputField value="{!sel.Zip_Postal_Code__c}"/></td>
+                                    <td><apex:inputField value="{!sel.Country__c}"/></td>
+                                    <td><apex:inputField value="{!sel.Phone_Number__c}"/></td>
+                                    <td><apex:inputField value="{!sel.Venue_Name__c}"/></td>
+                                    <td><apex:inputField value="{!sel.Merchant_Id__c}"/></td>
+                                    <td><apex:inputField value="{!sel.Type__c}"/></td>
+                                </tr>
+                            </apex:repeat>        
+                    
+                </tbody>
+            </table>
+        </apex:pageblock>
+    </div>
+</apex:form>
+
+<Script>
+
+var j$ = jQuery.noConflict();
+    j$(document).ready(function()
+    {
+    j$("Results").tablesorter();
+    });
+
+function timedRefresh()
+    {
+        setTimeout("location.reload(true);");
+    }
+
+function putEditId(id)
+    {
+         var $hiddenId1 = j$("input[id$='hidId1']");
+         $hiddenId1.val(id);
+    }
+
+function putDelId(id)
+    {
+         var confDel = confirm("Are you sure you want to delete this Address?")
+             if (confDel==true)
+             {
+                 var $hiddenId2 = j$("input[id$='hidId2']");
+                 $hiddenId2.val(id);
+             }else
+             return null
+    }
+   
+</script>
+
+</apex:page>

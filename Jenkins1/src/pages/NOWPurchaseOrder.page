@@ -1,0 +1,38 @@
+<apex:page StandardController="Purchase_Order__c" extensions="NOWPOSystem">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.js"/>
+
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+<script type="text/javascript">
+      google.load('visualization', '1', {packages: ['corechart', 'table']});
+</script>
+
+<script>
+function drawVisualization() 
+    {
+      
+      
+      var data = new google.visualization.DataTable({!DataSetNow});
+                           
+     
+      
+      dataT = new google.visualization.Table(document.getElementById('table'));
+      
+
+      dataT.draw(data, {allowHtml: true, showRowNumber: true});
+      
+      
+     }
+
+google.setOnLoadCallback(drawVisualization);  
+</script>
+
+
+
+<apex:pageblock >
+<apex:pageblocksection id="thetable" title="Now! Eligible">
+<div id="table"></div>
+</apex:pageblocksection>
+</apex:pageblock>
+
+</apex:page>

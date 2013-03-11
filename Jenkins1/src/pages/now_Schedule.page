@@ -1,0 +1,247 @@
+<apex:page standardController="GrouponNow__c" extensions="now_Schedule_controller" showHeader="false" sidebar="false">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js"/>
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.js"/>
+<apex:stylesheet value="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/flick/jquery-ui.css"/>
+<script>
+ if("{!$Request.success}" == "true") {
+        parent.window.close();
+        parent.window.opener.location.href = "/{!$Request.id}";          
+    }
+</script>
+    <apex:form id="form" >
+     <apex:pageMessages />
+     
+            <apex:pageBlock id="Pgblck" rendered="{!newmode}" >
+
+                <apex:pageBlockSection id="pgblk1" >
+                     
+                 <apex:pageBlockSectionitem >    
+                 <apex:commandbutton value="Save" action="{!savenew}" />
+                 <apex:commandButton value="Cancel" action="{!cancelnewmode}" immediate="True" />
+                </apex:pageBlockSectionitem>
+                <apex:pageBlocksection />
+                  <apex:pageblocksection >   
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value=" Daily Unit Max for this Schedule " />
+                        <apex:inputfield value="{!schedule.Daily_Unit_Max_for_this_Schedule__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                  <br/>      
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="NOW Start Date" />
+                        <apex:inputfield value="{!schedule.NOW_Start_Date__c}" />
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="NOW End Date" />
+                        <apex:inputfield value="{!schedule.NOW_End_Date__c}"/>
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Start Time"/>
+                        <apex:inputfield value="{!schedule.Start_Time__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="End Time" />
+                        <apex:inputfield value="{!schedule.End_Time__c}" required="True"/>
+                        </apex:pageblockSectionItem>
+                  </apex:pageblocksection>  
+                  <br/> 
+                  <apex:pageblocksection >   
+                       <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Monday" />
+                        <apex:inputfield value="{!schedule.Monday__c}" />
+                        </apex:pageblockSectionItem>
+                        
+                         <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Friday" />
+                        <apex:inputfield value="{!schedule.Friday__c}" />
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Tuesday" />
+                        <apex:inputfield value="{!schedule.Tuesday__c}" />
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Saturday" />
+                        <apex:inputfield value="{!schedule.Saturday__c}" />
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Wednesday" />
+                        <apex:inputfield value="{!schedule.Wednesday__c}" />
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Sunday" />
+                        <apex:inputfield value="{!schedule.Sunday__c}" />
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Thursday" />
+                        <apex:inputfield value="{!schedule.Thursday__c}" />
+                        </apex:pageblockSectionItem>
+                  </apex:pageblocksection>   
+  
+         </apex:pageBlockSection>               
+        </apex:pageblock>
+        
+  <apex:pageblock rendered="{!IF(NOT(newmode),true,false)}" mode="maindetail" id="pgblkhide">
+        
+                <!--apex:commandlink value="Show All Schedules" action="{!cancel}" rendered="{!IF(NOT(selectedschedule),true,false)}" immediate="true" /-->
+              
+                 
+                <apex:pageBlockSection rendered="{!selectedschedule}" columns="1">
+
+                    <apex:pageBlockTable value="{!allschedule}" var="address" border="1" id="Datatbl" style="width:100%">
+
+                       <apex:column style="width:40px;"  > 
+
+                       <apex:facet name="header">                       
+                       <apex:commandButton style="width:30px;height:30px" value="New" action="{!Addaddress}" rendered="{!selectedschedule}"/>
+                       </apex:facet>       
+                            <apex:commandlink value="edit" action="{!editschedule}" onclick="putEditId('{!address.schedulewrap.Id}',false);"></apex:commandlink>
+                            <apex:actionSupport event="onsubmit" onsubmit="{!address.passid}"/>
+                           <apex:InputHidden value="{!strEditSelId}" id="hidId1"/>
+                           &nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:commandlink value="del" action="{!delschedules}" onclick="putDelId('{!address.schedulewrap.Id}',false);" oncomplete="timedRefresh();" />
+                            <apex:InputHidden value="{!strDelSelId}" id="hidId2"/>
+                         
+                                
+                        </apex:column>
+                        
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Daily Unit Max <br/> for this Schedule</div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Daily_Unit_Max_for_this_Schedule__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> NOW <br/> Start Date</div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.NOW_Start_Date__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> NOW <br/> End Date</div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.NOW_End_Date__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Start <br/> Time</div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Start_Time__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> End <br/> Time </div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.End_Time__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Monday </div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Monday__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Tuesday </div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Tuesday__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Wednesday </div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Wednesday__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Thursday</div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Thursday__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Friday </div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Friday__c}"/>                              
+                        </apex:column>
+                        
+                           <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Saturday </div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Saturday__c}"/>                              
+                        </apex:column>
+                        
+                        <apex:column style="width:10px">
+                            <apex:facet name="header"> <div align="center"> Sunday </div> </apex:facet>           
+                            <apex:outputfield value="{!address.schedulewrap.Sunday__c}"/>                              
+                        </apex:column>
+                        
+                    </apex:pageblocktable>
+                </apex:pageBlockSection>
+              
+        </apex:pageblock>
+
+          
+         <apex:pageblock id="pgblock1" mode="maindetail" rendered="{!IF(NOT(selectedschedule),true,false)}" >
+                <apex:pageBlockSection id="Selected_PBS"  rendered="{!IF(NOT(newmode),true,false)}" >               
+                     
+                    <apex:repeat value="{!selectedaddress}" var="s" id="pgblktab">
+                     <apex:pageblocksectionitem >                                          
+                            <apex:commandbutton action="{!Updatemethod}" value="Save" id="savebutton" onclick="putSelectedId('{!s.Id}');">
+                           <apex:InputHidden value="{!strSelectedRec}" id="hidId3"/>
+                           </apex:commandbutton>
+                            <apex:commandbutton action="{!Cancel}" value="Cancel" id="cancelbutton" immediate="true"/>
+                        </apex:pageblocksectionitem> 
+                        <apex:pageblocksectionitem />
+                        <apex:pageblocksection >   
+                        <apex:inputfield value="{!s.Daily_Unit_Max_for_this_Schedule__c}" required="True"/>
+                        <apex:inputfield value="{!s.NOW_Start_Date__c}"/>                     
+                        <apex:inputfield value="{!s.NOW_End_Date__c}"/>                     
+                        <apex:inputfield value="{!s.Start_Time__c }"  required="True"/>                     
+                        <apex:inputfield value="{!s.End_Time__c}"  required="True"/> 
+                        </apex:pageblocksection>
+                        <br/> 
+                        <apex:pageblocksection >                       
+                        <apex:inputfield value="{!s.Monday__c}"/>                            
+                        <apex:inputfield value="{!s.Friday__c}"/>                           
+                        <apex:inputfield value="{!s.Tuesday__c}"/>                         
+                        <apex:inputfield value="{!s.Saturday__c}"/>                          
+                        <apex:inputfield value="{!s.Wednesday__c}"/>                            
+                        <apex:inputfield value="{!s.Sunday__c}"/>                           
+                        <apex:inputfield value="{!s.Thursday__c }"/>   
+                        </apex:pageblocksection>                             
+                   </apex:repeat>      
+               </apex:pageblocksection>   
+        </apex:pageblock>         
+        
+      
+        </apex:form>
+<Script>
+var j$ = jQuery.noConflict();
+    j$(document).ready(function()
+    {
+    j$("Results").tablesorter();
+    });
+
+function timedRefresh()
+    {
+        
+        setTimeout("location.reload(true);");
+    }
+
+function putEditId(id)
+    {
+         var $hiddenId1 = j$("input[id$='hidId1']");
+         $hiddenId1.val(id);
+    }
+function putSelectedId(id)
+{
+         var $hiddenId3 = j$("input[id$='hidId3']");
+         $hiddenId3.val(id);
+}
+function putDelId(id)
+    {
+
+                 var $hiddenId2 = j$("input[id$='hidId2']");
+                 $hiddenId2.val(id);
+ 
+    }
+
+</script>
+</apex:page>

@@ -1,0 +1,212 @@
+<apex:page standardController="account" showheader="false" sidebar="false" id="pgId"> 
+<body>
+<apex:outputPanel layout="block" style="background-color:#FFFF00" rendered="{!Account.High_Risk_Subcategory_Grade_F__c==TRUE&&(Account.Subcategory_v3__c=='Transportation'||Account.Subcategory_v3__c=='Handyman & Contractors'||Account.Subcategory_v3__c=='Car & Automotive'||Account.Subcategory_v3__c=='Cleaning Services')}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>This merchant is on High-Risk Probation and must run with limited caps. See Wiki: <a href="http://bit.ly/high-risk-categories-on-glite-1" target="_blank">Wiki Link</a></b>
+       </td> 
+    </tr>
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FFFF00" rendered="{!Account.G1_Services_Override__c==TRUE&&(Account.Subcategory_v3__c=='Transportation Rental'||Account.Subcategory_v3__c=='Event Rental Services'||Account.Subcategory_v3__c=='Delivery Service'||Account.Subcategory_v3__c=='Tour Provider'||Account.Subcategory_v3__c=='Accommodation'||Account.Subcategory_v3__c=='Driving')}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>This merchant is on High-Risk Probation and must run with limited caps. See Wiki: <a href="http://bit.ly/high-risk-categories-on-glite-1" target="_blank">Wiki Link</a></b>
+       </td> 
+    </tr>
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - Bankruptcy / Out of Business'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **Bankruptcy or Out of Business** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - CS Issues'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **Customer Service Issues** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - High Refunds'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **High Refunds** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - Low Customer Satisfaction'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **Low Customer Satisfaction** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - Merchant Risk / Fraud'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **Merchant Risk / Fraud** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - Editorial Red Flag'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **Editorial Red Flag** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - Historical'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **Historical** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - Legal'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **Legal** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF0000" rendered="{!Account.Account_Status__c=='Do Not Run - Failed Credit Model'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **DO NOT RUN** DUE TO **Failed Credit Model** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#FF9900" rendered="{!Account.Pay_On_Redemption_Only__c==TRUE}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>THIS MERCHANT IS **PAY ON REDEMPTION ONLY** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#66FFFF" rendered="{!Account.Top_Merchant_Campaign__c=='LS'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>This Account is a Top Merchant Campaign **LS Target** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#66FFFF" rendered="{!Account.Top_Merchant_Campaign__c=='DreamList'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>This Account is a Top Merchant Campaign **DreamList Target** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#66FFFF" rendered="{!Account.Top_Merchant_Campaign__c=='PS'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>This Account is a Top Merchant Campaign **PS Target** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#66FFFF" rendered="{!Account.Top_Merchant_Campaign__c=='High Value Attrition'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>This Account is a Top Merchant Campaign **High Value Attrition Target** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#33FF00" rendered="{!Account.BillingCountry=='US'&&Account.Payments_Product_Sales_Status__c!='Contract Closed'&&Account.Subcategory_v3__c!='Charity'&&Account.Subcategory_v3__c!='Dating Services'&&Account.Subcategory_v3__c!='Accommodation'&&Account.Subcategory_v3__c!=''&&Account.Subcategory_v3__c!='Commercial Airline'&&Account.Subcategory_v3__c!='Revenue Management'&&Account.Subcategory_v3__c!='Tour Provider'&&Account.Subcategory_v3__c!='Travel Agency'&&(Account.Interested_in_Payments__c=='Yes'||Account.Payments_Eligible__c=='Yes'||Account.Top_Merchant_Campaign__c!='')}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>*** Payments eligible - PLEASE PITCH PAYMENTS PROACTIVELY - <a href="https://sites.google.com/a/groupon.com/call-map-4/payment-resources" target="_blank">Payments Selling Points</a> If interested, please send warm lead to paymentsleads@groupon.com ***</b>
+       </td> 
+    </tr>
+</table>
+</apex:outputPanel>
+
+
+<apex:outputPanel layout="block" style="background-color:#FF33CC" rendered="{!Account.Do_Not_Call__c=='POS'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>***G1/G2/GLite/NOW! --- SALES DO NOT CALL***</b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+<apex:outputPanel layout="block" style="background-color:#66FFFF" rendered="{!Account.Top_Merchant_Campaign__c=='Best Of'}">
+<table>
+    <tr>
+        <td id="rep" >
+       <B>This Account is a Top Merchant Campaign **Best Of Target** </b>
+       </td> 
+    </tr>
+
+</table>
+</apex:outputPanel>
+
+</body>
+
+</apex:page>

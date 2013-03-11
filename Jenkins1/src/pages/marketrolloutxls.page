@@ -1,0 +1,99 @@
+<apex:page showHeader="true" sidebar="true" controller="marketrollout" contenttype="application/vnd.ms-excel">
+<apex:sectionHeader title="Rollout"/>
+ <apex:pageBlock title="Market Roll Out">
+  <apex:dataTable value="{!Divisions}" var="division" cellPadding="4" border="1" style="text-align:center">
+   <apex:column >
+    <apex:facet name="header" >Division Name</apex:facet>
+    <apex:outputField value="{!division.name}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">State</apex:facet>
+    <apex:outputField value="{!division.State__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Actual Launch</apex:facet>
+    <apex:outputField value="{!division.Actual_Launch__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">NOW! Launch</apex:facet>
+    <apex:outputField value="{!division.NOW_Actual_Launch_Date__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Channels <br/> - Home <br/> Launch</apex:facet>
+    <apex:outputField value="{!division.Home_Channel_Actual_Launch_Date__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Channels <br/> - Travel <br/> Launch</apex:facet>
+    <apex:outputField value="{!division.Travel_Channel_Actual_Launch_Date__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Channels <br/>- Live<br/> Launch</apex:facet>
+    <apex:outputField value="{!division.Live_Events_Channel_Actual_Launch_Date__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Smart<br/> Launch</apex:facet>
+    <apex:outputField value="{!division.Smart_Deals_Actual_Launch__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Weekend<br/> Launch</apex:facet>
+    <apex:outputField value="{!division.Weekend_Launch__c}"/>
+   </apex:column>
+   <apex:column > 
+    <apex:facet name="header">Sales <br/> Team</apex:facet>
+    <apex:outputField value="{!division.Sales_Reps__c}"/>
+   </apex:column>
+   <apex:column >   
+    <apex:facet name="header">Lead Deal <br/> Planner(s)</apex:facet>
+    <apex:outputField value="{!division.Lead_Deal_Planner_s__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Merchant <br/> Researcher</apex:facet>
+    <apex:outputField value="{!division.Merchant_Researcher__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Market <br/>Planner</apex:facet>
+    <apex:outputField value="{!division.Market_Planner__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Divisional <br/> Sales <br/>Manager</apex:facet>
+    <apex:outputField value="{!division.DSM__c}"/>
+   </apex:column> 
+    <apex:column >
+    <apex:facet name="header">City <br/> CEO</apex:facet>
+    <apex:outputField value="{!division.City_CEO__c}"/>
+   </apex:column> 
+   <apex:column >
+    <apex:facet name="header">Planning <br/> Coordinator</apex:facet>
+    <apex:outputField value="{!division.Deal_Vetter__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">RVP</apex:facet>
+    <apex:outputField value="{!division.RVP__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Region</apex:facet>
+    <apex:outputField value="{!division.Region__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">DPM</apex:facet>
+    <apex:outputField value="{!division.DPM__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Merchant <br/> Managers</apex:facet>
+    <apex:outputField value="{!division.Merchant_Managers__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Inside <br/> Rep <br/> Count</apex:facet>
+    <apex:outputField value="{!division.Inside_Rep_Count__c}"/>
+   </apex:column>
+   <apex:column >
+    <apex:facet name="header">Outside <br/>Rep <br/> Count</apex:facet>
+    <apex:outputField value="{!division.Outside_Rep_Count__c}"/>
+   </apex:column>
+    <apex:column >
+    <apex:facet name="header">Total <br/> Rep <br/> Count</apex:facet>
+    <apex:outputField value="{!division.Total_Rep_Count__c}"/>
+   </apex:column>
+  </apex:dataTable>
+ </apex:pageBlock>
+</apex:page>
