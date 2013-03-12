@@ -19,6 +19,7 @@ public class AddressHelper {
     public string type {get;set;}
 	
 	//new comment
+	//new Comment 2 - Some New Implementation
     public AddressHelper(ApexPages.StandardController ctrl) 
         {
              ctrlId = ctrl.getID();
